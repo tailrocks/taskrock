@@ -8,6 +8,7 @@ pub mod fields;
 pub mod gh;
 pub mod github;
 pub mod link;
+pub mod ready;
 
 use crate::gh::Gh;
 
@@ -20,7 +21,11 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
     let name = match &cli.command {
         cli::Command::Check { .. } => "check",
         cli::Command::Apply { .. } => "apply",
-        cli::Command::Ready { .. } => "ready",
+        cli::Command::Ready { link, json } => {
+            let text = ready::run(gh, link, *json)?;
+            println!("{text}");
+            return Ok(());
+        }
         cli::Command::Claim { link } => {
             println!("{}", claim::claim(gh, link)?);
             return Ok(());
