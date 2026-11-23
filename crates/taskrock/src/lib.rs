@@ -2,8 +2,10 @@
 
 pub mod cli;
 pub mod error;
+pub mod fields;
 pub mod gh;
 pub mod github;
+pub mod link;
 
 use crate::gh::Gh;
 
