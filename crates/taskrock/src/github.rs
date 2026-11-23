@@ -3,6 +3,8 @@
 use crate::error::Error;
 use crate::gh::Gh;
 
+pub mod items;
+
 #[cfg(test)]
 mod tests;
 
