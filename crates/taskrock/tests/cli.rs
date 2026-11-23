@@ -35,12 +35,12 @@ fn no_argument_exits_with_wrong_arguments() {
 }
 
 #[test]
-fn ready_reports_not_built_yet() {
+fn release_reports_not_built_yet() {
     let output = Command::new(env!("CARGO_BIN_EXE_taskrock"))
-        .args(["ready", "x"])
+        .args(["release", "x"])
         .output()
         .expect("the taskrock binary starts");
     assert_eq!(output.status.code(), Some(1));
     let stderr = String::from_utf8(output.stderr).expect("stderr is UTF-8");
-    assert_eq!(stderr.trim(), "error: ready is not built yet");
+    assert_eq!(stderr.trim(), "error: release is not built yet");
 }

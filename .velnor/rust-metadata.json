@@ -72,6 +72,16 @@
               "requires_features": false
             },
             {
+              "name": "sandbox_claim",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_claim.rs",
+              "requires_features": false
+            },
+            {
               "name": "sandbox_gh",
               "kinds": [
                 "test"
