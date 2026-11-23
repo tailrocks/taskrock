@@ -1,5 +1,6 @@
 //! taskrock: plan and run agent work on GitHub Issues and Projects.
 
+pub mod apply;
 pub mod claim;
 pub mod cli;
 pub mod draft;
@@ -24,7 +25,15 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             println!("{text}");
             return Ok(());
         }
-        cli::Command::Apply { .. } => "apply",
+        cli::Command::Apply { draft, dry_run } => {
+            let options = apply::Options {
+                dry_run: *dry_run,
+                pause: std::time::Duration::from_secs(1),
+            };
+            let text = apply::run(gh, draft, &options)?;
+            println!("{text}");
+            return Ok(());
+        }
         cli::Command::Ready { link, json } => {
             let text = ready::run(gh, link, *json)?;
             println!("{text}");
