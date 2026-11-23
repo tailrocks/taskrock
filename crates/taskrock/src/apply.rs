@@ -63,7 +63,7 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
     for issue in create::creation_order(&draft) {
         if let Some(known) = found.get(&issue.key) {
             lines.push(format!(
-                "exists #{} {} {}",
+                "exists  #{} {} {}",
                 known.link.number, issue.key, issue.title
             ));
         } else if options.dry_run {

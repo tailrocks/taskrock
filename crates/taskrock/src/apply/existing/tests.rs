@@ -18,9 +18,9 @@ fn existing_markers_send_no_post() {
     assert_eq!(
         lines,
         [
-            "exists #21 E1 CSV export",
-            "exists #22 T01 Add CSV rendering to the report command",
-            "exists #23 T02 Add `--format csv` to the report command",
+            "exists  #21 E1 CSV export",
+            "exists  #22 T01 Add CSV rendering to the report command",
+            "exists  #23 T02 Add `--format csv` to the report command",
         ]
     );
     assert_eq!(map["T01"].link.number, 22);
@@ -44,7 +44,7 @@ fn late_issue_after_empty_listing_creates_other_two() {
         lines,
         [
             "created #11 E1 CSV export",
-            "exists #1 T01 Add CSV rendering to the report command",
+            "exists  #1 T01 Add CSV rendering to the report command",
             "created #12 T02 Add `--format csv` to the report command",
         ]
     );
