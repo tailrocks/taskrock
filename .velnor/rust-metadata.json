@@ -67,6 +67,16 @@
               "doctest": false,
               "source": "crates/taskrock/tests/sandbox_gh.rs",
               "requires_features": false
+            },
+            {
+              "name": "sandbox_items",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_items.rs",
+              "requires_features": false
             }
           ]
         }
@@ -77,5 +87,5 @@
     "Cargo.toml": "dc2b579090efed4b75bbde6060c02823ddfff867fdfa770198d9e5893fc50a2a",
     "crates/taskrock/Cargo.toml": "b562e886c794fb59f3338555bb170168f7241e8c3cf651e68f1f6113bfff1397"
   },
-  "layout": "fbf98612b5c32d1b8cb6690a39c102a4ff9d6d0f3b99ee8d0e859d88824367f0"
+  "layout": "2c07fc07342eb186e5dd0946ff7bf0a1a03eb0f3e3dde19ba815ce4696f43999"
 }

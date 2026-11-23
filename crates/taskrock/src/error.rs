@@ -17,6 +17,9 @@ pub enum Error {
     /// A link taskrock does not understand.
     #[error("not a link taskrock understands: {0}")]
     Link(String),
+    /// A project that does not have what taskrock needs.
+    #[error("{0}")]
+    Project(String),
 }
 
 impl Error {
