@@ -1,0 +1,82 @@
+min_version = { hard = "2026.11.1", soft = "2026.11.12" }
+
+[tools]
+# Rust and its wrapper. rust-toolchain.toml mirrors the rust entry exactly.
+mr-boxington = "1.30.0"
+rust = { version = "1.100.0", profile = "minimal", components = [
+  "clippy",
+  "rustfmt",
+], targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "aarch64-unknown-linux-gnu",
+  "x86_64-unknown-linux-gnu",
+], mr_boxington = true }
+cargo-binstall = "1.26.2"
+"aqua:nextest-rs/nextest/cargo-nextest" = "0.9.151"
+"github:bnjbvr/cargo-machete" = "0.9.2"
+"aqua:EmbarkStudios/cargo-deny" = "0.20.2"
+"github:asamarts/alint" = "0.21.1"
+# velnor-gen writes the CI workflows. Linux takes the release asset. The
+# release has no macOS asset, so macOS builds the same commit from source.
+# The version here must equal the version in .velnor/rust-ci.lock.
+# Bump both with `velnor-gen pin-helper <version>`.
+"github:tailrocks/velnor-new" = { version = "tools-v0.1.111", asset_pattern = "velnor-gen-*-unknown-linux-musl.tar.gz", os = ["linux"] }
+"cargo:https://github.com/tailrocks/velnor-new" = { version = "rev:146a9960b0b41adf6612462d28982bff2c60a1c6", crate = "velnor-gen", os = ["macos"] }
+
+[settings]
+cargo.binstall = true
+idiomatic_version_file_enable_tools = ["rust"]
+lockfile = true
+
+[wrappers.cargo]
+command = "mbx"
+env = { MBX_CARGO_SHIM_MODE = "1" }
+
+[tasks.install]
+description = "Provision every pinned tool from mise.lock"
+run = "mise install --locked"
+
+[tasks.build]
+description = "Compile every workspace target"
+run = "cargo build --workspace --all-targets --all-features --locked"
+
+[tasks.fmt]
+description = "Check formatting"
+run = "cargo fmt --all --check"
+
+[tasks."fmt-fix"]
+description = "Apply formatting"
+run = "cargo fmt --all"
+
+[tasks.lint]
+description = "Clippy, warnings are errors"
+run = "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings"
+
+[tasks.test]
+description = "Unit and integration tests"
+run = "cargo nextest run --workspace --all-features --locked"
+
+[tasks.doctest]
+description = "Doctests (nextest does not run them)"
+run = "cargo test --workspace --doc --all-features --locked"
+
+[tasks.deny]
+description = "Licenses, bans, sources and advisories"
+run = "cargo deny --locked check"
+
+[tasks.machete]
+description = "Unused dependencies"
+run = "cargo machete"
+
+[tasks.policy]
+description = "Repository policy (alint, rust-strict-v1)"
+run = ["alint validate-config", "alint check --fail-on-warning"]
+
+[tasks.workflows]
+description = "Fail when a generated workflow differs from velnor-gen output"
+run = "velnor-gen --root . check"
+
+[tasks.check]
+description = "Every local check. Run it before each commit."
+depends = ["fmt", "lint", "test", "doctest", "deny", "machete", "policy", "workflows"]
