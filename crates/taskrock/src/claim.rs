@@ -1,5 +1,7 @@
 //! Take a task: create its branch and move it to `In Progress`.
 
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use crate::error::Error;
 use crate::gh::Gh;
 use crate::github::items::{Item, project_items, project_of, set_status, status_field};
@@ -8,6 +10,9 @@ use crate::link::{IssueLink, ProjectLink};
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod release_tests;
 
 /// Take the task at `link`: create `feat/issue-<number>` and move the task
 /// and its open parents to `In Progress`.
@@ -130,4 +135,138 @@ fn delete_branch(gh: &dyn Gh, issue: &IssueLink) {
     match gh.run(&["api", "-X", "DELETE", &path], None) {
         Ok(_) | Err(_) => {}
     }
+}
+
+/// Give the task at `link` back: free its branch and move it and its free
+/// parents to `Todo`.
+///
+/// Returns two lines: `released <url>` and what happened to the branch:
+/// `branch deleted`, `branch kept as <name>` or `no branch`.
+///
+/// # Errors
+///
+/// Returns [`Error::Link`] when `link` is not an issue link, [`Error::Project`]
+/// when the issue is not an item of its project, [`Error::Refused`] when the
+/// issue is closed, and [`Error::Gh`] or [`Error::Json`] when GitHub fails or
+/// answers badly.
+pub fn release(gh: &dyn Gh, link: &str) -> Result<String, Error> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|error| Error::Json(error.to_string()))?
+        .as_secs();
+    release_at(gh, link, now)
+}
+
+fn release_at(gh: &dyn Gh, link: &str, now: u64) -> Result<String, Error> {
+    let issue = link.parse::<IssueLink>()?;
+    let project = project_of(gh, &issue)?;
+    let items = project_items(gh, &project)?;
+    let item = find(&items, &issue)?.clone();
+    if !item.open {
+        return Err(Error::Refused("the issue is closed".to_owned()));
+    }
+    let branch = finish_branch(gh, &issue, now)?;
+    if item.status.as_deref() != Some("Todo") {
+        let field = status_field(gh, &project)?;
+        set_status(gh, &project, &field, item.item_id, &field.todo)?;
+    }
+    release_parents(gh, &project, &items, &item)?;
+    Ok(format!("released {}\n{branch}", issue.url()))
+}
+
+fn finish_branch(gh: &dyn Gh, issue: &IssueLink, now: u64) -> Result<String, Error> {
+    let path = format!(
+        "repos/{}/{}/git/ref/heads/{}",
+        issue.owner,
+        issue.repo,
+        issue.branch()
+    );
+    if let Err(error) = get(gh, &path) {
+        if is_status(&error, 404) {
+            return Ok("no branch".to_owned());
+        }
+        return Err(error);
+    }
+    let repo = get(gh, &issue.repo_path())?;
+    let default = repo["default_branch"]
+        .as_str()
+        .ok_or_else(|| Error::Json("default_branch".to_owned()))?;
+    let compare = get(
+        gh,
+        &format!(
+            "repos/{}/{}/compare/{default}...{}",
+            issue.owner,
+            issue.repo,
+            issue.branch()
+        ),
+    )?;
+    let ahead = compare
+        .pointer("/ahead_by")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or_else(|| Error::Json("ahead_by".to_owned()))?;
+    if ahead == 0 {
+        let path = format!(
+            "repos/{}/{}/git/refs/heads/{}",
+            issue.owner,
+            issue.repo,
+            issue.branch()
+        );
+        gh.run(&["api", "-X", "DELETE", &path], None)?;
+        return Ok("branch deleted".to_owned());
+    }
+    let name = format!("{}-parked-{now}", issue.branch());
+    let path = format!(
+        "repos/{}/{}/branches/{}/rename",
+        issue.owner,
+        issue.repo,
+        issue.branch()
+    );
+    send(gh, "POST", &path, &serde_json::json!({"new_name": name}))?;
+    Ok(format!("branch kept as {name}"))
+}
+
+fn release_parents(
+    gh: &dyn Gh,
+    project: &ProjectLink,
+    items: &[Item],
+    item: &Item,
+) -> Result<(), Error> {
+    let mut view = items.to_vec();
+    if let Some(own) = view
+        .iter_mut()
+        .find(|candidate| candidate.link == item.link)
+    {
+        own.status = Some("Todo".to_owned());
+    }
+    let mut reset = Vec::new();
+    let mut parent = item.parent.clone();
+    while let Some(link) = parent.take() {
+        let Some(position) = view.iter().position(|candidate| candidate.link == link) else {
+            break;
+        };
+        if is_busy(&view, position) {
+            break;
+        }
+        if view[position].status.as_deref() == Some("In Progress") {
+            reset.push(view[position].item_id);
+            view[position].status = Some("Todo".to_owned());
+        }
+        parent.clone_from(&view[position].parent);
+    }
+    if reset.is_empty() {
+        return Ok(());
+    }
+    let field = status_field(gh, project)?;
+    for item_id in reset {
+        set_status(gh, project, &field, item_id, &field.todo)?;
+    }
+    Ok(())
+}
+
+fn is_busy(view: &[Item], position: usize) -> bool {
+    let link = view[position].link.clone();
+    view.iter().any(|child| {
+        child.parent.as_ref() == Some(&link)
+            && (!child.open || matches!(child.status.as_deref(), Some("In Progress" | "Done")))
+    })
 }

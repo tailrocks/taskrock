@@ -43,7 +43,10 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             println!("{}", claim::claim(gh, link)?);
             return Ok(());
         }
-        cli::Command::Release { .. } => "release",
+        cli::Command::Release { link } => {
+            println!("{}", claim::release(gh, link)?);
+            return Ok(());
+        }
     };
     Err(error::Error::NotBuilt(name))
 }
