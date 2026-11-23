@@ -45,7 +45,7 @@ fn numbers(items: &[&Item]) -> Vec<u64> {
     items.iter().map(|item| item.link.number).collect()
 }
 
-fn has(report: &Report, needle: &str) -> bool {
+fn has(report: &Report<'_>, needle: &str) -> bool {
     report.problems.iter().any(|line| line.contains(needle))
 }
 
