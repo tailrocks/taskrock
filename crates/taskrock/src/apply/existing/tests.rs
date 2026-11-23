@@ -2,17 +2,13 @@
 
 use crate::apply::create_issues;
 
-use super::super::tests::{base, created, folder, has_call, not_found, options, post_bodies};
+use super::super::tests::{
+    all_existing, base, created, folder, has_call, not_found, options, post_bodies,
+};
 
 #[test]
 fn existing_markers_send_no_post() {
-    let gh = not_found(
-        base().ok(
-            "issues?state=all",
-            r#"[[{"number":21,"id":201,"body":"a\n\n<!-- taskrock:holla-csv:E1 -->"},{"number":22,"id":202,"body":"b\n\n<!-- taskrock:holla-csv:T01 -->"},{"number":23,"id":203,"body":"c\n\n<!-- taskrock:holla-csv:T02 -->"}]]"#,
-        ),
-        24,
-    );
+    let gh = all_existing();
     let (_, map, lines) = create_issues(&gh, &folder(), &options()).expect("apply succeeds");
     assert!(!has_call(&gh, "POST"), "nothing is created: {lines:?}");
     assert_eq!(

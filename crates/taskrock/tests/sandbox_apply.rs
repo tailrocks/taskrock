@@ -29,7 +29,14 @@ fn write_file(folder: &Path, name: &str, text: &str) -> Result<(), Error> {
     })
 }
 
-fn write_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> {
+/// Writes the draft: the plan, the epic, and one task file per `tasks` entry
+/// of `(key, title, blocked_by line or "")`.
+fn write_draft(
+    folder: &Path,
+    id: &str,
+    stamp: u64,
+    tasks: &[(&str, String, &str)],
+) -> Result<(), Error> {
     std::fs::create_dir_all(folder).map_err(|error| Error::Draft {
         file: folder.display().to_string(),
         message: error.to_string(),
@@ -48,14 +55,7 @@ fn write_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> {
             "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Done when\n\n- [ ] The summary report downloads.\n"
         ),
     )?;
-    for (key, title, blocked) in [
-        ("T01", format!("[apply test] first task {stamp}"), ""),
-        (
-            "T02",
-            format!("[apply test] second task {stamp}"),
-            "blocked_by = [\"T01\"]\n",
-        ),
-    ] {
+    for (key, title, blocked) in tasks {
         write_file(
             folder,
             &format!("{key}.md"),
@@ -90,7 +90,20 @@ fn second_apply_creates_nothing() {
         .as_secs();
     let folder = folder(stamp);
     let id = format!("apply-{stamp}");
-    write_draft(&folder, &id, stamp).expect("draft is written");
+    write_draft(
+        &folder,
+        &id,
+        stamp,
+        &[
+            ("T01", format!("[apply test] first task {stamp}"), ""),
+            (
+                "T02",
+                format!("[apply test] second task {stamp}"),
+                "blocked_by = [\"T01\"]\n",
+            ),
+        ],
+    )
+    .expect("draft is written");
     let options = Options {
         dry_run: false,
         pause: Duration::from_secs(1),
@@ -131,49 +144,6 @@ fn second_apply_creates_nothing() {
     std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }
 
-fn write_blockers_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> {
-    std::fs::create_dir_all(folder).map_err(|error| Error::Draft {
-        file: folder.display().to_string(),
-        message: error.to_string(),
-    })?;
-    write_file(
-        folder,
-        "plan.toml",
-        &format!(
-            "id = \"{id}\"\nrepo = \"{REPO}\"\nproject = \"https://github.com/orgs/tailrocks/projects/10\"\n"
-        ),
-    )?;
-    write_file(
-        folder,
-        "E1.md",
-        &format!(
-            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Done when\n\n- [ ] The summary report downloads.\n"
-        ),
-    )?;
-    for (key, title, blocked) in [
-        ("T01", format!("[apply test] first task {stamp}"), ""),
-        (
-            "T02",
-            format!("[apply test] second task {stamp}"),
-            "blocked_by = [\"T01\"]\n",
-        ),
-        (
-            "T03",
-            format!("[apply test] third task {stamp}"),
-            "blocked_by = [\"T01\"]\n",
-        ),
-    ] {
-        write_file(
-            folder,
-            &format!("{key}.md"),
-            &format!(
-                "+++\nkey = \"{key}\"\ntitle = \"{title}\"\ntype = \"Task\"\nparent = \"E1\"\n{blocked}agent = \"tailrocks-systems-engineer\"\nruntime = \"muse\"\nmodel = \"muse-spark-1.3\"\neffort = \"high\"\nreview_agent = \"tailrocks-code-reviewer\"\nreview_runtime = \"codex\"\nreview_model = \"muse-spark-1.3\"\nreview_effort = \"medium\"\n+++\n## Outcome\n\nThe report command renders rows.\n\n## Decisions already made\n\n- The delimiter is a comma.\n\n## Steps\n\n1. Render the rows.\n\n## Done when\n\n- [ ] `report --format csv` prints the rows.\n\n## Out of scope\n\n- No other format changes.\n"
-            ),
-        )?;
-    }
-    Ok(())
-}
-
 /// The numbers of the issues the first run created, in creation order.
 fn created_numbers(text: &str) -> Vec<u64> {
     text.lines()
@@ -194,7 +164,25 @@ fn second_apply_links_nothing_twice() {
         .as_secs();
     let folder = std::env::temp_dir().join(format!("taskrock-apply-blockers-{stamp}"));
     let id = format!("apply-blockers-{stamp}");
-    write_blockers_draft(&folder, &id, stamp).expect("draft is written");
+    write_draft(
+        &folder,
+        &id,
+        stamp,
+        &[
+            ("T01", format!("[apply test] first task {stamp}"), ""),
+            (
+                "T02",
+                format!("[apply test] second task {stamp}"),
+                "blocked_by = [\"T01\"]\n",
+            ),
+            (
+                "T03",
+                format!("[apply test] third task {stamp}"),
+                "blocked_by = [\"T01\"]\n",
+            ),
+        ],
+    )
+    .expect("draft is written");
     let options = Options {
         dry_run: false,
         pause: Duration::from_secs(1),
