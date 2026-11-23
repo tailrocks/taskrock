@@ -23,6 +23,7 @@ pub(super) fn options() -> Options {
     Options {
         dry_run: false,
         pause: Duration::from_secs(0),
+        poll: Duration::from_secs(0),
     }
 }
 
@@ -30,6 +31,7 @@ pub(super) fn dry_options() -> Options {
     Options {
         dry_run: true,
         pause: Duration::from_secs(0),
+        poll: Duration::from_secs(0),
     }
 }
 
@@ -72,6 +74,32 @@ pub(super) fn post_bodies(gh: &FakeGh) -> Vec<Value> {
 
 pub(super) fn has_call(gh: &FakeGh, what: &str) -> bool {
     gh.calls().iter().any(|(call, _)| call.contains(what))
+}
+
+/// The listing with two unrelated issues and nothing past it, then the
+/// three issues of `draft-good` created with numbers 11 to 13.
+pub(super) fn fresh() -> FakeGh {
+    created(
+        not_found(
+            base().ok(
+                "issues?state=all",
+                r#"[[{"number":7,"id":70,"body":"old"},{"number":8,"id":80,"pull_request":{},"body":"old"}]]"#,
+            ),
+            9,
+        ),
+        11,
+    )
+}
+
+/// The three issues of `draft-good` already on GitHub with numbers 21 to 23.
+pub(super) fn all_existing() -> FakeGh {
+    not_found(
+        base().ok(
+            "issues?state=all",
+            r#"[[{"number":21,"id":201,"body":"a\n\n<!-- taskrock:holla-csv:E1 -->"},{"number":22,"id":202,"body":"b\n\n<!-- taskrock:holla-csv:T01 -->"},{"number":23,"id":203,"body":"c\n\n<!-- taskrock:holla-csv:T02 -->"}]]"#,
+        ),
+        24,
+    )
 }
 
 #[test]

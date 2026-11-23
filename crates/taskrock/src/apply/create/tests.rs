@@ -5,21 +5,12 @@ use serde_json::json;
 use crate::apply::create_issues;
 
 use super::super::tests::{
-    base, created, dry_options, folder, has_call, not_found, options, post_bodies,
+    base, dry_options, folder, fresh, has_call, not_found, options, post_bodies,
 };
 
 #[test]
 fn first_run_creates_epic_then_tasks() {
-    let gh = created(
-        not_found(
-            base().ok(
-                "issues?state=all",
-                r#"[[{"number":7,"id":70,"body":"old"},{"number":8,"id":80,"pull_request":{},"body":"old"}]]"#,
-            ),
-            9,
-        ),
-        11,
-    );
+    let gh = fresh();
     let (_, map, lines) = create_issues(&gh, &folder(), &options()).expect("apply succeeds");
     assert_eq!(
         lines,

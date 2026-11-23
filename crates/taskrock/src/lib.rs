@@ -29,6 +29,7 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             let options = apply::Options {
                 dry_run: *dry_run,
                 pause: std::time::Duration::from_secs(1),
+                poll: std::time::Duration::from_secs(5),
             };
             let text = apply::run(gh, draft, &options)?;
             println!("{text}");
