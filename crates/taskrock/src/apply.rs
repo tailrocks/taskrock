@@ -1,10 +1,12 @@
 //! Create the issues of a draft on GitHub.
 
+mod blockers;
 mod create;
 mod existing;
 mod fields;
 mod marker;
 mod milestones;
+mod project;
 
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -24,6 +26,8 @@ pub struct Options {
     pub dry_run: bool,
     /// How long to wait after each created issue.
     pub pause: std::time::Duration,
+    /// How long to wait between two reads of the project items.
+    pub poll: std::time::Duration,
 }
 
 /// One issue of the draft on GitHub.
@@ -81,13 +85,30 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
     Ok((draft, found, lines))
 }
 
-/// The whole command for now. The next task extends it.
+/// The whole command: the issues, their blockers, and their project.
 ///
 /// # Errors
 ///
-/// See [`create_issues`].
+/// See [`create_issues`], [`blockers::link_blockers`], and
+/// [`project::add_to_project`].
 pub fn run(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<String, Error> {
-    let (_, _, lines) = create_issues(gh, folder, options)?;
+    let (draft, found, mut lines) = create_issues(gh, folder, options)?;
+    lines.extend(blockers::link_blockers(
+        gh,
+        &draft,
+        &found,
+        options.dry_run,
+    )?);
+    lines.extend(project::add_to_project(gh, &draft, &found, options)?);
+    let blockers: usize = draft
+        .issues
+        .iter()
+        .map(|issue| issue.blocked_by.len())
+        .sum();
+    lines.push(format!(
+        "DONE {} issues, {blockers} blockers",
+        draft.issues.len()
+    ));
     Ok(lines.join("\n"))
 }
 

@@ -23,6 +23,7 @@ pub(super) fn options() -> Options {
     Options {
         dry_run: false,
         pause: Duration::from_secs(0),
+        poll: Duration::from_secs(0),
     }
 }
 
@@ -30,6 +31,7 @@ pub(super) fn dry_options() -> Options {
     Options {
         dry_run: true,
         pause: Duration::from_secs(0),
+        poll: Duration::from_secs(0),
     }
 }
 
