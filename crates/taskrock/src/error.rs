@@ -8,6 +8,12 @@ pub enum Error {
     /// A command that is not built yet.
     #[error("{0} is not built yet")]
     NotBuilt(&'static str),
+    /// The `gh` command failed.
+    #[error("gh {args} failed: {stderr}")]
+    Gh { args: String, stderr: String },
+    /// GitHub sent output that is not JSON.
+    #[error("GitHub sent JSON that taskrock cannot read: {0}")]
+    Json(String),
 }
 
 impl Error {

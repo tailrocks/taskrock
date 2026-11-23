@@ -17,6 +17,11 @@
               ]
             },
             {
+              "name": "serde_json",
+              "kind": "normal",
+              "manifest": null
+            },
+            {
               "name": "thiserror",
               "kind": "normal",
               "manifest": null
@@ -52,6 +57,16 @@
               "doctest": false,
               "source": "crates/taskrock/tests/cli.rs",
               "requires_features": false
+            },
+            {
+              "name": "sandbox_gh",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_gh.rs",
+              "requires_features": false
             }
           ]
         }
@@ -60,7 +75,7 @@
   },
   "manifests": {
     "Cargo.toml": "dc2b579090efed4b75bbde6060c02823ddfff867fdfa770198d9e5893fc50a2a",
-    "crates/taskrock/Cargo.toml": "5f62cb7c3cdb35526d10d4878d63becbf92a0cf54cdf462c78b64fae658b276c"
+    "crates/taskrock/Cargo.toml": "b562e886c794fb59f3338555bb170168f7241e8c3cf651e68f1f6113bfff1397"
   },
   "layout": "fec02ba0f2fff053d801cc03d51f0165670405a2f3f074ded0437a5a622426d8"
 }

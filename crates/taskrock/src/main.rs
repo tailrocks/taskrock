@@ -5,7 +5,7 @@ use taskrock::cli::Cli;
 
 fn main() -> std::process::ExitCode {
     let cli = Cli::parse();
-    match taskrock::run(&cli) {
+    match taskrock::run(&cli, &taskrock::gh::RealGh::default()) {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("error: {error}");

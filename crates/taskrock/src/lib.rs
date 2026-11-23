@@ -2,13 +2,18 @@
 
 pub mod cli;
 pub mod error;
+pub mod gh;
+pub mod github;
+
+use crate::gh::Gh;
 
 /// Run the command line of taskrock.
 ///
 /// # Errors
 ///
 /// Returns [`error::Error::NotBuilt`] while no command is built yet.
-pub fn run(cli: &cli::Cli) -> Result<(), error::Error> {
+pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
+    let _ = gh;
     let name = match &cli.command {
         cli::Command::Check { .. } => "check",
         cli::Command::Apply { .. } => "apply",
