@@ -120,6 +120,16 @@
               "doctest": false,
               "source": "crates/taskrock/tests/sandbox_items.rs",
               "requires_features": false
+            },
+            {
+              "name": "skills",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/skills.rs",
+              "requires_features": false
             }
           ]
         }
