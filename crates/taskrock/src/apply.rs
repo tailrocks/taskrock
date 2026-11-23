@@ -89,8 +89,10 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
 ///
 /// # Errors
 ///
-/// See [`create_issues`], [`blockers::link_blockers`], and
-/// [`project::add_to_project`].
+/// See [`create_issues`]. Returns [`Error::Gh`] when `gh` fails,
+/// [`Error::Json`] when GitHub answers badly, [`Error::Check`] when the
+/// folder is not a clean draft, and [`Error::Project`] when a field is
+/// missing.
 pub fn run(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<String, Error> {
     let (draft, found, mut lines) = create_issues(gh, folder, options)?;
     lines.extend(blockers::link_blockers(
