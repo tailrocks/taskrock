@@ -3,7 +3,6 @@
 use std::str::FromStr as _;
 
 use super::{IssueLink, Link, ProjectLink};
-use crate::error::Error;
 
 fn issue() -> IssueLink {
     IssueLink {
@@ -21,10 +20,10 @@ fn project() -> ProjectLink {
 }
 
 fn refuse(text: &str) -> String {
-    let Err(Error::Link(message)) = Link::from_str(text) else {
+    let Err(err) = Link::from_str(text) else {
         panic!("{text} is refused");
     };
-    message
+    err.to_string()
 }
 
 #[test]
@@ -62,14 +61,15 @@ fn project_view_url() {
 #[test]
 fn personal_projects_are_refused() {
     let message = refuse("https://github.com/users/donbeave/projects/1");
-    let expected = "projects of a personal account are not supported";
+    let expected = "not a link taskrock understands: \
+        projects of a personal account are not supported";
     assert_eq!(message, expected);
 }
 
 #[test]
 fn pull_requests_are_refused() {
     let message = refuse("https://github.com/tailrocks/holla/pull/4");
-    let expected = "this is a pull request, not an issue";
+    let expected = "not a link taskrock understands: this is a pull request, not an issue";
     assert_eq!(message, expected);
 }
 
@@ -113,7 +113,9 @@ fn issue_from_str_handles_every_form() {
         assert_eq!(IssueLink::from_str(text).expect("the form parses"), issue());
     }
     let project = "https://github.com/orgs/tailrocks/projects/3";
-    assert!(IssueLink::from_str(project).is_err());
+    let err = IssueLink::from_str(project).expect_err("a project link is refused");
+    let expected = format!("not a link taskrock understands: {project}");
+    assert_eq!(err.to_string(), expected);
 }
 
 #[test]

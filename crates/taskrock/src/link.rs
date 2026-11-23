@@ -55,9 +55,7 @@ impl FromStr for Link {
                 "this is a pull request, not an issue".to_owned(),
             ));
         }
-        Err(Error::Link(format!(
-            "not a link taskrock understands: {text}"
-        )))
+        Err(Error::Link(text.to_owned()))
     }
 }
 
@@ -71,8 +69,7 @@ impl FromStr for IssueLink {
     /// Returns [`Error::Link`] when the text is not an issue link.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let text = s.trim();
-        parse_issue(text)
-            .ok_or_else(|| Error::Link(format!("not a link taskrock understands: {text}")))
+        parse_issue(text).ok_or_else(|| Error::Link(text.to_owned()))
     }
 }
 
