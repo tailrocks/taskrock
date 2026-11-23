@@ -29,6 +29,9 @@ pub enum Error {
     /// A draft that breaks the check rules.
     #[error("{0} problems in the draft")]
     Check(usize),
+    /// GitHub refuses to create an issue.
+    #[error("{0}")]
+    Apply(String),
 }
 
 impl Error {
