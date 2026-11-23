@@ -20,6 +20,9 @@ pub enum Error {
     /// A project that does not have what taskrock needs.
     #[error("{0}")]
     Project(String),
+    /// The issue cannot be taken.
+    #[error("{0}")]
+    Refused(String),
     /// A draft file taskrock cannot read.
     #[error("{file}: {message}")]
     Draft { file: String, message: String },
@@ -29,6 +32,9 @@ impl Error {
     /// The exit code of the error.
     #[must_use]
     pub fn exit_code(&self) -> u8 {
-        1
+        match self {
+            Self::Refused(_) => 3,
+            _ => 1,
+        }
     }
 }
