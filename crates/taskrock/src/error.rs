@@ -26,6 +26,9 @@ pub enum Error {
     /// A draft file taskrock cannot read.
     #[error("{file}: {message}")]
     Draft { file: String, message: String },
+    /// A draft that breaks the check rules.
+    #[error("{0} problems in the draft")]
+    Check(usize),
 }
 
 impl Error {

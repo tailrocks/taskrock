@@ -19,7 +19,11 @@ use crate::gh::Gh;
 /// Returns [`error::Error::NotBuilt`] while no command is built yet.
 pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
     let name = match &cli.command {
-        cli::Command::Check { .. } => "check",
+        cli::Command::Check { draft } => {
+            let text = draft::check::run(draft)?;
+            println!("{text}");
+            return Ok(());
+        }
         cli::Command::Apply { .. } => "apply",
         cli::Command::Ready { link, json } => {
             let text = ready::run(gh, link, *json)?;

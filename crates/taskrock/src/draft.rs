@@ -6,6 +6,7 @@ use crate::link::ProjectLink;
 #[cfg(test)]
 mod tests;
 
+pub mod check;
 pub mod parse;
 
 /// One milestone of the plan.
