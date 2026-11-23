@@ -14,6 +14,9 @@ pub enum Error {
     /// GitHub sent output that is not JSON.
     #[error("GitHub sent JSON that taskrock cannot read: {0}")]
     Json(String),
+    /// A link taskrock does not understand.
+    #[error("not a link taskrock understands: {0}")]
+    Link(String),
 }
 
 impl Error {
