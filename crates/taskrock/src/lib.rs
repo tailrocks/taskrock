@@ -1,6 +1,7 @@
 //! taskrock: plan and run agent work on GitHub Issues and Projects.
 
 pub mod cli;
+pub mod draft;
 pub mod error;
 pub mod fields;
 pub mod gh;

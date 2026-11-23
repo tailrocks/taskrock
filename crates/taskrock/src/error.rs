@@ -20,6 +20,9 @@ pub enum Error {
     /// A project that does not have what taskrock needs.
     #[error("{0}")]
     Project(String),
+    /// A draft file taskrock cannot read.
+    #[error("{file}: {message}")]
+    Draft { file: String, message: String },
 }
 
 impl Error {
