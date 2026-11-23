@@ -17,13 +17,13 @@ use crate::gh::Gh;
 ///
 /// # Errors
 ///
-/// Returns [`error::Error::NotBuilt`] while no command is built yet.
+/// Returns the error of the command that runs.
 pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
-    let name = match &cli.command {
+    match &cli.command {
         cli::Command::Check { draft } => {
             let text = draft::check::run(draft)?;
             println!("{text}");
-            return Ok(());
+            Ok(())
         }
         cli::Command::Apply { draft, dry_run } => {
             let options = apply::Options {
@@ -32,18 +32,20 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             };
             let text = apply::run(gh, draft, &options)?;
             println!("{text}");
-            return Ok(());
+            Ok(())
         }
         cli::Command::Ready { link, json } => {
             let text = ready::run(gh, link, *json)?;
             println!("{text}");
-            return Ok(());
+            Ok(())
         }
         cli::Command::Claim { link } => {
             println!("{}", claim::claim(gh, link)?);
-            return Ok(());
+            Ok(())
         }
-        cli::Command::Release { .. } => "release",
-    };
-    Err(error::Error::NotBuilt(name))
+        cli::Command::Release { link } => {
+            println!("{}", claim::release(gh, link)?);
+            Ok(())
+        }
+    }
 }

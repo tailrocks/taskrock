@@ -5,9 +5,6 @@ use thiserror::Error;
 /// The errors of taskrock.
 #[derive(Debug, Error)]
 pub enum Error {
-    /// A command that is not built yet.
-    #[error("{0} is not built yet")]
-    NotBuilt(&'static str),
     /// The `gh` command failed.
     #[error("gh {args} failed: {stderr}")]
     Gh { args: String, stderr: String },
