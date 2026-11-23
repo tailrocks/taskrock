@@ -7,7 +7,21 @@
           "name": "taskrock",
           "version": "0.1.0",
           "manifest": "crates/taskrock/Cargo.toml",
-          "dependencies": [],
+          "dependencies": [
+            {
+              "name": "clap",
+              "kind": "normal",
+              "manifest": null,
+              "features": [
+                "derive"
+              ]
+            },
+            {
+              "name": "thiserror",
+              "kind": "normal",
+              "manifest": null
+            }
+          ],
           "targets": [
             {
               "name": "taskrock",
@@ -46,7 +60,7 @@
   },
   "manifests": {
     "Cargo.toml": "dc2b579090efed4b75bbde6060c02823ddfff867fdfa770198d9e5893fc50a2a",
-    "crates/taskrock/Cargo.toml": "33162ea02730b7ba4e8f05616f9c1214232e765519dabd72eae953d32d1feae0"
+    "crates/taskrock/Cargo.toml": "5f62cb7c3cdb35526d10d4878d63becbf92a0cf54cdf462c78b64fae658b276c"
   },
   "layout": "fec02ba0f2fff053d801cc03d51f0165670405a2f3f074ded0437a5a622426d8"
 }
