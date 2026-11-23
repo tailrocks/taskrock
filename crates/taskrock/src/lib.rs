@@ -1,7 +1,20 @@
 //! taskrock: plan and run agent work on GitHub Issues and Projects.
 
-/// The version of taskrock, from the workspace manifest.
-#[must_use]
-pub fn version() -> &'static str {
-    env!("CARGO_PKG_VERSION")
+pub mod cli;
+pub mod error;
+
+/// Run the command line of taskrock.
+///
+/// # Errors
+///
+/// Returns [`error::Error::NotBuilt`] while no command is built yet.
+pub fn run(cli: &cli::Cli) -> Result<(), error::Error> {
+    let name = match &cli.command {
+        cli::Command::Check { .. } => "check",
+        cli::Command::Apply { .. } => "apply",
+        cli::Command::Ready { .. } => "ready",
+        cli::Command::Claim { .. } => "claim",
+        cli::Command::Release { .. } => "release",
+    };
+    Err(error::Error::NotBuilt(name))
 }
