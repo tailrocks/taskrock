@@ -21,8 +21,8 @@ cargo-binstall = "1.26.2"
 # release has no macOS asset, so macOS builds the same commit from source.
 # The version here must equal the version in .velnor/rust-ci.lock.
 # Bump both with `velnor-gen pin-helper <version>`.
-"github:tailrocks/velnor-new" = { version = "tools-v0.1.111", asset_pattern = "velnor-gen-*-unknown-linux-musl.tar.gz", os = ["linux"] }
-"cargo:https://github.com/tailrocks/velnor-new" = { version = "rev:146a9960b0b41adf6612462d28982bff2c60a1c6", crate = "velnor-gen", os = ["macos"] }
+"github:tailrocks/velnor-new" = { version = "tools-v0.1.115", asset_pattern = "velnor-gen-*-unknown-linux-musl.tar.gz", os = ["linux"] }
+"cargo:https://github.com/tailrocks/velnor-new" = { version = "rev:6f0f6154efac858505f7e5c1d8c55a900ede0370", crate = "velnor-gen", os = ["macos"] }
 
 [settings]
 cargo.binstall = true
