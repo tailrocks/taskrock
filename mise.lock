@@ -144,9 +144,9 @@ url_api = "https://api.github.com/repos/cargo-bins/cargo-binstall/releases/asset
 provenance = "github-attestations"
 
 [[tools."cargo:https://github.com/tailrocks/velnor-new"]]
-version = "rev:146a9960b0b41adf6612462d28982bff2c60a1c6"
+version = "rev:6f0f6154efac858505f7e5c1d8c55a900ede0370"
 backend = "cargo:https://github.com/tailrocks/velnor-new"
-specifiers = ["rev:146a9960b0b41adf6612462d28982bff2c60a1c6"]
+specifiers = ["rev:6f0f6154efac858505f7e5c1d8c55a900ede0370"]
 
 [tools."cargo:https://github.com/tailrocks/velnor-new".options]
 crate = "velnor-gen"
@@ -246,35 +246,35 @@ url = "https://github.com/bnjbvr/cargo-machete/releases/download/v0.9.2/cargo-ma
 url_api = "https://api.github.com/repos/bnjbvr/cargo-machete/releases/assets/397131414"
 
 [[tools."github:tailrocks/velnor-new"]]
-version = "tools-v0.1.111"
+version = "tools-v0.1.115"
 backend = "github:tailrocks/velnor-new"
-specifiers = ["tools-v0.1.111"]
+specifiers = ["tools-v0.1.115"]
 
 [tools."github:tailrocks/velnor-new".options]
 asset_pattern = "velnor-gen-*-unknown-linux-musl.tar.gz"
 
 [tools."github:tailrocks/velnor-new"."platforms.linux-arm64"]
-checksum = "sha256:933695ac11db7ba5feba98d10e63a12d5fc2e9e34b27130b2612c2b410519e08"
-url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.111/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/775424527"
+checksum = "sha256:1d4e493796dc33e03061b77832e2bfb2ff3a48d821f74c397561cb6c3f2a0347"
+url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.115/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/786873603"
 provenance = "github-attestations"
 
 [tools."github:tailrocks/velnor-new"."platforms.linux-arm64-musl"]
-checksum = "sha256:933695ac11db7ba5feba98d10e63a12d5fc2e9e34b27130b2612c2b410519e08"
-url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.111/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/775424527"
+checksum = "sha256:1d4e493796dc33e03061b77832e2bfb2ff3a48d821f74c397561cb6c3f2a0347"
+url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.115/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/786873603"
 provenance = "github-attestations"
 
 [tools."github:tailrocks/velnor-new"."platforms.linux-x64"]
-checksum = "sha256:933695ac11db7ba5feba98d10e63a12d5fc2e9e34b27130b2612c2b410519e08"
-url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.111/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/775424527"
+checksum = "sha256:1d4e493796dc33e03061b77832e2bfb2ff3a48d821f74c397561cb6c3f2a0347"
+url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.115/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/786873603"
 provenance = "github-attestations"
 
 [tools."github:tailrocks/velnor-new"."platforms.linux-x64-musl"]
-checksum = "sha256:933695ac11db7ba5feba98d10e63a12d5fc2e9e34b27130b2612c2b410519e08"
-url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.111/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
-url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/775424527"
+checksum = "sha256:1d4e493796dc33e03061b77832e2bfb2ff3a48d821f74c397561cb6c3f2a0347"
+url = "https://github.com/tailrocks/velnor-new/releases/download/tools-v0.1.115/velnor-gen-x86_64-unknown-linux-musl.tar.gz"
+url_api = "https://api.github.com/repos/tailrocks/velnor-new/releases/assets/786873603"
 provenance = "github-attestations"
 
 [[tools.mr-boxington]]
