@@ -10,12 +10,16 @@ GitHub is the only place work lives: issues, projects and pull requests. `taskro
 "cargo:https://github.com/tailrocks/taskrock" = { version = "tag:v0.1.0", crate = "taskrock" }
 ```
 
+The tool needs Rust 1.100.0 or newer.
+
+The skills are the native plugin `tailrocks-taskrock-skills` of the Tailrocks marketplace. Its [installation guide](https://github.com/tailrocks/tailrocks-taskrock-skills/blob/main/docs/installation.md) has the command for each agent CLI. For Claude Code:
+
 ```sh
-git clone https://github.com/tailrocks/taskrock
-mkdir -p ~/.agents/skills ~/.claude/skills
-cp -R taskrock/skills/taskrock-* ~/.agents/skills/
-cp -R taskrock/skills/taskrock-* ~/.claude/skills/
+claude plugin marketplace add tailrocks/tailrocks-skills
+claude plugin install tailrocks-taskrock-skills@tailrocks --scope user
 ```
+
+Install the skills only as a plugin. Do not copy skill folders by hand. Remove old copies named `taskrock-*` from `~/.agents/skills` and `~/.claude/skills`.
 
 ## Set up an account
 
@@ -70,7 +74,7 @@ A new project is a copy of a project that already has the fields and the views:
 
 ## Use
 
-The owner works in three ways. To plan, explain the work, then type `/taskrock-plan`. To build, type `/goal Implement <link>`. For one task, type `Do <link>`.
+The owner works in three ways. To plan, explain the work, then run the skill `taskrock-plan`. In Claude Code that is `/tailrocks-taskrock-skills:taskrock-plan`. To build, type `/goal Implement <link>`. For one task, type `Do <link>`.
 
 ## Commands
 

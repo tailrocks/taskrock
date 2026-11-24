@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## Unreleased
+
+- The skills moved to the plugin package `tailrocks/tailrocks-taskrock-skills`. Install them as a native plugin from the Tailrocks marketplace.
+
 ## 0.1.0
 
 - `check`: check a draft against the rules, using no network.
