@@ -42,7 +42,7 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Five commands are enough, because `gh` does the rest.
 
-**Reason.** `gh` has no flag for issue fields, and it cannot select children of children. It cannot check a plan. GitHub accepts a blocker cycle of three issues, and the draft check finds it. A claim needs its calls in a fixed order and an undo. A plan needs a rerun that creates nothing twice. Reading and writing routing fields by name works with one REST call, so `show`, `set` and account setup became `gh` commands. Commands for blockers and for moving became `gh issue edit`. The tool calls `gh` for every request, so there is one login and one client.
+**Reason.** `gh` has no flag for issue fields, and it cannot select children of children. It cannot check a plan. GitHub accepts a blocker cycle of three issues, and the draft check finds it. A claim needs its calls in a fixed order and an undo. A plan needs a rerun that creates nothing twice. Reading routing fields by name and writing them with their IDs works with one REST call, so `show`, `set` and account setup became `gh` commands. Commands for blockers and for moving became `gh issue edit`. The tool calls `gh` for every request, so there is one login and one client.
 
 ### The tool uses the REST API, not GraphQL and not search
 
@@ -50,7 +50,7 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Rejected.** GraphQL for the tool, with paging. The search API for listing and for finding issues.
 
-**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The one-time account setup script is the exception. It uses GraphQL to create issue types and fields.
+**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The tool makes one GraphQL call, `project_of`, to find the project of an issue. The one-time account setup script also uses GraphQL, to create issue types and fields.
 
 ### A plan is a draft that is applied and then used up
 

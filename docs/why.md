@@ -26,7 +26,7 @@ Every sampled edit and comment in the three trackers came from one login. GitHub
 
 GitHub has the parts of a good plan: issues, sub-issues, blockers, milestones, projects, issue types and issue fields. What it lacks sits between those parts. The first bullet was measured on 2026-11-22 with `gh` 2.105.0. The others were found while building taskrock.
 
-- `gh issue create` and `gh issue edit` set the type, the parent and the blockers. They have no flag for issue fields. The REST API sets the fields by name.
+- `gh issue create` and `gh issue edit` set the type, the parent and the blockers. They have no flag for issue fields. The REST API sets the fields with their IDs and the single-select values by option name.
 - Nothing checks a plan before it is written. GitHub rejects a blocker cycle of two issues and accepts a cycle of three.
 - Creating a plan needs an order, a map from the keys of the draft to the numbers of the new issues, and a rerun that creates nothing twice. A listing shows a new issue only 6 to 8 seconds after it is created, and the search lags behind writes.
 - Finding the tasks that can start now needs the children of children. `gh` cannot select them.
