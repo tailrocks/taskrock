@@ -29,7 +29,7 @@ taskrock goes another way for five jobs. With `gh` 2.105.0 on 2026-11-25, `gh is
 
 taskrock took two ideas. A draft issue is a Markdown file with front matter at the top. A draft issue has a temporary key that stands for the real number until the issue exists, and `apply` keeps a map from keys to numbers. In taskrock the front matter is TOML between `+++` lines, because the Rust repositories of Tailrocks already use the `toml` crate and this avoids a YAML dependency. A key names a parent or a blocker, so the draft is complete before any issue exists.
 
-taskrock does not keep the mirror. The draft folder is temporary and is gone after `apply`. After that, an edit on GitHub is an edit to the only copy, so no conflict can arise. The front matter of `gh-issue-sync` does not list issue fields, so it has no place for the eight routing fields. The tool has no command to claim a task or to list the tasks that are ready. It is also written in Go, and no existing Rust tool was fit to adopt.
+taskrock does not keep the mirror. The draft folder is temporary. The plan skill deletes it after `apply`. After that, an edit on GitHub is an edit to the only copy, so no conflict can arise. The front matter of `gh-issue-sync` does not list issue fields, so it has no place for the eight routing fields. The tool has no command to claim a task or to list the tasks that are ready. It is also written in Go, and no existing Rust tool was fit to adopt.
 
 ## mattpocock/skills
 

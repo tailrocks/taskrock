@@ -1,6 +1,6 @@
 # Why taskrock exists
 
-The owner plans work for AI coding agents on GitHub. That work lived in three trackers. Each was built by hand, and each recorded the same facts in a different way, so the trackers drifted from the truth. taskrock is one way to plan and run that work, the same in every organization. GitHub is the only store, and a small Rust command covers the steps that `gh` cannot do safely.
+The owner plans work for AI coding agents on GitHub. That work lived in three trackers. Each recorded the same facts in a different way, so the trackers drifted from the truth. taskrock is one way to plan and run that work, the same in every organization. GitHub is the only store, and a small Rust command covers the steps that `gh` cannot do safely.
 
 ## The problem
 
@@ -11,20 +11,20 @@ The owner directs several agents in several agent CLIs. Their work was planned i
 | Items (open) | 378 (141) | 333 (109) | 326 (6), in 16 repositories |
 | Model recorded as | A label and a project field | An `exec:` label and body text | A label, a project field and body text |
 | "In progress" recorded as | The project Status, set by hand | An `in-progress` label | Derived from open pull requests |
-| Tool that wrote the issues | A private generator | None | A private sync script |
+| Tool that wrote the issues | A generator | None | A sync script |
 
 The same fact had a different home in each tracker. The drift that followed:
 
 - 101 closed issues in tracker B still carry the `in-progress` label.
 - The root issue of tracker B has 94 direct sub-issues. GitHub allows 100 per parent.
 - One issue in tracker A is a duplicate that two sync runs created at the same moment.
-- In one repository of tracker C, which the sync script drives, 56 of 65 issues were edited after creation. 42 of them were edited five times or more. Of the 100 newest issues, 5 in tracker A and 2 in tracker B were edited.
+- In one repository of tracker C, which the sync script drives, 56 of 65 issues had an edited body. 42 of them had it edited five times or more. Of the 100 newest issues, 5 in tracker A and 2 in tracker B had an edited body.
 
 Every sampled edit and comment in the three trackers came from one login. GitHub cannot tell two agents apart in that setup. So an assignee does not say who took a task.
 
 ## What was missing
 
-GitHub has the parts of a good plan: issues, sub-issues, blockers, milestones, projects, issue types and issue fields. What it lacks sits between those parts. This was measured on 2026-11-22 with `gh` 2.105.0.
+GitHub has the parts of a good plan: issues, sub-issues, blockers, milestones, projects, issue types and issue fields. What it lacks sits between those parts. The first bullet was measured on 2026-11-22 with `gh` 2.105.0. The others were found while building taskrock.
 
 - `gh issue create` and `gh issue edit` set the type, the parent and the blockers. They have no flag for issue fields. The REST API sets the fields by name.
 - Nothing checks a plan before it is written. GitHub rejects a blocker cycle of two issues and accepts a cycle of three.
