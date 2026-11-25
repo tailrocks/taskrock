@@ -86,6 +86,10 @@ The owner works in three ways. To plan, explain the work, then run the skill `ta
 | `claim` | Take a task |
 | `release` | Give a task back |
 
+## Documentation
+
+The folder [`docs/`](docs/README.md) explains [why taskrock exists](docs/why.md), its [design](docs/design.md) with the options that were rejected, its [structure](docs/structure.md), a [comparison](docs/comparison.md) with the projects that were studied, and the [facts proven by test](docs/facts.md).
+
 ## Develop
 
 ```sh

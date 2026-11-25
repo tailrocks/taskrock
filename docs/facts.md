@@ -1,0 +1,64 @@
+# Facts proven by test
+
+This page lists the facts about GitHub, the `gh` command, agent CLIs and the CI of this repository that taskrock depends on. Each row says how its fact was seen: a live test on GitHub, a measurement, a read of a page, or a trap found during the build. A fact can change when GitHub or a tool changes, so check it again before a change that depends on it. The choices that stand on these facts are in [design](design.md).
+
+## GitHub
+
+| Fact | How it was proven | Where the tool depends on it |
+|---|---|---|
+| A branch name can be created once. A second create of the same name is refused with `Reference already exists`. | Sandbox test. Four creates of one branch name at the same moment: one created the branch and three were refused. | `crates/taskrock/src/claim.rs`, `create_branch`: REST call to `repos/<owner>/<repo>/git/refs`. |
+| One account cannot approve its own pull request. The verdict is a comment. | Found while the plan was built. | nowhere, it is a trap to avoid |
+| One REST call creates an issue with its type, its parent and its field values given by name. | Sandbox test. | `crates/taskrock/src/apply/create.rs`, `issue_body`: keys `type`, `parent_issue_id` and `issue_field_values`. |
+| One REST call lists a project's items with status, parent, type, open blockers, children and routing fields. The result is correct right after a write. | Sandbox test. | `crates/taskrock/src/github/items.rs`, `project_items` and `parse_item`. |
+| One REST call sets the status of a project item. | Sandbox test. | `crates/taskrock/src/github/items.rs`, `set_status`. |
+| A new issue shows up in the repository's issue listing 6 to 8 seconds after it is created. | Found while the plan was built. | `crates/taskrock/src/apply/existing.rs`, `look_past_listing`. It reads past the listing and stops after 3 answers in a row that are HTTP 404. |
+| GitHub does not close a parent when its last child closes. | Found while the plan was built. | Not in `crates/taskrock`. The skill `taskrock-goal`, step 6, closes a parent after it counts its open sub-issues. |
+| Adding a blocker that already exists is an error. | Found while the plan was built. | `crates/taskrock/src/apply/blockers.rs`, `link_blockers`. It reads `existing_ids` and skips a blocker that is already there. |
+| GitHub refuses a blocker cycle of two issues with a validation error. It accepts a cycle of three issues. | Sandbox test of two issues, 2026-11-22. The cycle of three was found while the plan was built. | `crates/taskrock/src/draft/check.rs`, `link_cycles`. The check finds cycles without the network. |
+| The blockers need a second call after the issue is created. The create call takes the parent, type, fields and milestone. | Measured with the GraphQL API, 2026-11-22. `CreateIssueInput` takes `parentIssueId`, `issueTypeId`, `issueFields`, `projectV2Ids` and `milestoneId` in one call. | `crates/taskrock/src/apply/blockers.rs`, `link_blockers`, a second pass after the create. |
+| `UpdateIssueInput` has no version or precondition field. "Update only if unchanged" is a read followed by a write. | Measured with the GraphQL API, 2026-11-22. | `crates/taskrock/src/claim.rs`. A status alone cannot be the claim, so the branch is. |
+| A new issue field can be created on a Free organization. | Sandbox test, 2026-11-22. The test field was deleted afterwards. | `crates/taskrock/src/apply/fields.rs`, `field_ids`. It reads the issue fields of the organization by name. |
+| The issue listing returns the body of each issue, so a hidden marker in the body can be found. | Sandbox test, 2026-11-22. Listing the repository's issues found all three hidden markers. | `crates/taskrock/src/apply/existing.rs`, `scan_listing`, and `crates/taskrock/src/apply/marker.rs`, `marker_key`. |
+| GitHub cannot tell two agents apart when they share one login. An assignee alone is not a claim. | Read of the newest issues of three repositories, 2026-11-22. Every sampled edit and comment came from one login. | `crates/taskrock/src/claim.rs`, `create_branch`. The claim is the branch, not the assignee. |
+| Limits: 100 sub-issues per parent, and eight levels of sub-issues. | Read of the GitHub docs, 2026-11-22. | `crates/taskrock/src/draft/check.rs`, `family_size`. The check runs without the network. |
+| Limits: 25 issue fields and 25 issue types per account, 50,000 items per project, 65,536 characters per issue body, 80 content-creating requests per minute and 500 per hour. | Read of the GitHub docs, 2026-11-22. | `crates/taskrock/src/draft/check.rs` refuses a body of more than 60,000 characters. The tool does not pace its writes. |
+| Three agents used up the hourly GraphQL budget of one account in one hour. | Found while the plan was built. | `crates/taskrock/src/github/items.rs`. The reads use REST. The one GraphQL call is `project_of`, which runs once for each claim or release. |
+| A GitHub organization starts with four default issue fields, Priority, Start date, Target date and Effort. It also has three issue types, Task, Bug and Feature. | Read of three organizations, 2026-11-22. | `crates/taskrock/src/apply/fields.rs` reads the fields by name. The routing field `Effort` is in `crates/taskrock/src/fields.rs`, `ROUTING`. |
+| A default issue field named `Effort` is not renamed by the account setup script. The effort of a builder then points at the wrong field. | Found while the plan was built. | `crates/taskrock/src/fields.rs`, `ROUTING`, looks up the field by its name. |
+
+## The gh command
+
+| Fact | How it was proven | Where the tool depends on it |
+|---|---|---|
+| `gh issue create` and `gh issue edit` have `--type`, `--parent`, `--add-sub-issue`, `--blocked-by` and `--add-blocked-by`. They have no flag for issue fields. | Measured with `gh` 2.105.0, 2026-11-22. | `skills/taskrock-goal/SKILL.md` in the skills package uses `--type` and `--parent`. Issue field values are written by REST in `crates/taskrock/src/apply/create.rs`. |
+| `gh issue develop` does not refuse a second claim. | Found while the plan was built. | nowhere, it is a trap to avoid. The REST branch call in `crates/taskrock/src/claim.rs` is the one that refuses. |
+| `gh project copy` keeps the five views, the fields and the workflows of the template project. | Sandbox test. | The skill `taskrock-plan`, step 2, in `skills/taskrock-plan/SKILL.md` of the skills package. The command is also in `README.md`. |
+
+## Agent CLIs
+
+| Fact | How it was proven | Where the tool depends on it |
+|---|---|---|
+| `/goal <objective>` works in Muse Code 1.4.25. The session printed `Goal set`, did the work and printed `Completed goal 100%`. The other `/goal` subcommands were not tested. | Live test on the sandbox, 2026-11-22. | `skills/taskrock-goal/SKILL.md` in the skills package. The build command is in `README.md`. |
+| In Muse Code 1.4.25, an unattended run with only `--trust-workspace` needs no extra approval or sandbox flag. The run used `gh`, `git` and `cargo`, committed with sign-off, pushed, opened a pull request, commented on an issue and squash-merged. Every command exited 0. | Live test on the sandbox, 2026-11-22. | `skills/taskrock-goal/SKILL.md` in the skills package, the `muse exec` line with `--trust-workspace`. |
+| A helper can run on a model and effort other than the model and effort of its session. A helper started from an agent definition ran on that definition's model. A workflow child with its own model and effort ran on those. | Live test on the sandbox, 2026-11-22. | `crates/taskrock/src/fields.rs`, `ROUTING`. Each task has its own `Model` and `Effort`, and the review has its own too. |
+| `muse session-message send` refuses to send with `sender_unverified`. Another tool cannot message a running Muse session. A correction reaches the session through GitHub or by typing into its terminal pane. | Live test on the sandbox, 2026-11-22. | nowhere, it is a limit to know |
+
+## The CI of this repository
+
+| Fact | How it was proven | Where the tool depends on it |
+|---|---|---|
+| The `velnor-gen` version in `mise.toml` must equal the version in `.velnor/rust-ci.lock`. With generator 0.1.109 and helper 0.1.111, the `rust` job failed on `tools-verify reset`. | Live test on the sandbox, 2026-11-22. | The `velnor-gen` pin in `mise.toml`, and `.velnor/rust-ci.lock`. |
+| With `velnor-gen` 0.1.109, a new crate with `runner = "ubuntu-24.04"` and `hosted = true` passed the steps `pin-helper`, `generate` and `check`. Its pull request was green with `Required`, `rust` and `DCO`. | Live test on the sandbox, 2026-11-22. | `.velnor/rust-ci.toml`, which has the keys `runner` and `hosted`. |
+| The `Required` gate fails when the crate has no test, with the message `tests_by_package is missing or malformed`. | Live test on the sandbox, 2026-11-22. | `.github/workflows/ci.yml`, the output `tests_by_package` of the test step. |
+| A repository needs `mise.toml` with `mr-boxington`, `rust` with `mr_boxington = true` and a pinned `cargo-nextest`. It also needs `mise.lock`, `rust-toolchain.toml` and a committed `Cargo.lock`. Every file must be tracked by git before `generate`. | Live test on the sandbox, 2026-11-22. | `mise.toml`, `mise.lock`, `rust-toolchain.toml` and `Cargo.lock` in this repository. |
+| The DCO check comes from the `cncf/dco2` app. A new repository got it with no setup. | Live test on the sandbox, 2026-11-22. | `.github/dco.yml` |
+| `velnor-gen` refuses a tool built from source. Tools are pinned from prebuilt releases. | Found while the plan was built. | `mise.toml`. The Linux pin uses the release asset. The macOS entry builds from source for local use. |
+| Velnor tools 0.1.111 make the job `Cache` fail in every run that restores the cache of the same commit. Version 0.1.113 fixes it. | Found in the CI runs. | The tools pin in `mise.toml` must be 0.1.113 or newer. |
+| The audit of the Rust inputs runs only in the nightly run or a manual run. A repository without `.velnor/rust-inputs.lock` is green on every push and red every night. | Found in the CI runs. | `.github/workflows/ci.yml`. The workflow has a `schedule` and a `workflow_dispatch`, and the audit steps run only on them. |
+| A lock written on macOS can miss lines that Linux needs. The missing lines are taken from the error of the audit step. | Found in the CI runs. | `.velnor/rust-ci.lock` and `.velnor/rust-inputs.lock` |
+| The repository policy requires a `docs/` folder. | Read of the policy module `docs.yml` of `rust-repository-policy` `v0.1.3`. | `.alint.yml`, and the folder `docs/` with `docs/README.md`. |
+| `main` is protected by a ruleset: squash merges only, a linear history, the required checks `DCO` and `Required`, resolved review threads and zero required approvals. | Read on 2026-11-22. | not found in this repository. The ruleset is set outside this repository. |
+
+## How to prove a fact again
+
+The live tests are the four files in `crates/taskrock/tests/` whose names start with `sandbox_`: `sandbox_gh.rs`, `sandbox_items.rs`, `sandbox_claim.rs` and `sandbox_apply.rs`. They run against the repository `tailrocks/taskrock-sandbox` and a test project on GitHub. Each test has `#[ignore = "talks to GitHub"]`, so the normal test run skips them. Run one file from the tool repository with `cargo test -p taskrock --test sandbox_claim -- --ignored`, while `gh` is logged in to an account that can write to the sandbox.
