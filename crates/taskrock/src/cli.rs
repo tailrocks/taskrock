@@ -47,6 +47,10 @@ pub enum Command {
     Claim {
         /// The link of the task.
         link: String,
+        /// Start from the branch of the open blocker whose pull request is open,
+        /// instead of the default branch.
+        #[arg(long)]
+        stacked: bool,
     },
     /// Give a task back.
     Release {

@@ -16,6 +16,7 @@ pub mod link;
 pub mod projects;
 pub mod ready;
 pub mod setup;
+pub mod stack;
 pub mod template;
 
 use std::path::Path;
@@ -53,8 +54,13 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             println!("{text}");
             Ok(())
         }
-        cli::Command::Claim { link } => {
-            println!("{}", claim::claim(gh, link)?);
+        cli::Command::Claim { link, stacked } => {
+            let text = if *stacked {
+                claim::claim_stacked(gh, link)?
+            } else {
+                claim::claim(gh, link)?
+            };
+            println!("{text}");
             Ok(())
         }
         cli::Command::Release { link, note } => {
