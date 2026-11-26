@@ -1,16 +1,13 @@
 //! Tests of the Status of the new issues.
 
-use std::collections::BTreeMap;
-
 use serde_json::{Value, json};
 
+use crate::apply::create_issues;
 use crate::apply::status::set_statuses;
-use crate::apply::{Created, create_issues};
-use crate::draft::{self, Draft};
 use crate::error::Error;
 use crate::gh::FakeGh;
 
-use super::super::tests::{base, dry_options, has_call, options};
+use super::super::tests::{base, draft_and_found, dry_options, has_call, options};
 
 const FIELDS: &str = include_str!("../../../fixtures/project_fields.json");
 
@@ -40,24 +37,6 @@ fn item(number: u64, status: Option<&str>) -> Value {
         "fields":[{"name":"Status","value":value}]})
 }
 
-/// The draft, with `T01` as issue 12 and `B1` as issue 13.
-fn draft_and_found() -> (Draft, BTreeMap<String, Created>) {
-    let draft = draft::parse::read(&folder()).expect("fixture is a draft");
-    let mut found = BTreeMap::new();
-    for (key, number) in [("T01", 12), ("B1", 13)] {
-        let link = format!("https://github.com/tailrocks/holla/issues/{number}");
-        let link = link.parse().expect("link");
-        found.insert(
-            key.to_owned(),
-            Created {
-                link,
-                id: number + 100,
-            },
-        );
-    }
-    (draft, found)
-}
-
 /// A fake that answers the field read, then two reads of the items.
 fn fake(first: &[Value], second: &[Value]) -> FakeGh {
     let fields = fields(true);
@@ -82,7 +61,7 @@ fn patches(gh: &FakeGh) -> Vec<String> {
 
 #[test]
 fn bug_goes_to_triage_and_task_to_todo() {
-    let (draft, found) = draft_and_found();
+    let (draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     let after = [item(12, Some("Todo")), item(13, Some("Todo"))];
     let gh = fake(&[item(12, None), item(13, Some("Todo"))], &after);
     let lines = set_statuses(&gh, &draft, &found, &options()).expect("statuses");
@@ -102,7 +81,7 @@ fn bug_goes_to_triage_and_task_to_todo() {
 
 #[test]
 fn second_read_sets_a_bug_again_only_when_it_left_triage() {
-    let (draft, found) = draft_and_found();
+    let (draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     let triage = [item(12, Some("Todo")), item(13, Some("Triage"))];
     let gh = fake(&triage, &triage);
     let lines = set_statuses(&gh, &draft, &found, &options()).expect("statuses");
@@ -112,7 +91,7 @@ fn second_read_sets_a_bug_again_only_when_it_left_triage() {
 
 #[test]
 fn dry_run_makes_no_call() {
-    let (draft, found) = draft_and_found();
+    let (draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     let gh = FakeGh::new();
     let lines = set_statuses(&gh, &draft, &found, &dry_options()).expect("dry run");
     assert_eq!(lines, ["would set B1 to Triage"]);
@@ -133,7 +112,7 @@ fn project_without_triage_stops_before_any_creation() {
 
 #[test]
 fn task_only_draft_needs_no_triage_and_reads_the_items_once() {
-    let (mut draft, found) = draft_and_found();
+    let (mut draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     draft.issues.retain(|issue| issue.key == "T01");
     let no_triage = fields(false);
     let items = json!([[item(12, None)]]).to_string();

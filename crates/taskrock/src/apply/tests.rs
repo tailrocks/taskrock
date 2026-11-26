@@ -1,12 +1,14 @@
 //! Tests of `apply`.
 
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::time::Duration;
 
 use serde_json::Value;
 
-use crate::apply::Options;
 use crate::apply::marker::{marker, marker_key};
+use crate::apply::{Created, Options};
+use crate::draft::{self, Draft};
 use crate::gh::FakeGh;
 
 pub(super) const FIELDS: &str = r#"[[{"id":11,"name":"Agent"},{"id":12,"name":"Runtime"},{"id":13,"name":"Model"},{"id":14,"name":"Effort"},{"id":15,"name":"Review agent"},{"id":16,"name":"Review runtime"},{"id":17,"name":"Review model"},{"id":18,"name":"Review effort"}]]"#;
@@ -17,6 +19,31 @@ pub(super) const MISSING: &str = "gh: Not Found (HTTP 404)";
 
 pub(super) fn folder() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-good")
+}
+
+/// The draft of `fixtures/<fixture>` with each `(key, number)` as issue
+/// `number` of `tailrocks/holla`.
+pub(super) fn draft_and_found(
+    fixture: &str,
+    issues: &[(&str, u64)],
+) -> (Draft, BTreeMap<String, Created>) {
+    let folder = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("fixtures")
+        .join(fixture);
+    let draft = draft::parse::read(&folder).expect("fixture is a draft");
+    let mut found = BTreeMap::new();
+    for (key, number) in issues {
+        let link = format!("https://github.com/tailrocks/holla/issues/{number}");
+        let link = link.parse().expect("link");
+        found.insert(
+            (*key).to_owned(),
+            Created {
+                link,
+                id: number + 100,
+            },
+        );
+    }
+    (draft, found)
 }
 
 pub(super) fn options() -> Options {
