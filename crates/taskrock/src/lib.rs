@@ -8,6 +8,7 @@ pub mod draft;
 pub mod edit;
 pub mod error;
 pub mod fields;
+pub mod format;
 pub mod gh;
 pub mod github;
 pub mod handoff;

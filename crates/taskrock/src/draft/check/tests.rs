@@ -1,25 +1,26 @@
 use super::check;
+use crate::config;
 use crate::draft::parse::{parse_issue, parse_plan, read};
 use crate::draft::{Draft, DraftIssue};
 use crate::fields::Routing;
-const BODY: &str = "## Outcome\n\nO.\n\n## Decisions already made\n\nD.\n\n## Steps\n\nS.\n\n## Done when\n\n- [ ] D.\n\n## Out of scope\n\nO.\n";
+pub(super) const BODY: &str = "## Outcome\n\nO.\n\n## Decisions already made\n\nD.\n\n## Not yet specified\n\nNone.\n\n## Steps\n\nS.\n\n## Done when\n\n- [ ] `d` prints ok.\n\n## Out of scope\n\nO.\n";
 const PLAN: &str =
     "id = \"p\"\nrepo = \"o/n\"\nproject = \"https://github.com/orgs/o/projects/7\"\n";
-fn issue(key: &str, extra: &str) -> DraftIssue {
+pub(super) fn issue(key: &str, extra: &str) -> DraftIssue {
     let text = format!(
         "+++\nkey = \"{key}\"\ntitle = \"{key}\"\ntype = \"Task\"\nagent = \"a\"\nruntime = \"b\"\nmodel = \"c\"\neffort = \"d\"\nreview_agent = \"e\"\nreview_runtime = \"f\"\nreview_model = \"g\"\nreview_effort = \"h\"\n{extra}\n+++\n{BODY}"
     );
     parse_issue(&format!("{key}.md"), &text, "tailrocks/holla").expect("the test issue parses")
 }
-fn lines(issues: Vec<DraftIssue>) -> Vec<String> {
+pub(super) fn lines(issues: Vec<DraftIssue>) -> Vec<String> {
     let plan = parse_plan(PLAN).expect("the test plan parses");
     let draft = Draft { plan, issues };
-    check(&draft)
+    check(&draft, &config::default())
         .into_iter()
         .map(|f| format!("{}: {}", f.file, f.message))
         .collect()
 }
-fn epic(key: &str) -> DraftIssue {
+pub(super) fn epic(key: &str) -> DraftIssue {
     let mut full = issue(key, "");
     full.kind = "Epic".to_owned();
     full.routing = Routing::default();
@@ -48,7 +49,10 @@ fn rings(blocked: bool) {
 #[test]
 fn good_draft_has_no_finding() {
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-good");
-    assert_eq!(check(&read(&dir).expect("draft-good reads")).len(), 0);
+    assert_eq!(
+        check(&read(&dir).expect("draft-good reads"), &config::default()).len(),
+        0
+    );
 }
 #[test]
 fn bad_keys_and_types_are_reported() {
@@ -58,8 +62,8 @@ fn bad_keys_and_types_are_reported() {
     dup.file = "b.md".to_owned();
     let found = lines(vec![bad, dup]);
     assert_eq!(found.len(), 3);
-    assert!(found[0].contains("S has no children, so its type must be Task or Bug"));
-    assert!(found[1].contains("S.md: type must be Initiative, Epic, Task or Bug"));
+    assert!(found[0].contains("S has no children, so its type must be Task, Bug or Feature"));
+    assert!(found[1].contains("S.md: type must be one of Initiative, Epic, Task, Bug, Feature"));
     assert!(found[2].contains("b.md: key S is also used in S.md"));
 }
 #[test]
@@ -83,54 +87,6 @@ fn cycles_cover_one_two_and_three_issues() {
     rings(false);
 }
 #[test]
-fn routing_fields_are_reported() {
-    let task = issue("T", "");
-    let mut owner = issue("O", "");
-    owner.routing.set("Agent", "Owner");
-    owner.parent = Some("T".to_owned());
-    let mut noagent = issue("N", "");
-    noagent.routing.set("Agent", "");
-    let mut missing = issue("R", "");
-    missing.routing.set("Review effort", "");
-    let mut epic = issue("E", "");
-    epic.kind = "Epic".to_owned();
-    let found = lines(vec![task, owner, noagent, missing, epic]);
-    assert_eq!(found.len(), 7);
-    assert!(found[0].contains("E has no children, so its type must be Task or Bug"));
-    assert!(found[1].contains("E.md: only a Task or Bug has routing fields"));
-    assert!(found[2].contains("N.md: agent is missing"));
-    assert!(found[3].contains("N.md: agent is missing"));
-    assert!(found[4].contains("O.md: an Owner task has no other routing field"));
-    assert!(found[5].contains("R.md: review_effort is missing"));
-    assert!(found[6].contains("T has children, so its type cannot be Task"));
-}
-#[test]
-fn sections_are_reported() {
-    let mut leaf = issue("T", "");
-    leaf.body = BODY.replace("## Steps\n\nS.\n\n", "");
-    let mut other = epic("E");
-    other.body = BODY.replace("## Done when\n\n- [ ] D.\n\n", "");
-    let mut boxless = issue("D", "");
-    boxless.body = BODY.replace("- [ ] D.", "done");
-    let found = lines(vec![leaf, other, boxless]);
-    assert_eq!(found.len(), 4);
-    assert!(found[0].contains("D.md: ## Done when has no checkbox"));
-    assert!(found[1].contains("E has no children, so its type must be Task or Bug"));
-    assert!(found[2].contains("the section ## Done when is missing"));
-    assert!(found[3].contains("the section ## Steps is missing"));
-}
-#[test]
-fn bodies_and_titles_have_limits() {
-    let mut big = issue("B", "");
-    big.body = format!("{BODY}{}", "x".repeat(60_000));
-    let mut empty = issue("T", "");
-    empty.title = String::new();
-    let found = lines(vec![big, empty]);
-    assert_eq!(found.len(), 2);
-    assert!(found[0].contains("B.md: the body has 60105 characters"));
-    assert!(found[1].contains("T.md: the title must have 1 to 256"));
-}
-#[test]
 fn families_have_limits() {
     let mut many = vec![epic("E")];
     many.extend((0..100).map(|n| issue(&format!("C{n}"), "parent = \"E\"")));
@@ -147,4 +103,29 @@ fn families_have_limits() {
     assert_eq!(found.len(), 2);
     assert!(found[0].contains("E.md: E has 101 children"));
     assert!(found[1].contains("T is 9 levels deep"));
+}
+
+#[test]
+fn a_bare_issue_number_is_reported() {
+    let mut task = issue("T", "");
+    task.body = BODY.replace("O.\n", "Fixes #12.\n");
+    let found = lines(vec![task]);
+    assert_eq!(found.len(), 2, "{found:?}");
+    assert!(
+        found
+            .iter()
+            .all(|line| line.contains("#12 is a bare issue number. Name the key instead"))
+    );
+}
+
+#[test]
+fn bodies_and_titles_have_limits() {
+    let mut big = issue("B", "");
+    big.body = format!("{BODY}{}", "x".repeat(60_000));
+    let mut empty = issue("T", "");
+    empty.title = String::new();
+    let found = lines(vec![big, empty]);
+    assert_eq!(found.len(), 2);
+    assert!(found[0].contains("B.md: the body has 60"));
+    assert!(found[1].contains("T.md: the title must have 1 to 256"));
 }

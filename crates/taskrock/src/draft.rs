@@ -23,6 +23,8 @@ pub struct Plan {
     pub id: String,
     pub repo: String,
     pub project: ProjectLink,
+    /// The key of the portfolio project that gets the initiatives.
+    pub portfolio: Option<String>,
     pub milestones: Vec<Milestone>,
 }
 

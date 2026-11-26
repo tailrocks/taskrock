@@ -7,7 +7,7 @@ use super::{Draft, DraftIssue};
 use crate::config::Config;
 use crate::error::Error;
 
-use self::body::{bodies, checkboxes, routing, sections, titles};
+use self::body::{bare_numbers, bodies, routing, sections, titles};
 use self::graph::{
     blockers, duplicates, family, family_size, kinds, link_cycles, milestones, parents,
 };
@@ -27,18 +27,18 @@ pub struct Finding {
 
 /// Every broken rule, sorted by file name, then by message.
 #[must_use]
-pub fn check(draft: &Draft) -> Vec<Finding> {
+pub fn check(draft: &Draft, config: &Config) -> Vec<Finding> {
     let mut findings = Vec::new();
     duplicates(draft, &mut findings);
-    kinds(draft, &mut findings);
+    kinds(draft, config, &mut findings);
     parents(draft, &mut findings);
     blockers(draft, &mut findings);
     link_cycles(draft, &mut findings);
     milestones(draft, &mut findings);
     family(draft, &mut findings);
     routing(draft, &mut findings);
-    sections(draft, &mut findings);
-    checkboxes(draft, &mut findings);
+    sections(draft, config, &mut findings);
+    bare_numbers(draft, &mut findings);
     bodies(draft, &mut findings);
     titles(draft, &mut findings);
     family_size(draft, &mut findings);
@@ -51,9 +51,9 @@ pub fn check(draft: &Draft) -> Vec<Finding> {
 /// # Errors
 ///
 /// Returns [`Error::Draft`] or [`Error::Check`].
-pub fn run(folder: &Path, _config: &Config) -> Result<String, Error> {
+pub fn run(folder: &Path, config: &Config) -> Result<String, Error> {
     let draft = super::parse::read(folder)?;
-    let findings = check(&draft);
+    let findings = check(&draft, config);
     if findings.is_empty() {
         return Ok(format!("OK {} issues", draft.issues.len()));
     }
@@ -98,10 +98,12 @@ pub(super) fn has_children(draft: &Draft) -> BTreeMap<&str, Vec<&DraftIssue>> {
     map
 }
 
-pub(super) fn is_task(kind: &str) -> bool {
-    kind == "Task" || kind == "Bug"
+/// The types that may have children.
+pub(super) fn can_have_children(kind: &str) -> bool {
+    matches!(kind, "Initiative" | "Epic" | "Feature")
 }
 
-pub(super) fn is_epic(kind: &str) -> bool {
-    kind == "Initiative" || kind == "Epic"
+/// The types that may have no children.
+pub(super) fn can_be_a_leaf(kind: &str) -> bool {
+    matches!(kind, "Task" | "Bug" | "Feature")
 }

@@ -10,6 +10,9 @@ use crate::error::Error;
 use crate::fields::{ROUTING, Routing};
 use crate::link::{Link, ProjectLink};
 
+#[cfg(test)]
+mod tests;
+
 /// The plan file inside a draft folder.
 const PLAN_FILE: &str = "plan.toml";
 
@@ -22,6 +25,7 @@ struct RawPlan {
     id: String,
     repo: String,
     project: String,
+    portfolio: Option<String>,
     #[serde(default)]
     milestones: Vec<RawMilestone>,
 }
@@ -64,6 +68,9 @@ pub fn parse_plan(text: &str) -> Result<Plan, Error> {
     let raw: RawPlan = toml::from_str(text).map_err(|error| draft_error(PLAN_FILE, error))?;
     check_name(PLAN_FILE, "id", &raw.id)?;
     check_repo(PLAN_FILE, &raw.repo)?;
+    if let Some(portfolio) = &raw.portfolio {
+        check_name(PLAN_FILE, "portfolio", portfolio)?;
+    }
     let milestones = raw
         .milestones
         .into_iter()
@@ -76,6 +83,7 @@ pub fn parse_plan(text: &str) -> Result<Plan, Error> {
         id: raw.id,
         repo: raw.repo,
         project: parse_project_link(&raw.project)?,
+        portfolio: raw.portfolio,
         milestones,
     })
 }
