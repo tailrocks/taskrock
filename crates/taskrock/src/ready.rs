@@ -266,7 +266,7 @@ fn warn_shared_files(report: &mut Report<'_>, bodies: &BTreeMap<IssueLink, Strin
 
 fn push_problems(problems: &mut Vec<String>, item: &Item) {
     let url = item.link.url();
-    if item.open && is_task_or_bug(item) && item.children > 0 {
+    if item.open && matches!(item.kind.as_deref(), Some("Task" | "Bug")) && item.children > 0 {
         problems.push(format!(
             "{url} has children. Only an issue with no children is built."
         ));
