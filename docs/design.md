@@ -170,13 +170,13 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Reason.** The skills name the exact `taskrock` and `gh` commands of each step, so a session needs no other plugin to plan, build and review. See [comparison](comparison.md).
 
-### Skills ship as a native plugin package
+### Skills ship as a plugin in their own marketplace repository
 
-**Chosen.** The three skills are one plugin package, installed through the plugin system of each agent CLI. Package version and tool version change together.
+**Chosen.** The three skills are the plugin `taskrock` in `tailrocks/taskrock-plugins`. That repository is also the marketplace: its catalog files name the plugin by the local path `./plugins/taskrock`. One skill tree serves five agent CLIs, Claude Code, Codex, Grok Build, Muse Code and Antigravity, each through its own manifest. Every skill first runs `taskrock --version` and stops when the tool is missing or older than it needs. The CI of the plugin installs the released tool and runs `taskrock <command> --help` for each command a skill names.
 
-**Rejected.** Skill folders copied by hand into a user folder, with the skills kept in the tool repository.
+**Rejected.** Skill folders copied by hand into a user folder. A plugin package in its own repository that a shared Tailrocks catalog pins to a commit, which was the layout of 0.1.0. The skills inside the tool repository. A catalog that points into the tool repository with `git-subdir`.
 
-**Reason.** A skill must never name a command the installed tool lacks, and a different tool version can change the commands. The package version matches the tool version. A skill also needs its sibling skills and references in their original places, so the package is installed as one unit and a single `SKILL.md` is not copied out.
+**Reason.** A skill must never name a command the installed tool lacks. The version check and the CI check hold that rule across two repositories, and the release order is the tool first, then the plugin. The 0.1.0 layout needed three repositories for one tool, put tailrocks roles and a tailrocks template project into the skills, and installed a 182 MB `node_modules` for an OpenCode adapter into the cache of Claude Code. Adding a marketplace clones its whole repository on every agent, so the tool repository would give each agent the Rust source too. Claude Code reads `git-subdir`, but no test showed that the other four agents do. A local path in the plugin repository works on all five. A skill also needs its sibling skills in their original places, so the plugin is installed as one unit and a single `SKILL.md` is not copied out.
 
 ## Left out of version 1 on purpose
 

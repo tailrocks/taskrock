@@ -32,7 +32,7 @@ This page lists the facts about GitHub, the `gh` command, agent CLIs and the CI 
 |---|---|---|
 | `gh issue create` and `gh issue edit` have `--type`, `--parent`, `--add-sub-issue`, `--blocked-by` and `--add-blocked-by`. They have no flag for issue fields. | Measured with `gh` 2.105.0, 2026-11-22. | `skills/taskrock-goal/SKILL.md` in the skills package uses `--type` and `--parent`. Issue field values are written by REST in `crates/taskrock/src/apply/create.rs`. |
 | `gh issue develop` does not refuse a second claim. | Found while the plan was built. | nowhere, it is a trap to avoid. The REST branch call in `crates/taskrock/src/claim.rs` is the one that refuses. |
-| `gh project copy` keeps the five views, the fields and the workflows of the template project. | Sandbox test. | The skill `taskrock-plan`, step 2, in `skills/taskrock-plan/SKILL.md` of the skills package. The command is also in `README.md`. |
+| `gh project copy` keeps the five views, the fields and the workflows of the template project. | Sandbox test. | The command in `README.md`. The skill `taskrock-plan` no longer copies a project: it uses an existing one or asks the owner. |
 
 ## Agent CLIs
 
