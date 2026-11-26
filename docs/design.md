@@ -18,7 +18,7 @@ This page keeps each choice together with the option that was rejected and the r
 - **Status.** Triage, Todo, In Progress and Done. Reported issues start in Triage, planned issues in Todo.
 - **Routing fields.** Eight issue fields on each task. Agent, Runtime, Model and Effort say who builds. Review agent, Review runtime, Review model and Review effort say who reviews before the merge. Agent holds a subagent name from the config.
 - **Task.** A title and five sections: Outcome, Decisions already made, Steps, Done when, Out of scope. Done when is a checklist. Each box is a real command with its expected result. Each type has its own sections, set in the config file of the organization.
-- **Config.** One file for each organization, `<owner>/.github/taskrock.toml`. It holds the routing blocks, the issue formats, the projects and their views and workflows. `taskrock setup` makes GitHub match it.
+- **Config.** One file for each organization, `<owner>/.github/taskrock.toml`. It holds the routing blocks, the issue formats, the projects with their repositories, workflows and shared milestones. The views of each kind of project are fixed by the tool. `taskrock setup` makes GitHub match it.
 - **Owner task.** An ordinary issue with Agent set to `Owner`. It blocks the tasks that wait on it.
 - **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, a body that has the build sections of its type, and no branch `feat/issue-<number>`.
 - **Claim.** The branch `feat/issue-<number>` on GitHub, then the status "In Progress".
