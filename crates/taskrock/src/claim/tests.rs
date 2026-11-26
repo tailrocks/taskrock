@@ -91,7 +91,7 @@ fn owner_issue_is_refused() {
 fn blocked_issue_is_refused() {
     refused(
         &TASK.replace("\"blocked_by\":0", "\"blocked_by\":1"),
-        "1 open issues block it",
+        "1 open issues block it. Build it only after they close",
     );
 }
 
