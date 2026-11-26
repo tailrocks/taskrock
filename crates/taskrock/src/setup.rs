@@ -7,6 +7,7 @@ use crate::config::{self, Config};
 use crate::error::Error;
 use crate::gh::Gh;
 
+mod fields;
 mod types;
 
 #[cfg(test)]
@@ -115,6 +116,7 @@ pub fn run(gh: &dyn Gh, options: &Options) -> Result<String, Error> {
         lines: Vec::new(),
     };
     types::issue_types(&mut run, &config)?;
+    fields::routing_fields(&mut run, &config)?;
     Ok(format!("DONE {} changes", run.changes()))
 }
 
