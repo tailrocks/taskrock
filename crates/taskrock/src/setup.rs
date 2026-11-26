@@ -14,6 +14,7 @@ mod projects;
 mod repos;
 mod types;
 mod views;
+mod workflows;
 
 #[cfg(test)]
 mod testing;
@@ -73,7 +74,6 @@ pub(crate) struct Run<'a> {
     pub gh: &'a dyn Gh,
     pub owner: String,
     pub dry_run: bool,
-    #[expect(dead_code, reason = "step 9 of setup reads it")]
     pub yes: bool,
     pub lines: Vec<String>,
 }
@@ -130,6 +130,7 @@ pub fn run(gh: &dyn Gh, options: &Options) -> Result<String, Error> {
     views::views(&mut run, &projects)?;
     repos::repos(&mut run, &projects)?;
     milestones::milestones(&mut run, &projects)?;
+    workflows::workflows(&mut run, &projects)?;
     Ok(format!("DONE {} changes", run.changes()))
 }
 

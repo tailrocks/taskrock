@@ -107,7 +107,7 @@ fn a_missing_type_is_created() {
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
     let calls = gh.calls();
-    assert_eq!(calls.len(), 13);
+    assert_eq!(calls.len(), 15);
     assert_eq!(
         calls[1].1.as_deref(),
         Some(r#"{"is_enabled":true,"name":"Feature"}"#)
@@ -127,7 +127,7 @@ fn dry_run_makes_no_post() {
     let gh = linked_and_dated(gh);
     let out = run(&gh, &options("config-good.toml", true)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
-    assert_eq!(gh.calls().len(), 12);
+    assert_eq!(gh.calls().len(), 14);
 }
 
 #[test]
@@ -143,5 +143,5 @@ fn a_second_run_only_finds_existing_types() {
     let gh = linked_and_dated(gh);
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 0 changes");
-    assert_eq!(gh.calls().len(), 12);
+    assert_eq!(gh.calls().len(), 14);
 }
