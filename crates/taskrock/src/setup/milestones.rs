@@ -93,7 +93,9 @@ fn fix(
     }
     let mut body = Map::new();
     if let Some(due) = &wanted.due {
-        body.insert("due_on".to_owned(), format!("{due}T00:00:00Z").into());
+        // Noon, not midnight: GitHub stores a POST of `<day>T00:00:00Z` one day
+        // earlier, and noon is stored as the same day.
+        body.insert("due_on".to_owned(), format!("{due}T12:00:00Z").into());
     }
     if let Some(text) = &wanted.description {
         body.insert("description".to_owned(), text.as_str().into());

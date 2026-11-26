@@ -24,7 +24,7 @@ fn present(due_on: Option<&str>, description: Option<&str>) -> String {
 }
 
 #[test]
-fn a_missing_milestone_is_created_with_due_on() {
+fn a_missing_milestone_is_created_with_due_on_at_noon() {
     let gh = FakeGh::new()
         .ok("milestones?state=all&per_page=100", "[]")
         .ok("-X POST repos/acme/taskrock/milestones", "{}");
@@ -38,7 +38,7 @@ fn a_missing_milestone_is_created_with_due_on() {
     assert_eq!(lines, ["create milestone taskrock v0.2.0"]);
     assert_eq!(
         body(&gh, 1),
-        json!({"title": "v0.2.0", "description": "The release", "due_on": "2026-12-15T00:00:00Z"})
+        json!({"title": "v0.2.0", "description": "The release", "due_on": "2026-12-15T12:00:00Z"})
     );
 }
 
@@ -70,7 +70,7 @@ fn another_due_date_is_fixed_with_a_patch() {
     let (result, lines) = step(&gh, false, |run| milestones(run, &list));
     result.expect("step");
     assert_eq!(lines, ["update milestone taskrock v0.2.0"]);
-    assert_eq!(body(&gh, 1), json!({"due_on": "2026-12-15T00:00:00Z"}));
+    assert_eq!(body(&gh, 1), json!({"due_on": "2026-12-15T12:00:00Z"}));
 }
 
 #[test]
