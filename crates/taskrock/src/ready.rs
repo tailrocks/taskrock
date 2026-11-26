@@ -2,11 +2,13 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::config::ProjectKind;
 use crate::error::Error;
 use crate::fields::{ROUTING, Routing, draft_key};
 use crate::gh::Gh;
 use crate::github::items::{Item, project_items, project_of};
 use crate::link::{IssueLink, Link};
+use crate::projects::kind_of;
 
 #[cfg(test)]
 mod tests;
@@ -116,18 +118,28 @@ pub fn report<'a>(scope: &[&'a Item], claimed: &BTreeSet<IssueLink>) -> Report<'
 
 /// The whole command. Returns the text to print.
 ///
-/// A project link lists the whole project. An issue link finds its project
+/// A project link lists the whole project, unless it is a portfolio project.
+/// An issue link finds its project
 /// with `project_of`, reads the items, then keeps the issue and below.
 ///
 /// # Errors
 ///
 /// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
 /// not JSON, [`Error::Link`] when the link is not understood, [`Error::Project`]
-/// when a field or the project is missing.
+/// when a field or the project is missing, [`Error::Refused`] when the link is
+/// a portfolio project.
 pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
     let link: Link = link.parse()?;
     let items = match &link {
-        Link::Project(project) => project_items(gh, project)?,
+        Link::Project(project) => {
+            if kind_of(gh, project)? == ProjectKind::Portfolio {
+                return Err(Error::Refused(format!(
+                    "{} is a portfolio project. Give a delivery project or an initiative",
+                    project.url()
+                )));
+            }
+            project_items(gh, project)?
+        }
         Link::Issue(issue) => {
             let project = project_of(gh, issue)?;
             project_items(gh, &project)?

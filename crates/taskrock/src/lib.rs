@@ -13,6 +13,7 @@ pub mod gh;
 pub mod github;
 pub mod handoff;
 pub mod link;
+pub mod projects;
 pub mod ready;
 pub mod setup;
 pub mod template;
