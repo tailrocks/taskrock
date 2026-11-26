@@ -19,6 +19,9 @@ mod tests;
 #[cfg(test)]
 mod release_tests;
 
+#[cfg(test)]
+mod refuse_tests;
+
 /// Take the task at `link`: create `feat/issue-<number>` and move the task
 /// and its open parents to `In Progress`.
 ///
@@ -76,12 +79,15 @@ fn refuse(item: &Item) -> Result<(), Error> {
     }
     if item.open_blockers > 0 {
         return Err(Error::Refused(format!(
-            "{} open issues block it",
+            "{} open issues block it. Build it only after they close",
             item.open_blockers
         )));
     }
     match item.status.as_deref() {
         Some("Todo") => Ok(()),
+        Some("Triage") => Err(Error::Refused(
+            "the issue is in Triage. Triage it first with the skill taskrock-triage".to_owned(),
+        )),
         Some(status) => Err(Error::Refused(format!("the status is {status}, not Todo"))),
         None => Err(Error::Refused("the issue has no status".to_owned())),
     }
