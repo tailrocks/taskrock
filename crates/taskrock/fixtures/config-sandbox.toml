@@ -1,0 +1,128 @@
+version = 1
+
+[routing]
+runtimes   = ["claude", "codex", "agy", "muse", "grok", "kimi", "mimo", "minimax", "opencode"]
+visibility = "restricted"
+
+[[routing.subagent]]
+name     = "tailrocks-systems-engineer"
+runtimes = ["claude", "codex", "muse"]
+can      = ["build", "review"]
+
+[[routing.subagent]]
+name     = "tailrocks-mechanic"
+runtimes = ["claude", "codex", "muse"]
+can      = ["build"]
+
+[[routing.subagent]]
+name     = "tailrocks-docs-writer"
+runtimes = ["claude", "codex", "muse"]
+can      = ["build"]
+
+[[routing.subagent]]
+name     = "tailrocks-code-reviewer"
+runtimes = ["claude", "codex", "muse"]
+can      = ["review"]
+
+[[routing.model]]
+name     = "claude-haiku-5-5"
+runtimes = ["claude"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "Mechanical work: docs, renames, config, tests that follow an existing pattern."
+
+[[routing.model]]
+name     = "claude-sonnet-5-5"
+runtimes = ["claude"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "The default builder."
+
+[[routing.model]]
+name     = "claude-opus-5-5"
+runtimes = ["claude"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "Rare as a builder: only a design-heavy or cross-module task. The reviewer of taskrock's own work."
+
+[[routing.model]]
+name     = "muse-spark-1.3"
+runtimes = ["muse"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "Fast builds on muse."
+
+[[routing.model]]
+name     = "muse-ember-1.0"
+runtimes = ["muse"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "Small builds on muse."
+
+[[routing.model]]
+name     = "muse-wonder-1.0"
+runtimes = ["muse"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "Large builds on muse."
+
+[[routing.model]]
+name     = "muse-wonder-full-1.0"
+runtimes = ["muse"]
+efforts  = ["minimal", "low", "medium", "high", "xhigh", "max"]
+use      = "The largest builds on muse."
+
+[review]
+max_rounds = 3
+
+# Issue types and their formats. Initiative, Epic, Task, Bug and Feature are required.
+[[issue_type]]
+name      = "Initiative"
+file      = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Epic"
+file      = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Task"
+file      = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+build     = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Bug"
+file      = ["What happens", "Expected", "How to reproduce", "Environment"]
+build     = ["What happens", "Expected", "How to reproduce", "Environment", "Cause",
+             "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Feature"
+file      = ["Problem", "Proposed behavior", "Workaround today"]
+build     = ["Problem", "Proposed behavior", "Workaround today",
+             "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+# The owner task is not a GitHub issue type, so its format has its own table.
+[owner_task]
+file      = ["Outcome", "Question", "Why it matters", "Recommended answer", "Done when"]
+build     = ["Outcome", "Question", "Why it matters", "Recommended answer", "Done when"]
+checklist = ["Done when"]
+
+[[project]]
+key    = "taskrock-sandbox"
+title  = "taskrock sandbox"
+kind   = "delivery"
+number = 10
+repos  = ["taskrock-sandbox"]
+
+[project.workflows]
+auto_add_sub_issues = true
+item_added          = true
+item_closed         = true
+pr_linked           = true
+pr_merged           = true
+auto_close_issue    = true
+
+[[project.milestone]]
+title = "sandbox-setup"
+due   = "2027-01-31"
