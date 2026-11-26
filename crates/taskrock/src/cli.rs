@@ -60,7 +60,7 @@ pub enum Command {
     Setup {
         /// The organization.
         owner: String,
-        /// Read this file instead of <owner>/.github/taskrock.toml.
+        /// Read this file instead of `<owner>/.github/taskrock.toml`.
         #[arg(long)]
         file: Option<PathBuf>,
         /// Print what would change and change nothing.
@@ -75,7 +75,7 @@ pub enum Command {
         /// The issue type, or `owner` for an owner task.
         #[arg(value_name = "TYPE")]
         kind: String,
-        /// Read the formats from <owner>/.github/taskrock.toml.
+        /// Read the formats from `<owner>/.github/taskrock.toml`.
         #[arg(long)]
         owner: Option<String>,
         /// Read the formats from this file.
