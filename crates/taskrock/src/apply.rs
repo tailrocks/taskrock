@@ -6,6 +6,7 @@ mod existing;
 mod fields;
 mod marker;
 mod milestones;
+mod portfolio;
 mod project;
 mod status;
 
@@ -64,6 +65,7 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
         return Err(Error::Check(findings.len()));
     }
     status::require_triage(gh, &draft)?;
+    portfolio::find_portfolio(gh, &owner, &draft)?;
     let field_ids = fields::field_ids(gh, &owner)?;
     let milestones = milestones::milestone_numbers(gh, &draft, options.dry_run)?;
     let mut found = existing::find_existing(gh, &draft)?;
@@ -107,6 +109,7 @@ pub fn run(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<String, Erro
     )?);
     lines.extend(project::add_to_project(gh, &draft, &found, options)?);
     lines.extend(status::set_statuses(gh, &draft, &found, options)?);
+    lines.extend(portfolio::add_to_portfolio(gh, &draft, &found, options)?);
     let blockers: usize = draft
         .issues
         .iter()
