@@ -1,5 +1,7 @@
 //! Tests of the Status of the new issues.
 
+use std::path::Path;
+
 use serde_json::{Value, json};
 
 use crate::apply::create_issues;
@@ -7,13 +9,11 @@ use crate::apply::status::set_statuses;
 use crate::error::Error;
 use crate::gh::FakeGh;
 
+mod rerun;
+
 use super::super::tests::{base, draft_and_found, dry_options, has_call, options};
 
 const FIELDS: &str = include_str!("../../../fixtures/project_fields.json");
-
-fn folder() -> std::path::PathBuf {
-    std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-triage")
-}
 
 /// The project fields as one page, with the option `Triage` when asked.
 fn fields(triage: bool) -> String {
@@ -40,31 +40,26 @@ fn item(number: u64, status: Option<&str>) -> Value {
 /// A fake that answers the field read, then two reads of the items.
 fn fake(first: &[Value], second: &[Value]) -> FakeGh {
     let fields = fields(true);
-    FakeGh::new()
+    let gh = FakeGh::new()
         .ok("7/fields", &fields)
         .ok("7/fields", &fields)
         .ok("7/items?", &json!([first]).to_string())
         .ok("7/fields", &fields)
-        .ok("7/items?", &json!([second]).to_string())
-        .ok("7/items/", "{}")
-        .ok("7/items/", "{}")
-        .ok("7/items/", "{}")
+        .ok("7/items?", &json!([second]).to_string());
+    (0..3).fold(gh, |gh, _| gh.ok("7/items/", "{}"))
 }
 
 fn patches(gh: &FakeGh) -> Vec<String> {
-    gh.calls()
-        .into_iter()
-        .filter(|(call, _)| call.contains("PATCH"))
-        .map(|(call, input)| format!("{call} {}", input.unwrap_or_default()))
+    let calls = gh.calls().into_iter();
+    let sent = calls.filter(|(call, _)| call.contains("PATCH"));
+    sent.map(|(call, body)| format!("{call} {}", body.unwrap_or_default()))
         .collect()
 }
 
 #[test]
 fn bug_goes_to_triage_and_task_to_todo() {
-    let (draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     let after = [item(12, Some("Todo")), item(13, Some("Todo"))];
-    let gh = fake(&[item(12, None), item(13, Some("Todo"))], &after);
-    let lines = set_statuses(&gh, &draft, &found, &options()).expect("statuses");
+    let (lines, gh) = run_with(&[], &[item(12, None), item(13, Some("Todo"))], &after);
     assert_eq!(
         lines,
         [
@@ -81,12 +76,23 @@ fn bug_goes_to_triage_and_task_to_todo() {
 
 #[test]
 fn second_read_sets_a_bug_again_only_when_it_left_triage() {
-    let (draft, found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
     let triage = [item(12, Some("Todo")), item(13, Some("Triage"))];
-    let gh = fake(&triage, &triage);
+    let (lines, gh) = run_with(&[], &triage, &triage);
+    assert!(lines.is_empty() && patches(&gh).is_empty(), "{lines:?}");
+}
+
+/// Runs `set_statuses` on T01 (#12) and B1 (#13). The `existing` keys were
+/// found, not created.
+fn run_with(existing: &[&str], first: &[Value], second: &[Value]) -> (Vec<String>, FakeGh) {
+    let (draft, mut found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
+    for key in existing {
+        found
+            .entry((*key).to_owned())
+            .and_modify(|c| c.fresh = false);
+    }
+    let gh = fake(first, second);
     let lines = set_statuses(&gh, &draft, &found, &options()).expect("statuses");
-    assert!(lines.is_empty(), "nothing to change: {lines:?}");
-    assert_eq!(patches(&gh).len(), 0, "no PATCH is sent");
+    (lines, gh)
 }
 
 #[test]
@@ -101,7 +107,8 @@ fn dry_run_makes_no_call() {
 #[test]
 fn project_without_triage_stops_before_any_creation() {
     let gh = base().ok("7/fields", &fields(false));
-    let error = create_issues(&gh, &folder(), &options()).expect_err("no Triage");
+    let error =
+        create_issues(&gh, Path::new("fixtures/draft-triage"), &options()).expect_err("no Triage");
     assert!(
         matches!(&error, Error::Project(message) if message
             == "the project has no Status option Triage. Run taskrock setup"),

@@ -1,5 +1,6 @@
 //! The Status of the new issues: Triage for a reported issue, Todo for the
-//! rest.
+//! rest. An issue that already has a Status keeps it, unless this run created
+//! it.
 
 use std::collections::BTreeMap;
 
@@ -57,39 +58,47 @@ pub(super) fn set_statuses(
     found: &BTreeMap<String, Created>,
     options: &Options,
 ) -> Result<Vec<String>, Error> {
-    let reported = reported(draft);
+    let all = reported(draft);
+    let fresh = |issue: &DraftIssue| found.get(&issue.key).is_none_or(|known| known.fresh);
     if options.dry_run {
-        return Ok(reported
+        return Ok(all
             .iter()
+            .filter(|issue| fresh(issue))
             .map(|issue| format!("would set {} to {TRIAGE}", issue.key))
             .collect());
     }
     let field = status_field(gh, &draft.plan.project)?;
-    let triage = if reported.is_empty() {
+    let triage = if all.is_empty() {
         ""
     } else {
         triage_option(&field)?
     };
     let mut lines = Vec::new();
     let items = project_items(gh, &draft.plan.project)?;
+    // A reported issue goes to Triage when this run created it or it has no
+    // Status yet (an earlier run stopped before setting one).
+    let mut triaged = Vec::new();
     for issue in &draft.issues {
         let Some(item) = item_of(found, issue, &items) else {
             continue;
         };
-        if reported.contains(&issue) {
-            if item.status.as_deref() != Some(TRIAGE) {
-                change(gh, draft, &field, item, (triage, TRIAGE), &mut lines)?;
+        if all.contains(&issue) {
+            if fresh(issue) || item.status.is_none() {
+                triaged.push(issue);
+                if item.status.as_deref() != Some(TRIAGE) {
+                    change(gh, draft, &field, item, (triage, TRIAGE), &mut lines)?;
+                }
             }
         } else if item.status.is_none() {
             change(gh, draft, &field, item, (&field.todo, "Todo"), &mut lines)?;
         }
     }
-    if reported.is_empty() {
+    if triaged.is_empty() {
         return Ok(lines);
     }
     std::thread::sleep(options.poll);
     let items = project_items(gh, &draft.plan.project)?;
-    for issue in reported {
+    for issue in triaged {
         if let Some(item) = item_of(found, issue, &items)
             && item.status.as_deref() != Some(TRIAGE)
         {

@@ -40,6 +40,7 @@ pub(super) fn draft_and_found(
             Created {
                 link,
                 id: number + 100,
+                fresh: true,
             },
         );
     }

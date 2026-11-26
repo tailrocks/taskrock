@@ -40,6 +40,9 @@ pub struct Created {
     pub link: IssueLink,
     /// The database ID of the issue, for sub-issue parents.
     pub id: u64,
+    /// Whether this run created the issue. A reported issue found from an
+    /// earlier run is set to Triage only when it has no Status.
+    pub fresh: bool,
 }
 
 /// The draft with the map from key to issue and the lines to print.
