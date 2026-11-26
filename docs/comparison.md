@@ -19,7 +19,7 @@ The skill catalogs were read on 2026-11-22. The public pages below were opened a
 
 `gh` is GitHub's official command line tool (`cli/cli`, MIT, checked on 2026-11-25). GitHub itself has sub-issues, issue types, issue fields, blockers, milestones and projects.
 
-taskrock is built on them. It stores no fact of its own. The tool calls `gh` for every request, so there is one login. Most jobs stay plain `gh` commands inside a skill, such as `gh issue edit --add-blocked-by` and `gh project copy`.
+taskrock is built on them. It stores no fact of its own. The tool calls `gh` for every request, so there is one login. Most jobs stay plain `gh` commands inside a skill, such as `gh issue edit --add-blocked-by`. Version 0.2.0 adds `taskrock setup`, which sets up the projects of an organization through the API.
 
 taskrock goes another way for five jobs. With `gh` 2.105.0 on 2026-11-25, `gh issue create` and `gh issue edit` set the type, the parent and the blockers, and have no flag for issue fields. Nothing in `gh` checks a plan before it is written, and GitHub accepts a blocker cycle of three issues. `gh` cannot select the children of children, and its search lags behind writes. Two agents that take the same task need a branch name that only one of them can create. These jobs are the commands `check`, `apply`, `ready`, `claim` and `release`. [Why the project exists](why.md) has the full list of gaps.
 
