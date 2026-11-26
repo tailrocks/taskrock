@@ -236,17 +236,17 @@ Steps, in order:
 
 1. **Read and check the file.** Stop on the first error, before any write.
 2. **Issue types.** Create each type in the file when missing.
-3. **Routing fields.** Create each of the eight fields when missing. Add missing options with `PATCH orgs/<owner>/issue-fields/<id>`, sending the existing options with their IDs plus the new ones (F5). Never send options through GraphQL `updateIssueField`. Extra existing options are kept. If GitHub's default `Effort` field holds only the sizes `XS`, `S`, `M`, `L` and `XL`, rename it to `Size` first. If a field `Size` exists too, stop. If the organization would have more than 25 issue fields, stop before any write. Set the visibility of each field to `organization_members_only` when `routing.visibility` is `restricted`, and to `all` otherwise.
-4. **Projects.** Find each by marker, or by `number`. Create it when missing. Write the marker, set the title and keep it private. A project found by number whose marker has another key stops the run.
-5. **Project fields.** Status gets Triage, Todo, In Progress and Done, sent with the existing IDs (F10). Each delivery project gets the eight routing fields as columns (F6). Each portfolio project gets `Start date` and `Target date`.
-6. **Views.** Rename "View 1" to the first view of the kind. Create missing views. Set the filter and columns of a view that differs. Never delete a view, and list extra ones.
-7. **Repositories.** Link each repository in `repos` (F7). List extra links and keep them.
-8. **Milestones.** Create each shared milestone in each repository of its project, and fix its due date and description.
-9. **Workflows.** Keep each workflow set to `true`. Delete each one set to `false`, only with `--yes`. If a `true` workflow is missing or off, stop: the API cannot turn it on again. Check that each board groups by Status (F2).
+3. **Routing fields.** Create each of the eight fields when missing. Add missing options with `PATCH orgs/<owner>/issue-fields/<id>`, sending the existing options with their IDs plus the new ones (F5). Never send options through GraphQL `updateIssueField`. Extra existing options are kept. If GitHub's default `Effort` field holds only the sizes `XS`, `S`, `M`, `L` and `XL`, rename it to `Size` first. If a field `Size` exists too, stop. If the organization would have more than 25 issue fields, stop before any write. A new field gets the visibility `routing.visibility` says. An existing field whose visibility differs is changed with `update field <name> (visibility)`: `organization_members_only` for `restricted`, `all` for `all`.
+4. **Projects.** Find each by marker, or by `number`. Create it when missing. Write the marker, set the title and keep it private, each with its own line: `update project <title> (marker)`, `(title)` or `(private)`. A project found by number whose marker has another key stops the run.
+5. **Project fields.** Status gets Triage, Todo, In Progress and Done, sent with the existing IDs (F10). Triage is added after the existing options, which keep their order. The lines are `update status <project title> (add Triage)` and `exists status <project title>`. Each delivery project gets the eight routing fields as columns (F6), with the lines `create column <project title> <field>` and `exists column <project title> <field>`. Each portfolio project gets `Start date` and `Target date`.
+6. **Views.** Turn "View 1" into the first view of the kind: name, filter, columns and, when it differs, layout. Create missing views. Set the filter and the columns of a view that differs, with a line such as `update view Ready (filter, columns)`. Never delete a view, and list extra ones with `extra view <name>`. A column that is not a field of the project stops the run.
+7. **Repositories.** Link each repository in `repos` (F7), with the lines `create link <project title> <owner>/<repo>` and `exists link ...`. List extra links with `extra link ...` and keep them.
+8. **Milestones.** Create each shared milestone in each repository of its project, and fix its due date and description. The lines are `create milestone <repo> <title>`, `update milestone <repo> <title>` and `exists milestone <repo> <title>`. Milestones are matched by title, open or closed.
+9. **Workflows.** Keep each workflow set to `true`. Delete each one set to `false`, only with `--yes`. If a `true` workflow is missing or off, stop with `project <title>: the workflow <name> is off and the API cannot turn it on`: the API cannot turn it on again. Check that each board groups by Status (F2), and note `view <name> groups by <names>, not Status. The API cannot change it` for one that does not.
 
 Each change prints one line before it is made: `create`, `update`, `delete` or `exists`, then the kind and the name, for example `create field Agent`. A note about something setup cannot or will not change is a line of its own, for example `extra view Old`. The last line is `DONE <n> changes`, where `n` counts the lines that start with `create`, `update` or `delete`.
 
-`--dry-run` writes nothing. In a dry run a project that does not exist yet is shown with `create` lines for its columns, views, links and milestones, and with `exists` lines for its six workflows, because a new project has all six on (F3). A second run on a set up organization prints only `exists` lines and notes.
+`--dry-run` writes nothing. In a dry run a project that does not exist yet is shown with `create project`, `update project <title> (marker)`, and `create` lines for its status, columns, views, links and milestones. It gets `exists` lines for the workflows set to `true`, because a new project has all six on (F3). In a dry run a view column that is not yet a field of an existing project is skipped, not an error. A second run on a set up organization prints only `exists` lines and notes.
 
 ### Views of each kind
 
@@ -262,7 +262,7 @@ Each change prints one line before it is made: `create`, `update`, `delete` or `
 | portfolio | Initiatives | table | `type:Initiative` | Title, Status, Sub-issues progress, Start date, Target date |
 | portfolio | Roadmap | roadmap | `type:Initiative` (default dates, F9) | Title, Status, Sub-issues progress |
 
-A view that is there with another layout is not changed, because the API cannot change a layout. Setup prints a note. A view with extra visible columns keeps them.
+A view that is there with another layout is not changed, because the API cannot change a layout: setup prints `view <name> has layout <got>, wanted <want>. The API cannot change it`. "View 1" is the one view whose layout setup sets, because it renames it. A view with extra visible columns keeps them.
 
 ### Workflows
 
@@ -277,7 +277,7 @@ The config keys and the names that GitHub shows:
 | `pr_merged` | Pull request merged |
 | `auto_close_issue` | Auto-close issue |
 
-A workflow set to `false` is deleted for good with `--yes`. Without `--yes`, setup prints a note that says so and goes on.
+A workflow set to `false` is deleted for good with `--yes`, with the line `delete workflow <name>`. Without `--yes`, setup prints `workflow <name> is set to false. Run again with --yes to delete it for good` and goes on. A workflow that is already gone prints `exists workflow <name> (deleted)`.
 
 ## 6. The commands
 
@@ -288,7 +288,7 @@ A workflow set to `false` is deleted for good with `--yes`. Without `--yes`, set
 | `edit <link> <file>` | Checks the body against the type, then writes it. A Triage issue or one with no status is checked against the file sections, any other against the build sections, and an owner task against the owner-task format. After In Progress, the sections Outcome, Decisions already made and Out of scope are frozen: a change needs `--replan`, which also posts a comment that names the changed sections. The hidden `<!-- taskrock:` marker lines are kept. The file has no front matter. |
 | `check <path>` | Checks a draft folder, or a config file (section 4). `--config <file>` reads the issue formats from a config file, offline, instead of the defaults. It refuses a Done-when box with no command or no result, a bare `#123` in a draft, and a routing field on a parent. A Task has all eight routing fields or `Agent` `Owner` alone. A Bug or Feature has all eight or none. |
 | `check <folder> --coverage` | A read-only report. It notes a parent whose Outcome has more list items than the parent has children, a task with more than 10 Steps, a task or bug with no builder or no reviewer, and a reviewer that runs on the builder's model. |
-| `apply` | Checks the file sections from the config. Puts each Bug and each Feature with no children in Triage, and each other new issue with no status in Todo. Adds initiatives to the portfolio project named in `plan.toml`. A project with no Status option Triage stops it, and the message says to run `taskrock setup`. |
+| `apply` | Checks the file sections from the config. Puts each Bug and each Feature with no children in Triage, and each other new issue with no status in Todo, with the line `status: #<number> <status>`. It reads the statuses again after a pause and sets Triage once more where the "Item added to project" workflow set Todo. Adds initiatives to the portfolio project named in `plan.toml`, with the line `portfolio: added #<number>`. A project with no Status option Triage stops it, and so does a `portfolio` key that matches no portfolio project. Both messages say to run `taskrock setup`. `--dry-run` prints `would set <key> to Triage` and `would add <key> to portfolio <portfolio key>`. |
 | `ready` | Lists a task whose body breaks the build sections of its type under problems, and leaves it out of the ready list. Warns when two ready tasks name the same file in Decisions already made. Accepts Feature. Refuses a portfolio link. |
 | `claim` | Refuses a task whose body breaks its build sections. |
 | `release --note <file>` | Posts a handoff comment first, then gives the task back. The note has the sections Done, Verified, State and Next step. The comment starts with `_Written by an agent._`. |
