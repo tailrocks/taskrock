@@ -26,6 +26,9 @@ pub enum Error {
     /// A draft that breaks the check rules.
     #[error("{0} problems in the draft")]
     Check(usize),
+    /// A config file taskrock cannot read or find.
+    #[error("{0}")]
+    Config(String),
     /// GitHub refuses to create an issue.
     #[error("{0}")]
     Apply(String),
