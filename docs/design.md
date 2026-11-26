@@ -20,8 +20,8 @@ This page keeps each choice together with the option that was rejected and the r
 - **Task.** A title and five sections: Outcome, Decisions already made, Steps, Done when, Out of scope. Done when is a checklist. Each box is a real command with its expected result. Each type has its own sections, set in the config file of the organization.
 - **Config.** One file for each organization, `<owner>/.github/taskrock.toml`. It holds the routing blocks, the issue formats, the projects with their repositories, workflows and shared milestones. The views of each kind of project are fixed by the tool. `taskrock setup` makes GitHub match it.
 - **Owner task.** An ordinary issue with Agent set to `Owner`. It blocks the tasks that wait on it.
-- **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, a body that has the build sections of its type, and no branch `feat/issue-<number>`.
-- **Claim.** The branch `feat/issue-<number>` on GitHub, then the status "In Progress".
+- **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, a body that has the build sections of its type, and no branch `feat/issue-<number>`. With `--stacked`, `ready` also lists a task whose open blockers form one stack: each is In Progress with an open pull request from its branch. The entry names the branch to start from.
+- **Claim.** The branch `feat/issue-<number>` on GitHub, then the status "In Progress". `claim --stacked` creates the branch from the branch of the top blocker instead of the default branch, and records that base in a comment on the task.
 - **Giving a task back.** The status returns to "Todo" and the branch is renamed or deleted. A handoff note can be posted first.
 - **Draft.** A folder that holds a plan before it exists on GitHub. Each file is one issue. Parents and blockers name keys, so the draft is complete before any issue exists. A parent or blocker may also be a full link to an issue that already exists, and `plan.toml` may name a milestone for every issue it creates. This files an issue inside a goal in one step.
 - **Roles.** The manager hands out tasks, starts the reviewer, posts the verdict and merges. The builder builds one task. The reviewer checks one pull request.
@@ -72,11 +72,19 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 ### Nothing is built before a claim
 
-**Chosen.** A builder writes code only for an issue that `taskrock claim` took: Status In Progress and the branch `feat/issue-<number>` on GitHub. A blocked task waits until its blockers close. An issue in Triage is built only after `taskrock-triage` set it to Todo.
+**Chosen.** A builder writes code only for an issue that `taskrock claim` took: Status In Progress and the branch `feat/issue-<number>` on GitHub. A blocked task waits until its blockers close, or until the manager takes it with `taskrock claim --stacked`. An issue in Triage is built only after `taskrock-triage` set it to Todo.
 
-**Rejected.** Building a blocked task early on the branch of its blocker, with or without a `claim --early`. Building fixes in local worktrees before the issue is claimed.
+**Rejected.** Building a blocked task early on the branch of its blocker without a claim. A `claim --early` that takes a task whose blocker has no open pull request. Building fixes in local worktrees before the issue is claimed.
 
-**Reason.** The Status is the only record of the work. Work that GitHub does not show is invisible to the other agents and to the owner. A task built on an open blocker's branch is a stacked pull request, which this design rejects, and a review fix of the blocker can undo it.
+**Reason.** The Status is the only record of the work. Work that GitHub does not show is invisible to the other agents and to the owner. A stacked task is claimed like any other task, so GitHub shows it. Version 0.2.1 rejected stacked pull requests. The owner reversed that in [#139](https://github.com/tailrocks/taskrock/issues/139) to finish plans faster. See the next section.
+
+### A stacked task starts from its blocker's branch
+
+**Chosen.** `taskrock claim --stacked` takes a Todo task whose open blockers form one stack. Each open blocker is in the same repository, is In Progress, and has an open pull request from `feat/issue-<blocker>`. With several open blockers, one of them must have all the others below it, following the base branches of the pull requests. The task's branch starts from the branch of that top blocker. The goal skill merges a pull request only when its base is the default branch. Before it merges one, it retargets every open pull request whose base is its branch to the default branch. The builder of each retargeted task then merges the default branch, and the task is reviewed again. A stacked task is still one branch and one pull request.
+
+**Rejected.** Two open blockers that are not one stack: the pull request would need two bases. Merging the branches of several blockers into one base branch. Retargeting after the merge, or leaving it to GitHub. Rebasing a stacked branch with a force push.
+
+**Reason.** The owner asked for stacked pull requests in [#139](https://github.com/tailrocks/taskrock/issues/139) on 2026-11-27, to finish plans faster. This reverses the rejection of 0.2.1. A pull request has exactly one base, so a task can start from one chain only. A plan often names a blocker twice, directly and through another blocker that is stacked on it, and the chain rule accepts that case. In a sandbox test, deleting the base branch after a squash merge closed the stacked pull request, and it cannot be reopened. The repositories delete a head branch on merge, so the goal retargets first. Merging the default branch after the base merged left only the task's own change in the diff, with no force push. See [facts](facts.md).
 
 ### Facts live in native GitHub features
 
@@ -112,7 +120,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 ### A branch on GitHub is the claim
 
-**Chosen.** `taskrock claim` creates the branch `feat/issue-<number>`. Only then does it set the status. A task can be taken only when it is open, has no children, has status "Todo", has no open blocker and is not an owner task.
+**Chosen.** `taskrock claim` creates the branch `feat/issue-<number>`. Only then does it set the status. A task can be taken only when it is open, has no children, has status "Todo", has no open blocker, or with `--stacked` open blockers that form one stack, and is not an owner task.
 
 **Rejected.** An assignee. A "taken by" comment. The status alone, which cannot be the claim because a status check and a write can race.
 
@@ -160,7 +168,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 ### A task is one session, one branch and one pull request
 
-**Chosen.** A task is one session of work, one branch and one pull request. It is a narrow path through every layer that can be proven alone.
+**Chosen.** A task is one session of work, one branch and one pull request. It is a narrow path through every layer that can be proven alone. A stacked task is also one branch and one pull request. Only its base differs until its blocker merges.
 
 **Rejected.** No other option was recorded.
 

@@ -110,8 +110,8 @@ The owner works in three ways, each through a skill of the plugin `taskrock`. Al
 | --- | --- |
 | `check` | Check a draft or a `taskrock.toml` file against the rules. Uses no network. `--config <file>` reads the issue formats from a config file. `--coverage` prints a read-only report on a draft |
 | `apply` | Create the plan of a draft on GitHub. `parent` and `blocked_by` in a draft may be a full issue link to an issue that already exists, so one step files a Bug under an existing epic. `milestone` in `plan.toml` sets a milestone on every created issue |
-| `ready` | List the tasks that can start now, and the issues waiting in Triage. `--json` prints them as a `triage` list |
-| `claim` | Take a task |
+| `ready` | List the tasks that can start now, and the issues waiting in Triage. `--json` prints them as a `triage` list. `--stacked` also lists a task whose blockers' pull requests are open, with the branch to start from |
+| `claim` | Take a task. `--stacked` starts it from the branch of its blocker's open pull request |
 | `release` | Give a task back. `--note <file>` posts a handoff comment first |
 | `setup` | Make GitHub match the `taskrock.toml` of an organization. `--file <path>` reads a local copy, `--dry-run` changes nothing |
 | `template` | Print an empty body with the file sections of an issue type |
