@@ -101,6 +101,25 @@ pub(super) fn titles(draft: &Draft, out: &mut Vec<Finding>) {
         if count == 0 || count > 256 {
             let message = "the title must have 1 to 256 characters".to_owned();
             out.push(at(issue, message));
+        } else if let Some(message) = title_start(issue) {
+            out.push(at(issue, message.to_owned()));
         }
     }
+}
+
+/// The problem with the first characters of a title, if any. A title may start with
+/// the repository name, as written in `owner/name`, when a space, `:` or the end follows.
+fn title_start(issue: &DraftIssue) -> Option<&'static str> {
+    let title = &issue.title;
+    if title.starts_with(char::is_whitespace) {
+        return Some("the title starts with a space");
+    }
+    if !title.starts_with(|c: char| c.is_ascii_lowercase()) {
+        return None;
+    }
+    let name = issue.repo.rsplit('/').next().unwrap_or_default();
+    let named = title
+        .strip_prefix(name)
+        .is_some_and(|rest| rest.is_empty() || rest.starts_with([' ', ':']));
+    (!named).then_some("the title starts with a lowercase letter. Start with a capital letter or put the code name in backticks")
 }

@@ -14,6 +14,8 @@ use self::graph::{
 
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod title_tests;
 
 mod body;
 mod graph;
