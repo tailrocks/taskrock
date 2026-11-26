@@ -57,7 +57,7 @@ pub fn send(
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails or the answer has a non-empty
+/// Returns [`Error::Gh`] when `gh` fails (its messages joined by `; `) or the answer has a non-empty
 /// `errors` array (the messages joined by `; `), [`Error::Json`] when the
 /// output is not JSON.
 pub fn graphql(
@@ -66,7 +66,9 @@ pub fn graphql(
     variables: &serde_json::Value,
 ) -> Result<serde_json::Value, Error> {
     let input = serde_json::json!({"query": query, "variables": variables}).to_string();
-    let stdout = gh.run(&["api", "graphql", "--input", "-"], Some(&input))?;
+    let stdout = gh
+        .run(&["api", "graphql", "--input", "-"], Some(&input))
+        .map_err(graphql_failure)?;
     let mut answer = parse(&stdout)?;
     let errors = answer
         .get("errors")
@@ -90,6 +92,23 @@ pub fn graphql(
     Ok(answer
         .get_mut("data")
         .map_or(serde_json::Value::Null, serde_json::Value::take))
+}
+
+/// The real `gh` exits 1 when the answer has `errors`, prints each message on
+/// its own line of stderr and the first one after `gh: `. This gives the
+/// messages in the same shape as the `errors` array branch of [`graphql`].
+fn graphql_failure(error: Error) -> Error {
+    match error {
+        Error::Gh { stderr, .. } => {
+            let text = stderr.strip_prefix("gh: ").unwrap_or(&stderr);
+            let messages: Vec<&str> = text.lines().filter(|line| !line.is_empty()).collect();
+            Error::Gh {
+                args: "api graphql".to_owned(),
+                stderr: messages.join("; "),
+            }
+        }
+        other => other,
+    }
 }
 
 /// True when `error` is `Error::Gh` and its text contains `(HTTP <code>)`.
