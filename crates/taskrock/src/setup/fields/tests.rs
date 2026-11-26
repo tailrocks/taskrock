@@ -7,7 +7,8 @@ use serde_json::{Value, json};
 use super::{routing_fields, wanted};
 
 mod update;
-use crate::config::{self, Config, Model};
+mod wanted;
+use crate::config::{self, Config};
 use crate::error::Error;
 use crate::gh::FakeGh;
 use crate::setup::Run;
@@ -62,44 +63,6 @@ pub(super) fn complete(config: &Config) -> Vec<Value> {
 }
 
 #[test]
-fn wanted_lists_the_options_of_the_eight_fields() {
-    let list = wanted(&good());
-    let fields: Vec<&str> = list.iter().map(|(name, _)| *name).collect();
-    assert_eq!(
-        fields,
-        [
-            "Agent",
-            "Review agent",
-            "Runtime",
-            "Review runtime",
-            "Model",
-            "Review model",
-            "Effort",
-            "Review effort"
-        ]
-    );
-    assert_eq!(names(&list[0].1), ["Owner", "builder"]);
-    assert_eq!(names(&list[1].1), ["builder", "reviewer"]);
-    assert_eq!(names(&list[3].1), ["claude", "codex"]);
-    assert_eq!(names(&list[5].1), ["small"]);
-    assert_eq!(names(&list[7].1), ["low", "high"]);
-}
-
-#[test]
-fn wanted_efforts_keep_first_appearance_without_repeats() {
-    let mut config = good();
-    config.routing.models.push(Model {
-        name: "big".to_owned(),
-        runtimes: vec!["claude".to_owned()],
-        efforts: vec!["high".to_owned(), "max".to_owned()],
-        usage: String::new(),
-    });
-    let list = wanted(&config);
-    assert_eq!(names(&list[6].1), ["low", "high", "max"]);
-    assert_eq!(names(&list[4].1), ["small", "big"]);
-}
-
-#[test]
 fn missing_fields_are_created_with_graphql() {
     let mut gh = FakeGh::new()
         .ok("issue-fields", "[]")
@@ -116,7 +79,7 @@ fn missing_fields_are_created_with_graphql() {
     let input = calls[2].1.clone().expect("input");
     let sent: Value = serde_json::from_str(&input).expect("json");
     assert!(sent["query"].as_str().expect("query").contains(
-        r#"options:[{name:"Owner",color:GRAY,priority:1},{name:"builder",color:GRAY,priority:2}]"#
+        r#"options:[{name:"Owner",color:GRAY,priority:1},{name:"tailrocks-systems-engineer",color:GRAY,priority:2}]"#
     ));
     assert_eq!(sent["variables"]["o"], "O_1");
     assert_eq!(sent["variables"]["n"], "Agent");
