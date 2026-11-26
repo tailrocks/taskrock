@@ -62,6 +62,22 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 **Reason.** A kept draft becomes a second copy that goes stale. The marker replaces a stored map of IDs, and a listing is not search, which lags. The front matter is TOML between `+++` lines because the `toml` crate is already used in the tailrocks Rust tools and this avoids a YAML dependency. A draft is checked offline for blocker cycles, valid routing, required sections, body size and the limits of GitHub: 100 children for a parent and eight levels.
 
+### An issue filed while a goal is built goes under the goal
+
+**Chosen.** A Bug, a follow-up task, a task for the owner or a retro that is filed while a goal is built comes from a one-file draft. Its `parent` is a link under the goal, and `plan.toml` gives it the goal's milestone. `ready` lists the Triage items under the link. The goal skill triages them, builds them, and stops only when the goal's milestone has no open issue.
+
+**Rejected.** Friction Bugs with no parent and no milestone that wait in Triage outside the goal. A separate `gh issue edit --parent` call after `apply`.
+
+**Reason.** In the 0.2.0 build, six Bugs that reviewers filed stayed in Triage with no parent. `ready` with the initiative link never saw them, and the initiative closed as done. A second call after `apply` is a step that an agent skips.
+
+### Nothing is built before a claim
+
+**Chosen.** A builder writes code only for an issue that `taskrock claim` took: Status In Progress and the branch `feat/issue-<number>` on GitHub. A blocked task waits until its blockers close. An issue in Triage is built only after `taskrock-triage` set it to Todo.
+
+**Rejected.** Building a blocked task early on the branch of its blocker, with or without a `claim --early`. Building fixes in local worktrees before the issue is claimed.
+
+**Reason.** The Status is the only record of the work. Work that GitHub does not show is invisible to the other agents and to the owner. A task built on an open blocker's branch is a stacked pull request, which this design rejects, and a review fix of the blocker can undo it.
+
 ### Facts live in native GitHub features
 
 **Chosen.** Kind of work is the issue type. Breakdown is sub-issues. Order is blocked-by links. Routing is issue fields. Status is the project's Status.

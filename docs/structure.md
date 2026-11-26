@@ -1,6 +1,6 @@
 # Structure
 
-taskrock is one Rust crate at `crates/taskrock`. It holds a library and the `taskrock` command line. The agent skills that call the command live in a second repository, `tailrocks/taskrock-plugins`, and the GitHub organization holds the issue types, fields and projects that the command reads and writes. The command makes the organization match one config file, as [setup](setup.md) describes. This page shows where each part lives and how one piece of work moves through them. It describes version 0.2.0 as of 2026-12.
+taskrock is one Rust crate at `crates/taskrock`. It holds a library and the `taskrock` command line. The agent skills that call the command live in a second repository, `tailrocks/taskrock-plugins`, and the GitHub organization holds the issue types, fields and projects that the command reads and writes. The command makes the organization match one config file, as [setup](setup.md) describes. This page shows where each part lives and how one piece of work moves through them. It describes version 0.2.1 as of 2026-12.
 
 ## The parts
 

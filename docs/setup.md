@@ -1,6 +1,6 @@
 # Setup
 
-This page describes version 0.2.0.
+This page describes version 0.2.1.
 
 taskrock is one system of three parts: the skills, the `taskrock` command and plain `gh`. Version 0.2.0 adds what makes it complete for an organization:
 
@@ -89,15 +89,15 @@ report ──► Triage ──► Todo ──► In Progress ──► Done
 
 | Move | Who | How |
 |---|---|---|
-| A Bug or Feature is filed | any agent or the owner, through a skill | `taskrock template <type>`, a one-file draft, `apply`. Status Triage. |
+| A Bug or Feature is filed | any agent or the owner, through a skill | `taskrock template <type>`, a one-file draft whose `parent` is a link under the goal and whose `plan.toml` has the goal's `milestone`, `apply`. Status Triage. |
 | Triage → Todo | `taskrock-triage` | checks, reproduces, fills the build sections and routing, sets Todo |
 | Triage → closed | `taskrock-triage` | duplicate, cannot reproduce, already built or rejected: closed as not planned with the reason |
 | Needs information | `taskrock-triage` | stays in Triage with a comment "Established / Still needed" |
 | A planned issue is created | `taskrock-plan` | straight to Todo |
-| Todo → In Progress | `taskrock claim` | as in 0.1.0 |
+| Todo → In Progress | `taskrock claim` | the only way work starts. No code is written for an issue that is not In Progress with its branch `feat/issue-<number>` on GitHub. |
 | → Done | the "Pull request merged" workflow | the manager closes a parent when all its children are closed |
 
-`ready` builds only Todo, so nothing in Triage is built by mistake. It still lists the Triage items apart, under `TRIAGE`, so a manager can see them. Every friction an agent meets while building is filed as a Bug in Triage.
+`ready` builds only Todo, so nothing in Triage is built by mistake. It still lists the Triage items apart, under `TRIAGE`, so a manager can see them. Every issue that an agent files while a goal is built (a deferred finding, a friction, a task for the owner) goes under the goal with the goal's milestone. The goal triages it, builds it, and is not done while it is open.
 
 ### Formats
 
@@ -117,6 +117,7 @@ Rules:
 - A section that does not apply says `None.` and the reason. An empty section is a problem.
 - **Done when** is a checklist. Each box is a command in backticks and the result it must show. `check` refuses a box with no command or no result. A command must be able to fail.
 - A bare `#123` in a body is a problem. Name the key of the issue instead.
+- A title starts with a capital letter, a digit or a code span in backticks. A lowercase letter is allowed only for the name of the repository, as in "taskrock 0.2.1: …".
 - A Bug's **How to reproduce** is a command and its failing output. Its Done when includes that command passing and a regression test that failed before the fix.
 - After a task is In Progress, Outcome, Decisions already made and Out of scope are frozen. Only `taskrock edit --replan` changes them.
 
@@ -298,13 +299,13 @@ A workflow set to `false` is deleted for good with `--yes`, with the line `delet
 
 ## 7. The skills
 
-All skills read the config. No skill calls `gh issue create` or `gh issue edit --body`. `scripts/check.py` in taskrock-plugins fails when a skill names either. The version check asks for 0.2.0.
+All skills read the config. No skill calls `gh issue create` or `gh issue edit --body`. `scripts/check.py` in taskrock-plugins fails when a skill names either. The version check asks for 0.2.1. A skill builds an issue only after taskrock claim took it, and never builds an issue in Triage.
 
 | Skill | What it does |
 |---|---|
-| `taskrock-plan` | Asks its questions in rounds, each multiple choice with a recommended answer. Finds facts by running commands and never asks them. Reviews its own tree before it shows it. Writes Done-when boxes as commands that can fail. Splits a wide change into prefactor, expand, migrate and contract. Gives each parent Not yet specified and Decisions so far. Takes routing only from the config blocks, with `use` guiding the model choice. Picks the delivery project from the config. |
-| `taskrock-issue` | Reads the issue's comments first. Merges the default branch and reruns Done when before the pull request. Ends with DONE, BLOCKED or TASK_WRONG. Uses `taskrock release --note` when it stops. |
-| `taskrock-goal` | The verdict names the commit: `VERDICT: PASS head=<sha>`. Only findings that the reviewer reproduced count, and each is routed as a fix, a decision (an owner task) or a deferral (a Bug in Triage). It allows at most `review.max_rounds` failed reviews, then makes an owner task. No reviewer available means no merge. When an epic closes, it makes an owner task with the repeated failures and proposed `AGENTS.md` edits. It appends Decisions so far to parents. |
+| `taskrock-plan` | Asks its questions in rounds, each multiple choice with a recommended answer. Finds facts by running commands and never asks them. Reviews its own tree before it shows it. Writes Done-when boxes as commands that can fail. Splits a wide change into prefactor, expand, migrate and contract. Gives each parent Not yet specified and Decisions so far. Takes routing only from the config blocks, with `use` guiding the model choice. Picks the delivery project from the config. It counts filed Bugs in the Done when of an initiative, and ends by naming the skill that builds the plan. |
+| `taskrock-issue` | Reads the issue's comments first. Merges the default branch and reruns Done when before the pull request. Ends with DONE, BLOCKED or TASK_WRONG. Uses `taskrock release --note` when it stops. It files a friction under the parent of its task, with the task's milestone. |
+| `taskrock-goal` | The verdict names the commit: `VERDICT: PASS head=<sha>`. Only findings that the reviewer reproduced count, and each is routed as a fix, a decision (an owner task) or a deferral (a Bug in Triage). It allows at most `review.max_rounds` failed reviews, then makes an owner task. No reviewer available means no merge. When an epic closes, it makes an owner task with the repeated failures and proposed `AGENTS.md` edits. It appends Decisions so far to parents. It files every issue under the goal with the goal's milestone, sweeps the Triage items of the goal before it stops, and says that the work is done only when the goal's milestone has no open issue. |
 | `taskrock-triage` | Checks for an existing implementation, reproduces a bug and searches closed requests. A report that needs information stays in Triage with a comment and no label. A rejected request is closed as not planned with the reason. Agent comments say an agent wrote them. |
 | `taskrock-setup` | Interviews the owner in rounds with recommended answers, reading the facts of the organization with `gh api`. Offers only runtimes and models found on the machine. Writes the config, opens the pull request to `<owner>/.github`, runs `taskrock setup --dry-run`, then `taskrock setup` after approval. |
 

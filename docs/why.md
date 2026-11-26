@@ -54,8 +54,8 @@ The planner uses the strongest model. It writes each task so that a weaker model
 One person who directs several agents. The agents run in several agent CLIs and work in more than one GitHub organization. The owner uses taskrock in three ways:
 
 - **Plan.** Explain the work to the strongest agent and run the plan skill. Approve the breakdown. The agent creates everything on GitHub and prints the links.
-- **Build.** Start a new session in any CLI and type `/goal Implement <link>`. The session works until everything under the link is done or only owner tasks are left.
-- **One task.** Type `Do <link>` in a session.
+- **Build.** Start a new session in any CLI and call the skill `taskrock-goal` with the link: `/taskrock:taskrock-goal <link>` in Claude Code, or `/goal /taskrock:taskrock-goal <link>` to keep it running. The session works until every issue under the link is closed, including the issues filed while it built, or only owner tasks are left.
+- **One task.** Call the skill `taskrock-issue` with the link: `/taskrock:taskrock-issue <link>` in Claude Code. The [README](../README.md) lists the call in each CLI.
 
 ## What it is not
 
