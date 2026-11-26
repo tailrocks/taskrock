@@ -13,6 +13,8 @@ use self::graph::{
 };
 
 #[cfg(test)]
+mod links_tests;
+#[cfg(test)]
 mod tests;
 #[cfg(test)]
 mod title_tests;

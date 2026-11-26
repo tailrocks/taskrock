@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## Unreleased
+
+- `apply`: `parent` and `blocked_by` in a draft may be a full issue link `https://github.com/<owner>/<repo>/issues/<number>`. `check` validates the link.
+
 ## 0.2.0
 
 - The skills moved to the plugin `taskrock` in `tailrocks/taskrock-plugins`, which is its own marketplace for Claude Code, Codex, Grok Build, Muse Code and Antigravity. The package `tailrocks/tailrocks-taskrock-skills` is replaced.

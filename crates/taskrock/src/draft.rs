@@ -8,6 +8,7 @@ mod tests;
 
 pub mod check;
 pub mod coverage;
+pub mod links;
 pub mod parse;
 
 /// One milestone of the plan.
@@ -51,4 +52,14 @@ pub struct DraftIssue {
 pub struct Draft {
     pub plan: Plan,
     pub issues: Vec<DraftIssue>,
+}
+
+impl DraftIssue {
+    /// The key of the parent when it is an issue of the draft, not a link.
+    #[must_use]
+    pub fn draft_parent(&self) -> Option<&str> {
+        self.parent
+            .as_deref()
+            .filter(|parent| !links::is_link(parent))
+    }
 }

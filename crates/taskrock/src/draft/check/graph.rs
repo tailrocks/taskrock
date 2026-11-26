@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use super::Finding;
 use super::{at, by_key, can_be_a_leaf, can_have_children, has_children, keys};
 use crate::config::Config;
-use crate::draft::{Draft, DraftIssue};
+use crate::draft::{Draft, DraftIssue, links};
 
 pub(super) fn duplicates(draft: &Draft, out: &mut Vec<Finding>) {
     let mut files: BTreeMap<&str, Vec<&DraftIssue>> = BTreeMap::new();
@@ -36,9 +36,9 @@ pub(super) fn parents(draft: &Draft, out: &mut Vec<Finding>) {
     for issue in &draft.issues {
         if let Some(parent) = &issue.parent
             && !known.contains(parent.as_str())
+            && links::parse(parent).is_none()
         {
-            let message = format!("parent {parent} is not a key in this draft");
-            out.push(at(issue, message));
+            out.push(at(issue, not_found("parent", parent)));
         }
     }
 }
@@ -47,11 +47,22 @@ pub(super) fn blockers(draft: &Draft, out: &mut Vec<Finding>) {
     let known = keys(draft);
     for issue in &draft.issues {
         for blocker in &issue.blocked_by {
-            if !known.contains(blocker.as_str()) {
-                let message = format!("blocker {blocker} is not a key in this draft");
-                out.push(at(issue, message));
+            if !known.contains(blocker.as_str()) && links::parse(blocker).is_none() {
+                out.push(at(issue, not_found("blocker", blocker)));
             }
         }
+    }
+}
+
+/// The message for a `parent` or `blocked_by` value that is neither a key of
+/// the draft nor an issue link.
+fn not_found(word: &str, value: &str) -> String {
+    if links::is_link(value) || value.starts_with("http://") {
+        format!(
+            "{word} {value} is not an issue link like https://github.com/<owner>/<repo>/issues/<number>"
+        )
+    } else {
+        format!("{word} {value} is not a key in this draft")
     }
 }
 

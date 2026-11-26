@@ -33,7 +33,7 @@ pub(super) fn add_to_project(
         return Ok(draft
             .issues
             .iter()
-            .filter(|issue| issue.parent.is_none())
+            .filter(|issue| issue.draft_parent().is_none())
             .map(|issue| format!("would add {} to project", issue.key))
             .collect());
     }
@@ -75,7 +75,7 @@ fn parentless_missing<'a>(
 ) -> Result<Vec<&'a DraftIssue>, Error> {
     let mut missing = Vec::new();
     for issue in &draft.issues {
-        if issue.parent.is_none() && !present(found, issue, items)? {
+        if issue.draft_parent().is_none() && !present(found, issue, items)? {
             missing.push(issue);
         }
     }

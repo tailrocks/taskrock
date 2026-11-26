@@ -7,6 +7,7 @@ use serde_json::{Map, Value};
 use crate::apply::Created;
 use crate::apply::marker::marker;
 use crate::apply::split_repo;
+use crate::draft::links::is_link;
 use crate::draft::{Draft, DraftIssue};
 use crate::error::Error;
 use crate::fields::ROUTING;
@@ -30,8 +31,7 @@ pub(super) fn creation_order(draft: &Draft) -> Vec<&DraftIssue> {
                 continue;
             }
             let ready = issue
-                .parent
-                .as_deref()
+                .draft_parent()
                 .is_none_or(|parent| done.contains(parent));
             if ready {
                 done.insert(issue.key.as_str());
@@ -48,6 +48,16 @@ pub(super) fn creation_order(draft: &Draft) -> Vec<&DraftIssue> {
         }
     }
     ordered
+}
+
+/// The lines a dry run prints for an issue it would create.
+#[must_use]
+pub(super) fn would_create(issue: &DraftIssue) -> Vec<String> {
+    let mut lines = vec![format!("would create {} {}", issue.key, issue.title)];
+    if let Some(parent) = issue.parent.as_deref().filter(|parent| is_link(parent)) {
+        lines.push(format!("would set parent of {} to {parent}", issue.key));
+    }
+    lines
 }
 
 /// Creates `issue` on GitHub.

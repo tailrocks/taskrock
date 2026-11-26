@@ -69,7 +69,7 @@ There are three kinds of tests.
 - Integration tests sit in `crates/taskrock/tests/`. `cli.rs` runs the built binary with `--version`, with `--help` and with no argument. `ready.rs` runs `ready::run` against the fixtures through `FakeGh`. `check_config.rs` runs `taskrock check` on a config file.
 - Live tests are the five files whose names start with `sandbox_`. They call GitHub. Each test has the attribute `#[ignore = "talks to GitHub"]`, so a normal test run skips it. The live tests of apply and claim write to `tailrocks/taskrock-sandbox`. The live test of setup, `sandbox_setup.rs`, runs `taskrock setup` twice on the sandbox project and expects no change the second time.
 
-The folder `crates/taskrock/fixtures/` holds the JSON answers of GitHub for the project tests, `project_fields.json` and `project_items.json`. It also holds four draft folders. `draft-good` is read by the draft and check tests. `draft-triage` has a Task and a Bug, for the tests of the statuses that `apply` sets. `draft-portfolio` has an Initiative and a `portfolio` key in its `plan.toml`, for the tests of the portfolio step. `draft-bad` holds files that break the rules. No test reads it by name. The config fixtures are `config-good.toml`, a complete config that passes `check`, `config-bad.toml`, which breaks three rules, and `config-sandbox.toml`, the config that the live test of setup applies to the sandbox project.
+The folder `crates/taskrock/fixtures/` holds the JSON answers of GitHub for the project tests, `project_fields.json` and `project_items.json`. It also holds five draft folders. `draft-good` is read by the draft and check tests. `draft-triage` has a Task and a Bug, for the tests of the statuses that `apply` sets. `draft-portfolio` has an Initiative and a `portfolio` key in its `plan.toml`, for the tests of the portfolio step. `draft-links` has one Task whose `parent` and `blocked_by` are links to issues that already exist, for the tests of those links. `draft-bad` holds files that break the rules. No test reads it by name. The config fixtures are `config-good.toml`, a complete config that passes `check`, `config-bad.toml`, which breaks three rules, and `config-sandbox.toml`, the config that the live test of setup applies to the sandbox project.
 
 ## A draft
 
@@ -86,6 +86,8 @@ agent = "tailrocks-systems-engineer"
 +++
 ## Outcome
 ```
+
+`parent` and `blocked_by` name a key of the draft, or an issue that already exists as a full link `https://github.com/<owner>/<repo>/issues/<number>`. `check` validates the shape of a link. `apply` reads the issue of a link with `GET repos/<owner>/<repo>/issues/<number>` for its `id` and then creates the new issue as its sub-issue, or blocks it by the issue, with the calls it uses for keys. This files a Bug under an epic that is already on GitHub in one step.
 
 The issue keys are `key`, `title`, `type`, `repo`, `parent`, `blocked_by`, `milestone`, `agent`, `runtime`, `model`, `effort`, `review_agent`, `review_runtime`, `review_model` and `review_effort`. The type is `Initiative`, `Epic`, `Task`, `Bug` or `Feature`. The sections of the body come from the config. By default a task has `Outcome`, `Decisions already made`, `Steps`, `Done when` and `Out of scope`, and a bug has `What happens`, `Expected`, `How to reproduce` and `Environment`. [Setup](setup.md) lists the sections of each type. A checklist section needs at least one checkbox, and each box needs a command and its result.
 
