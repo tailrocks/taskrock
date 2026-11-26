@@ -140,6 +140,16 @@
               "doctest": false,
               "source": "crates/taskrock/tests/sandbox_setup.rs",
               "requires_features": false
+            },
+            {
+              "name": "sandbox_stacked",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_stacked.rs",
+              "requires_features": false
             }
           ]
         }
