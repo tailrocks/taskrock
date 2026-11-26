@@ -2,7 +2,7 @@
 
 taskrock keeps all work on GitHub and adds a small Rust tool only where `gh` is weak. A plan is written once as a draft, applied to GitHub, and then lives only there. Agents build and review the tasks. Who does what is stored in issue fields, and the owner approves the plan before anything is created.
 
-This page keeps each choice together with the option that was rejected and the reason. The problem behind the project is in [why](why.md). The parts of the project are in [structure](structure.md). Facts that were proven by test are in [facts](facts.md).
+This page keeps each choice together with the option that was rejected and the reason. The problem behind the project is in [why](why.md). The parts of the project are in [structure](structure.md). The setup of an organization, its config file and its issue formats are in [setup](setup.md). Facts that were proven by test are in [facts](facts.md).
 
 ## Principles
 
@@ -14,17 +14,19 @@ This page keeps each choice together with the option that was rejected and the r
 
 ## The model
 
-- **Issue types.** Initiative, Epic, Task and Bug. Depth is free, up to the eight levels of GitHub. Only an issue with no children is built.
-- **Routing fields.** Eight issue fields on each task. Agent, Runtime, Model and Effort say who builds. Review agent, Review runtime, Review model and Review effort say who reviews before the merge. Agent holds a role.
-- **Task.** A title and five sections: Outcome, Decisions already made, Steps, Done when, Out of scope. Done when is a checklist. Each box is a real command with its expected result.
+- **Issue types.** Initiative, Epic, Task, Bug and Feature. Depth is free, up to the eight levels of GitHub. Only an issue with no children is built. A Bug or Feature is a report: it starts in Triage and is built after triage.
+- **Status.** Triage, Todo, In Progress and Done. Reported issues start in Triage, planned issues in Todo.
+- **Routing fields.** Eight issue fields on each task. Agent, Runtime, Model and Effort say who builds. Review agent, Review runtime, Review model and Review effort say who reviews before the merge. Agent holds a subagent name from the config.
+- **Task.** A title and five sections: Outcome, Decisions already made, Steps, Done when, Out of scope. Done when is a checklist. Each box is a real command with its expected result. Each type has its own sections, set in the config file of the organization.
+- **Config.** One file for each organization, `<owner>/.github/taskrock.toml`. It holds the routing blocks, the issue formats, the projects with their repositories, workflows and shared milestones. The views of each kind of project are fixed by the tool. `taskrock setup` makes GitHub match it.
 - **Owner task.** An ordinary issue with Agent set to `Owner`. It blocks the tasks that wait on it.
-- **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, and no branch `feat/issue-<number>`.
+- **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, a body that has the build sections of its type, and no branch `feat/issue-<number>`.
 - **Claim.** The branch `feat/issue-<number>` on GitHub, then the status "In Progress".
-- **Giving a task back.** The status returns to "Todo" and the branch is renamed or deleted.
+- **Giving a task back.** The status returns to "Todo" and the branch is renamed or deleted. A handoff note can be posted first.
 - **Draft.** A folder that holds a plan before it exists on GitHub. Each file is one issue. Parents and blockers name keys, so the draft is complete before any issue exists.
 - **Roles.** The manager hands out tasks, starts the reviewer, posts the verdict and merges. The builder builds one task. The reviewer checks one pull request.
 
-The [README](../README.md) lists the five commands. The three skills hold the steps that use them.
+The [README](../README.md) lists the eight commands. The skills hold the steps that use them.
 
 ## Choices and what was rejected
 
@@ -38,11 +40,11 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 ### A small custom tool, and plain `gh` for the rest
 
-**Chosen.** Five commands: `check`, `apply`, `ready`, `claim`, `release`. Each does what `gh` cannot do or does badly.
+**Chosen.** Eight commands: `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template` and `edit`. Each does what `gh` cannot do or does badly.
 
-**Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Five commands are enough, because `gh` does the rest.
+**Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Eight commands are enough, because `gh` does the rest.
 
-**Reason.** `gh` has no flag for issue fields, and it cannot select children of children. It cannot check a plan. GitHub accepts a blocker cycle of three issues, and the draft check finds it. A claim needs its calls in a fixed order and an undo. A plan needs a rerun that creates nothing twice. Reading routing fields by name and writing them with their IDs works with one REST call, so `show`, `set` and account setup became `gh` commands. Commands for blockers and for moving became `gh issue edit`. The tool calls `gh` for every request, so there is one login and one client.
+**Reason.** `gh` has no flag for issue fields, and it cannot select children of children. It cannot check a plan. GitHub accepts a blocker cycle of three issues, and the draft check finds it. A claim needs its calls in a fixed order and an undo. A plan needs a rerun that creates nothing twice. Reading routing fields by name and writing them with their IDs works with one REST call, so `show` and `set` became `gh` commands. Account setup became `taskrock setup`, because the options of an issue field and the views of a project need calls in a fixed order that a script got wrong. Commands for blockers and for moving became `gh issue edit`. The tool calls `gh` for every request, so there is one login and one client.
 
 ### The tool uses the REST API, not GraphQL and not search
 
@@ -50,7 +52,7 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Rejected.** GraphQL for the tool, with paging. The search API for listing and for finding issues.
 
-**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The tool makes one GraphQL call, `project_of`, to find the project of an issue. The one-time account setup script also uses GraphQL, to create issue types and fields.
+**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The tool reads GraphQL in a few places. `project_of` finds the project of an issue, for `claim`, `release`, `ready` and `edit`. `projects::kind_of` reads the kind of a project for `ready` with a project link, and `projects::list` lists the projects of an organization for `apply` with a portfolio key. `taskrock setup` also uses GraphQL, because projects, views and workflows have no REST endpoint.
 
 ### A plan is a draft that is applied and then used up
 
@@ -74,15 +76,15 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Rejected.** `model:`, `exec:` and `effort:` labels. Project fields. Routing as text in the body.
 
-**Reason.** The three existing trackers recorded the model as a label, as a project field, as body text, or as a mix of these. An issue field is native, is set in the same call that creates the issue, and is read by name through REST. GitHub's default field `Effort` means work size, so an account renames it to `Size` before it gets the routing field `Effort`.
+**Reason.** The three existing trackers recorded the model as a label, as a project field, as body text, or as a mix of these. An issue field is native, is set in the same call that creates the issue, and is read by name through REST. GitHub's default field `Effort` means work size, so `taskrock setup` renames it to `Size` before it creates the routing field `Effort`.
 
 ### Every issue is in a project, and the project is private
 
 **Chosen.** Every issue the tool manages belongs to one project. The status is the Status field of that project.
 
-**Rejected.** Small work as an issue with no project. A public project.
+**Rejected.** Small work as an issue with no project. A public project. A new project as a copy of a template project.
 
-**Reason.** Status needs a project, so an issue without one has no status. GitHub does not allow these fields in a public project. A new project is a copy of a template project, because `gh project copy` keeps the views, the fields and the workflows. The tool has no command that sets up a project.
+**Reason.** Status needs a project, so an issue without one has no status. GitHub does not allow these fields in a public project. `taskrock setup` creates and sets up every project through the API. There is no template project and no copy. See [setup](setup.md).
 
 ### Work for the owner is an ordinary issue
 
@@ -132,13 +134,13 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Reason.** The builder makes no design decision, so a wrong task is a planning error and only a decision-maker can fix it.
 
-### No fixed limit on builders and on fix rounds
+### No limit on builders, and a cap on fix rounds
 
-**Chosen.** Any number of builders and goals run at once. Review and fix repeat while each round fixes something. The cycle ends when the reviewer repeats a finding or the builder and the reviewer disagree. The task then gets an owner issue that blocks it, and is given back.
+**Chosen.** Any number of builders and goals run at once. Fix rounds are capped by `review.max_rounds` in the config, 3 by default. After that many failed reviews, or when the reviewer repeats a finding or the builder and the reviewer disagree, the task gets an owner issue that blocks it, and is given back.
 
-**Rejected.** A cap on builders. A fixed number of fix rounds. Review and fix with no end.
+**Rejected.** A cap on builders. No cap on fix rounds. Review and fix with no end.
 
-**Reason.** Several goals may run at once, as a team of agents, so a cap does not fit. Two tasks that change the same file get a blocker, which is what keeps them from conflicting. On a rate limit the manager waits for the reset, because all agents share one request budget. A round that fixes nothing new means the cycle must end, so it cannot loop forever.
+**Reason.** Several goals may run at once, as a team of agents, so a cap on builders does not fit. Two tasks that change the same file get a blocker, which is what keeps them from conflicting. `ready` also warns when two ready tasks name the same file. On a rate limit the manager waits for the reset, because all agents share one request budget. A round that fixes nothing new means the cycle must end, and a cap makes sure it ends even when each round finds something new.
 
 ### A task is one session, one branch and one pull request
 
@@ -160,11 +162,11 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 **Rejected.** Three crates: a pure core, a GitHub boundary and a thin command-line crate.
 
-**Reason.** Five commands do not need three crates. The layers are modules of one crate instead. See [structure](structure.md).
+**Reason.** Eight commands do not need three crates. The layers are modules of one crate instead. See [structure](structure.md).
 
-### The three skills are self-contained
+### The skills are self-contained
 
-**Chosen.** Three skills that hold the whole path and call no skill of another package.
+**Chosen.** Skills that hold the whole path and call no skill of another package.
 
 **Rejected.** Handing the build to the playbooks of pstack. A fork of pstack. A separate grilling skill for the question round. The pull request skill of another package.
 
@@ -172,7 +174,7 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 
 ### Skills ship as a plugin in their own marketplace repository
 
-**Chosen.** The three skills are the plugin `taskrock` in `tailrocks/taskrock-plugins`. That repository is also the marketplace: its catalog files name the plugin by the local path `./plugins/taskrock`. One skill tree serves five agent CLIs, Claude Code, Codex, Grok Build, Muse Code and Antigravity, each through its own manifest. Every skill first runs `taskrock --version` and stops when the tool is missing or older than it needs. The CI of the plugin installs the released tool and runs `taskrock <command> --help` for each command a skill names.
+**Chosen.** The skills are the plugin `taskrock` in `tailrocks/taskrock-plugins`. That repository is also the marketplace: its catalog files name the plugin by the local path `./plugins/taskrock`. One skill tree serves five agent CLIs, Claude Code, Codex, Grok Build, Muse Code and Antigravity, each through its own manifest. Every skill first runs `taskrock --version` and stops when the tool is missing or older than it needs. The CI of the plugin installs the released tool and runs `taskrock <command> --help` for each command a skill names.
 
 **Rejected.** Skill folders copied by hand into a user folder. A plugin package in its own repository that a shared Tailrocks catalog pins to a commit, which was the layout of 0.1.0. The skills inside the tool repository. A catalog that points into the tool repository with `git-subdir`.
 
@@ -186,4 +188,5 @@ The [README](../README.md) lists the five commands. The three skills hold the st
 - **Moving the existing trackers to this setup.** The tool does not do it.
 - **Projects owned by a personal account.** The tool reads and writes projects of an organization.
 - **A separate GitHub identity for agents.** It would let GitHub notify the owner. It is not part of version 1.
-- **Also left out.** A steering issue for corrections, export and rewrite of issues, bulk changes by query, `tree` and `waiting` commands, a setup skill and an install command.
+- **Also left out.** A steering issue for corrections, export and rewrite of issues, bulk changes by query, and `tree` and `waiting` commands.
+- **What `setup` does not do.** It never deletes a type, field, option, view, link, milestone or project, and it does not copy a project. [Setup](setup.md) lists them.

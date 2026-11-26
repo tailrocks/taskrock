@@ -23,54 +23,75 @@ Install the skills only as a plugin. Do not copy skill folders by hand. Remove t
 
 ## Set up an account
 
-Run it once for each organization. It creates only what is missing.
+Run it once for each organization. The setup reads one file, `taskrock.toml`, that describes how the organization works. It creates only what is missing, so it is safe to run again.
 
-```sh
-#!/usr/bin/env bash
-# Creates the issue types and the eight routing fields of taskrock in one
-# organization. It creates only what is missing, so it is safe to run again.
-set -euo pipefail
-owner="$1"
-owner_id=$(gh api graphql -f query='query($o:String!){organization(login:$o){id}}' -f o="$owner" --jq .data.organization.id)
+A minimal `taskrock.toml`, saved in the repository `<owner>/.github`. It lists the five required issue types, here with the default formats:
 
-have_types=$(gh api "orgs/$owner/issue-types" --jq '.[].name')
-for type in Initiative Epic; do
-  if grep -qx "$type" <<<"$have_types"; then echo "exists  type $type"; continue; fi
-  gh api graphql -f query='mutation($o:ID!,$n:String!){createIssueType(input:{ownerId:$o,name:$n,isEnabled:true}){issueType{name}}}' -f o="$owner_id" -f n="$type" >/dev/null
-  echo "created type $type"
-done
+```toml
+version = 1
 
-roles="tailrocks-systems-engineer tailrocks-mechanic tailrocks-docs-writer tailrocks-code-reviewer"
-runtimes="claude codex agy muse opencode mimo minimax kimi grok"
-models="muse-spark-1.3 muse-ember-1.0 muse-wonder-1.0 muse-wonder-full-1.0"
-efforts="minimal low medium high xhigh max"
+[routing]
+runtimes = ["claude"]
 
-options() { # prints a GraphQL list of options from words
-  local i=0 out="" word
-  for word in "$@"; do i=$((i + 1)); out+="{name:\"$word\",color:GRAY,priority:$i},"; done
-  echo "[${out%,}]"
-}
+[[routing.subagent]]
+name     = "builder"
+runtimes = ["claude"]
+can      = ["build", "review"]
 
-have_fields=$(gh api "orgs/$owner/issue-fields" --jq '.[].name')
-field() { # field <name> <description> <option words...>
-  local name="$1" description="$2"; shift 2
-  if grep -qx "$name" <<<"$have_fields"; then echo "exists  field $name"; return; fi
-  gh api graphql -f query="mutation(\$o:ID!,\$n:String!,\$d:String!){createIssueField(input:{ownerId:\$o,name:\$n,description:\$d,dataType:SINGLE_SELECT,options:$(options "$@")}){issueField{... on IssueFieldSingleSelect{name}}}}" -f o="$owner_id" -f n="$name" -f d="$description" >/dev/null
-  echo "created field $name"
-}
-field "Agent" "Who builds the task: a role, or Owner for work only the owner can do." Owner $roles
-field "Runtime" "The agent CLI that builds the task." $runtimes
-field "Model" "The model that builds the task." $models
-field "Effort" "The reasoning effort of the builder." $efforts
-field "Review agent" "Who reviews the pull request before it merges." $roles
-field "Review runtime" "The agent CLI that reviews the pull request." $runtimes
-field "Review model" "The model that reviews the pull request." $models
-field "Review effort" "The reasoning effort of the reviewer." $efforts
+[[routing.model]]
+name     = "claude-sonnet-5-5"
+runtimes = ["claude"]
+efforts  = ["low", "medium", "high"]
+use      = "The default builder."
+
+[[issue_type]]
+name      = "Initiative"
+file      = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Epic"
+file      = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Task"
+file      = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+build     = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Bug"
+file      = ["What happens", "Expected", "How to reproduce", "Environment"]
+build     = ["What happens", "Expected", "How to reproduce", "Environment", "Cause",
+             "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Feature"
+file      = ["Problem", "Proposed behavior", "Workaround today"]
+build     = ["Problem", "Proposed behavior", "Workaround today",
+             "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[project]]
+key   = "main"
+title = "Main"
+kind  = "delivery"
+repos = ["my-repo"]
 ```
 
-A new project is a copy of a project that already has the fields and the views:
+Check the file, see what would change, then make the change:
 
-`gh project copy <number> --source-owner <owner> --target-owner <owner> --title "<title>"`
+```sh
+taskrock check taskrock.toml
+taskrock setup <owner> --dry-run
+taskrock setup <owner>
+```
+
+`taskrock setup <owner> --file taskrock.toml` reads a local copy. [docs/setup.md](docs/setup.md) describes the file, the issue types, the kinds of project and each step of the setup.
 
 ## Use
 
@@ -80,15 +101,18 @@ The owner works in three ways. To plan, explain the work, then run the skill `ta
 
 | Command | Description |
 | --- | --- |
-| `check` | Check a draft against the rules. Uses no network |
+| `check` | Check a draft or a `taskrock.toml` file against the rules. Uses no network. `--config <file>` reads the issue formats from a config file. `--coverage` prints a read-only report on a draft |
 | `apply` | Create the plan of a draft on GitHub |
 | `ready` | List the tasks that can start now |
 | `claim` | Take a task |
-| `release` | Give a task back |
+| `release` | Give a task back. `--note <file>` posts a handoff comment first |
+| `setup` | Make GitHub match the `taskrock.toml` of an organization. `--file <path>` reads a local copy, `--dry-run` changes nothing |
+| `template` | Print an empty body with the file sections of an issue type |
+| `edit` | Replace the body of an issue after checking it against its type. `--replan` allows a change to the frozen sections |
 
 ## Documentation
 
-The folder [`docs/`](docs/README.md) explains [why taskrock exists](docs/why.md), its [design](docs/design.md) with the options that were rejected, its [structure](docs/structure.md), a [comparison](docs/comparison.md) with the projects that were studied, and the [facts proven by test](docs/facts.md).
+The folder [`docs/`](docs/README.md) explains [why taskrock exists](docs/why.md), its [design](docs/design.md) with the options that were rejected, the [setup](docs/setup.md) of an organization, its [structure](docs/structure.md), a [comparison](docs/comparison.md) with the projects that were studied, and the [facts proven by test](docs/facts.md).
 
 ## Develop
 
