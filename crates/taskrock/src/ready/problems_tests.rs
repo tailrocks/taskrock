@@ -17,3 +17,21 @@ fn triage_item_does_not_trigger_the_cycle_hint() {
     reported.status = Some("Triage".to_owned());
     assert!(!has(&listed(&reported), "blocker cycle"));
 }
+
+#[test]
+fn feature_with_children_is_a_parent_not_a_problem() {
+    let mut parent = item(1);
+    parent.kind = Some("Feature".to_owned());
+    parent.children = 2;
+    assert!(!has(&listed(&parent), "has children"));
+}
+
+#[test]
+fn task_or_bug_with_children_is_still_a_problem() {
+    for kind in ["Task", "Bug"] {
+        let mut parent = item(1);
+        parent.kind = Some(kind.to_owned());
+        parent.children = 2;
+        assert!(has(&listed(&parent), "has children"), "{kind}");
+    }
+}
