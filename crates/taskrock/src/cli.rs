@@ -16,9 +16,9 @@ pub struct Cli {
 /// The commands of taskrock.
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Check a draft against the rules. Uses no network.
+    /// Check a draft or a config file against the rules. Uses no network.
     Check {
-        /// The draft folder.
+        /// The draft folder, or a `taskrock.toml` file.
         draft: PathBuf,
     },
     /// Create the plan of a draft on GitHub.

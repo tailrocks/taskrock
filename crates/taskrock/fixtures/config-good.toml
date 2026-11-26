@@ -1,0 +1,83 @@
+version = 1
+
+[routing]
+runtimes   = ["claude", "codex"]
+visibility = "restricted"
+
+[[routing.subagent]]
+name     = "builder"
+runtimes = ["claude", "codex"]
+can      = ["build", "review"]
+
+[[routing.subagent]]
+name     = "reviewer"
+runtimes = ["claude", "codex"]
+can      = ["review"]
+
+[[routing.model]]
+name     = "small"
+runtimes = ["claude"]
+efforts  = ["low", "high"]
+use      = "Mechanical work."
+
+[review]
+max_rounds = 3
+
+[[issue_type]]
+name      = "Initiative"
+file      = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Why", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Epic"
+file      = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+build     = ["Outcome", "Decisions already made", "Not yet specified", "Out of scope", "Done when"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Task"
+file      = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+build     = ["Outcome", "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Bug"
+file      = ["What happens", "Expected", "How to reproduce", "Environment"]
+build     = ["What happens", "Expected", "How to reproduce", "Environment", "Cause", "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[[issue_type]]
+name      = "Feature"
+file      = ["Problem", "Proposed behavior", "Workaround today"]
+build     = ["Problem", "Proposed behavior", "Workaround today", "Decisions already made", "Steps", "Done when", "Out of scope"]
+checklist = ["Done when"]
+
+[owner_task]
+file      = ["Outcome", "Question", "Why it matters", "Recommended answer", "Done when"]
+build     = ["Outcome", "Question", "Why it matters", "Recommended answer", "Done when"]
+checklist = ["Done when"]
+
+[[project]]
+key    = "main"
+title  = "Main"
+kind   = "delivery"
+number = 3
+repos  = ["app", "docs"]
+
+[project.workflows]
+auto_add_sub_issues = true
+item_added          = true
+item_closed         = true
+pr_linked           = true
+pr_merged           = true
+auto_close_issue    = true
+
+[[project.milestone]]
+title = "v0.2.0"
+due   = "2026-12-15"
+
+[[project]]
+key   = "roadmap"
+title = "Roadmap"
+kind  = "portfolio"

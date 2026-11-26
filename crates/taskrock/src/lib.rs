@@ -3,6 +3,7 @@
 pub mod apply;
 pub mod claim;
 pub mod cli;
+pub mod config;
 pub mod draft;
 pub mod error;
 pub mod fields;
@@ -21,7 +22,11 @@ use crate::gh::Gh;
 pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
     match &cli.command {
         cli::Command::Check { draft } => {
-            let text = draft::check::run(draft)?;
+            let text = if draft.is_file() {
+                config::check::run(draft)?
+            } else {
+                draft::check::run(draft)?
+            };
             println!("{text}");
             Ok(())
         }

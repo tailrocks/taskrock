@@ -62,6 +62,16 @@
               "requires_features": false
             },
             {
+              "name": "check_config",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/check_config.rs",
+              "requires_features": false
+            },
+            {
               "name": "cli",
               "kinds": [
                 "test"
