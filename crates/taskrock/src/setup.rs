@@ -8,10 +8,15 @@ use crate::error::Error;
 use crate::gh::Gh;
 
 mod fields;
+mod milestones;
 mod project_fields;
 mod projects;
+mod repos;
 mod types;
 mod views;
+
+#[cfg(test)]
+mod testing;
 
 #[cfg(test)]
 mod tests;
@@ -123,6 +128,8 @@ pub fn run(gh: &dyn Gh, options: &Options) -> Result<String, Error> {
     let projects = projects::projects(&mut run, &config)?;
     project_fields::project_fields(&mut run, &projects)?;
     views::views(&mut run, &projects)?;
+    repos::repos(&mut run, &projects)?;
+    milestones::milestones(&mut run, &projects)?;
     Ok(format!("DONE {} changes", run.changes()))
 }
 

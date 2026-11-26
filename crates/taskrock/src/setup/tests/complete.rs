@@ -24,3 +24,25 @@ pub(super) fn project_fields() -> String {
     nodes.extend(columns.map(|name| serde_json::json!({"id": name, "name": name})));
     serde_json::json!({"data": {"node": {"fields": {"nodes": nodes}}}}).to_string()
 }
+
+/// The replies of the repositories and milestones steps for `config-good.toml`:
+/// every link and every milestone is there already.
+pub(super) fn linked_and_dated(gh: crate::gh::FakeGh) -> crate::gh::FakeGh {
+    let linked = |names: &[&str]| {
+        let nodes: Vec<_> = names
+            .iter()
+            .map(|name| serde_json::json!({"name": name}))
+            .collect();
+        serde_json::json!({"data": {"node": {"repositories": {"nodes": nodes}}}}).to_string()
+    };
+    let milestones =
+        r#"[{"number":1,"title":"v0.2.0","description":null,"due_on":"2026-12-15T00:00:00Z"}]"#;
+    gh.ok(
+        "graphql",
+        &linked(&["taskrock", "taskrock-plugins", "taskrock-sandbox"]),
+    )
+    .ok("graphql", &linked(&[]))
+    .ok("repos/acme/taskrock/milestones", milestones)
+    .ok("repos/acme/taskrock-plugins/milestones", milestones)
+    .ok("repos/acme/taskrock-sandbox/milestones", milestones)
+}
