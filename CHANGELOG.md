@@ -2,6 +2,14 @@
 
 All notable changes to this project are recorded in this file.
 
+## 0.3.0
+
+- `ready --stacked` also lists a Todo task whose open blockers form one stack: each is In Progress with an open pull request from `feat/issue-<blocker>`. The text line `stacked on:` and the `--json` key `stacked` (`base`, `blocker`, `pull_request`) name the branch to start from. Every ready entry of `--json` has the key, `null` for a task that is not stacked.
+- `claim --stacked` takes such a task: it creates `feat/issue-<number>` from the branch of the top blocker, posts a comment with the marker `<!-- taskrock:stacked-on feat/issue-<blocker> -->`, and prints a third line `base <branch>`. With no open blocker it starts from the default branch.
+- `claim --stacked` refuses a blocker in another repository, a blocker that is not In Progress, a blocker with no open pull request, and open blockers that are not one stack.
+- The design accepts stacked pull requests at the owner's request in https://github.com/tailrocks/taskrock/issues/139. A stacked task is still one branch and one pull request.
+- A live sandbox test, `sandbox_stacked`, proves the stacked claim on GitHub.
+
 ## 0.2.1
 
 - `apply`: `parent` and `blocked_by` in a draft may be a full issue link to an issue that already exists, so one draft files a Bug under an existing epic.
