@@ -52,7 +52,7 @@ fn write_draft(
         folder,
         "E1.md",
         &format!(
-            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Done when\n\n- [ ] The summary report downloads.\n"
+            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Decisions already made\n\n- The export is a CSV file.\n\n## Not yet specified\n\nNone. Every decision is in the tasks.\n\n## Out of scope\n\n- No other export format.\n\n## Done when\n\n- [ ] `report --format csv` prints the summary report.\n"
         ),
     )?;
     for (key, title, blocked) in tasks {
@@ -221,6 +221,73 @@ fn second_apply_links_nothing_twice() {
             "the new item has status Todo"
         );
     }
+    close(&gh, &numbers).expect("issues are closed");
+    std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
+}
+
+/// Writes a draft of one Task and one Bug. The Bug has the four file
+/// sections and no routing.
+fn write_triage_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> {
+    write_draft(
+        folder,
+        id,
+        stamp,
+        &[("T01", format!("[apply test] task {stamp}"), "")],
+    )?;
+    std::fs::remove_file(folder.join("E1.md")).map_err(|error| Error::Draft {
+        file: "E1.md".to_owned(),
+        message: error.to_string(),
+    })?;
+    let task = std::fs::read_to_string(folder.join("T01.md")).map_err(|error| Error::Draft {
+        file: "T01.md".to_owned(),
+        message: error.to_string(),
+    })?;
+    write_file(folder, "T01.md", &task.replace("parent = \"E1\"\n", ""))?;
+    write_file(
+        folder,
+        "B1.md",
+        &format!(
+            "+++\nkey = \"B1\"\ntitle = \"[apply test] bug {stamp}\"\ntype = \"Bug\"\n+++\n## What happens\n\nThe report command drops the last row.\n\n## Expected\n\nThe report command prints every row.\n\n## How to reproduce\n\n1. Run `report --format csv` on three rows.\n\n## Environment\n\ntaskrock 0.2.0.\n"
+        ),
+    )
+}
+
+#[test]
+#[ignore = "talks to GitHub"]
+fn apply_puts_a_bug_in_triage_and_a_task_in_todo() {
+    let _guard = SANDBOX.lock().expect("sandbox lock");
+    let gh = RealGh::default();
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("time")
+        .as_secs();
+    let folder = std::env::temp_dir().join(format!("taskrock-apply-triage-{stamp}"));
+    write_triage_draft(&folder, &format!("apply-triage-{stamp}"), stamp).expect("draft is written");
+    let options = Options {
+        dry_run: false,
+        pause: Duration::from_secs(1),
+        poll: Duration::from_secs(5),
+    };
+    let text = run(&gh, &folder, &options).expect("apply");
+    let numbers = created_numbers(&text);
+    assert_eq!(numbers.len(), 2, "two issues are created: {text}");
+    let project = ProjectLink {
+        owner: "tailrocks".to_owned(),
+        number: 10,
+    };
+    let items = project_items(&gh, &project).expect("items read back");
+    let status = |kind: &str| {
+        items
+            .iter()
+            .find(|item| numbers.contains(&item.link.number) && item.kind.as_deref() == Some(kind))
+            .and_then(|item| item.status.clone())
+    };
+    assert_eq!(
+        status("Bug").as_deref(),
+        Some("Triage"),
+        "the Bug waits in Triage"
+    );
+    assert_eq!(status("Task").as_deref(), Some("Todo"), "the Task is Todo");
     close(&gh, &numbers).expect("issues are closed");
     std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }

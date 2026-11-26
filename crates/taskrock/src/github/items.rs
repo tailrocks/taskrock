@@ -35,16 +35,18 @@ pub struct Item {
     pub routing: Routing,
 }
 
-/// The Status field of a project and the IDs of its three options.
+/// The Status field of a project and the IDs of its options.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StatusField {
     pub field_id: u64,
     pub todo: String,
     pub in_progress: String,
     pub done: String,
+    /// The ID of the option `Triage`, when the project has it.
+    pub triage: Option<String>,
 }
 
-/// The Status field of a project with the IDs of its three options.
+/// The Status field of a project with the IDs of its options.
 ///
 /// # Errors
 ///
@@ -177,7 +179,7 @@ fn parse_status_field(entries: &[Value], project: &ProjectLink) -> Result<Status
             project.url()
         ))
     })?;
-    let option = |want: &str| {
+    let find = |want: &str| {
         options
             .iter()
             .find(|item| {
@@ -187,12 +189,14 @@ fn parse_status_field(entries: &[Value], project: &ProjectLink) -> Result<Status
             })
             .and_then(|item| item["id"].as_str())
             .map(str::to_owned)
-            .ok_or_else(|| {
-                Error::Project(format!(
-                    "Status field of project {} has no {want} option",
-                    project.url()
-                ))
-            })
+    };
+    let option = |want: &str| {
+        find(want).ok_or_else(|| {
+            Error::Project(format!(
+                "Status field of project {} has no {want} option",
+                project.url()
+            ))
+        })
     };
     Ok(StatusField {
         field_id: status["id"]
@@ -201,6 +205,7 @@ fn parse_status_field(entries: &[Value], project: &ProjectLink) -> Result<Status
         todo: option("Todo")?,
         in_progress: option("In Progress")?,
         done: option("Done")?,
+        triage: find("Triage"),
     })
 }
 

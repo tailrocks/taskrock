@@ -37,6 +37,7 @@ pub(super) fn dry_options() -> Options {
 
 pub(super) fn base() -> FakeGh {
     FakeGh::new()
+        .fail("contents/taskrock.toml", MISSING)
         .ok("issue-fields", FIELDS)
         .ok("milestones?state=all", MILESTONES)
 }
