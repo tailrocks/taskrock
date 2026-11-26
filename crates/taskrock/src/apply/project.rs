@@ -115,7 +115,7 @@ fn found_link(found: &BTreeMap<String, Created>, issue: &DraftIssue) -> Result<I
 }
 
 /// Adds `link` to `project` and records the printed line.
-fn add(
+pub(super) fn add(
     gh: &dyn Gh,
     project: &ProjectLink,
     link: &IssueLink,
