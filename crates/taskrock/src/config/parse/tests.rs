@@ -9,10 +9,13 @@ const GOOD: &str = include_str!("../../../fixtures/config-good.toml");
 fn the_good_fixture_parses_into_every_part() {
     let config = parse(GOOD).expect("the good fixture parses");
     assert_eq!(config.version, 1);
-    assert_eq!(config.routing.runtimes, ["claude", "codex"]);
+    assert_eq!(
+        config.routing.runtimes,
+        ["claude", "codex", "agy", "muse", "grok"]
+    );
     assert_eq!(config.routing.visibility, Visibility::Restricted);
     assert_eq!(config.routing.subagents[1].can, [Ability::Review]);
-    assert_eq!(config.routing.models[0].usage, "Mechanical work.");
+    assert_eq!(config.routing.models[0].name, "claude-haiku-5-5");
     assert_eq!(config.review.max_rounds, 3);
     assert_eq!(
         config.type_names(),

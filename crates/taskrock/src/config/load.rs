@@ -3,6 +3,7 @@
 use super::{Config, check, default, parse};
 use crate::error::Error;
 use crate::gh::Gh;
+use crate::github;
 
 /// The config of an organization. A missing file (HTTP 404) gives
 /// [`default`].
@@ -39,7 +40,7 @@ fn fetch(gh: &dyn Gh, owner: &str) -> Result<Option<String>, Error> {
     let args = ["api", "-H", "Accept: application/vnd.github.raw", &path];
     match gh.run(&args, None) {
         Ok(text) => Ok(Some(text)),
-        Err(Error::Gh { stderr, .. }) if stderr.contains("HTTP 404") => Ok(None),
+        Err(error) if github::is_status(&error, 404) => Ok(None),
         Err(error) => Err(error),
     }
 }

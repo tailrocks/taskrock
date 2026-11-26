@@ -19,25 +19,13 @@ pub fn check(config: &Config) -> Vec<String> {
     if config.version != 1 {
         out.push("version must be 1".to_owned());
     }
-    names(config, &mut out);
-    runtimes(config, &mut out);
-    for subagent in &config.routing.subagents {
-        if subagent.can.is_empty() {
-            out.push(format!("subagent {} has an empty can", subagent.name));
-        }
-    }
-    for model in &config.routing.models {
-        if model.efforts.is_empty() {
-            out.push(format!("model {} has no efforts", model.name));
-        }
-    }
+    routing(config, &mut out);
     if config.review.max_rounds < 1 {
         out.push("review.max_rounds must be at least 1".to_owned());
     }
-    formats(config, &mut out);
-    for project in &config.projects {
-        project_rules(project, &mut out);
-    }
+    issue_types(config, &mut out);
+    format_rules("owner task", &config.owner_task, &mut out);
+    projects(config, &mut out);
     out
 }
 
@@ -59,68 +47,74 @@ pub fn run(path: &Path) -> Result<String, Error> {
     Err(Error::Check(problems.len()))
 }
 
-fn duplicates<'a>(kind: &str, names: impl Iterator<Item = &'a str>, out: &mut Vec<String>) {
-    let mut seen = BTreeSet::new();
-    let mut said = BTreeSet::new();
-    for name in names {
-        if !seen.insert(name) && said.insert(name) {
-            out.push(format!("{kind} {name} is listed twice"));
+/// Remembers the names of one kind and says the first repeat of each.
+struct Names<'a> {
+    kind: &'a str,
+    seen: BTreeSet<&'a str>,
+    said: BTreeSet<&'a str>,
+}
+
+impl<'a> Names<'a> {
+    fn new(kind: &'a str) -> Self {
+        Self {
+            kind,
+            seen: BTreeSet::new(),
+            said: BTreeSet::new(),
         }
+    }
+
+    fn see(&mut self, name: &'a str) -> Option<String> {
+        let repeat = !self.seen.insert(name) && self.said.insert(name);
+        repeat.then(|| format!("{} {name} is listed twice", self.kind))
     }
 }
 
-fn names(config: &Config, out: &mut Vec<String>) {
-    let routing = &config.routing;
-    duplicates(
-        "subagent",
-        routing.subagents.iter().map(|s| s.name.as_str()),
-        out,
-    );
-    duplicates("model", routing.models.iter().map(|m| m.name.as_str()), out);
-    duplicates(
-        "issue type",
-        config.issue_types.iter().map(|t| t.name.as_str()),
-        out,
-    );
-    duplicates(
-        "project",
-        config.projects.iter().map(|p| p.key.as_str()),
-        out,
-    );
-}
-
-fn runtimes(config: &Config, out: &mut Vec<String>) {
+fn routing(config: &Config, out: &mut Vec<String>) {
     let known = &config.routing.runtimes;
-    let subagents = config
-        .routing
-        .subagents
-        .iter()
-        .map(|s| ("subagent", &s.name, &s.runtimes));
-    let models = config
-        .routing
-        .models
-        .iter()
-        .map(|m| ("model", &m.name, &m.runtimes));
-    for (kind, name, listed) in subagents.chain(models) {
-        for runtime in listed.iter().filter(|runtime| !known.contains(runtime)) {
-            out.push(format!(
-                "{kind} {name} names runtime {runtime}, which is not in routing.runtimes"
-            ));
+    let mut names = Names::new("subagent");
+    for subagent in &config.routing.subagents {
+        out.extend(names.see(&subagent.name));
+        unknown_runtimes("subagent", &subagent.name, &subagent.runtimes, known, out);
+        if subagent.can.is_empty() {
+            out.push(format!("subagent {} has an empty can", subagent.name));
+        }
+    }
+    let mut names = Names::new("model");
+    for model in &config.routing.models {
+        out.extend(names.see(&model.name));
+        unknown_runtimes("model", &model.name, &model.runtimes, known, out);
+        if model.efforts.is_empty() {
+            out.push(format!("model {} has no efforts", model.name));
         }
     }
 }
 
-fn formats(config: &Config, out: &mut Vec<String>) {
+fn unknown_runtimes(
+    kind: &str,
+    name: &str,
+    listed: &[String],
+    known: &[String],
+    out: &mut Vec<String>,
+) {
+    for runtime in listed.iter().filter(|runtime| !known.contains(runtime)) {
+        out.push(format!(
+            "{kind} {name} names runtime {runtime}, which is not in routing.runtimes"
+        ));
+    }
+}
+
+fn issue_types(config: &Config, out: &mut Vec<String>) {
+    let mut names = Names::new("issue type");
+    for issue_type in &config.issue_types {
+        out.extend(names.see(&issue_type.name));
+        let label = format!("issue type {}", issue_type.name);
+        format_rules(&label, &issue_type.format, out);
+    }
     for required in REQUIRED_TYPES {
         if !config.type_names().contains(&required) {
             out.push(format!("issue type {required} is missing"));
         }
     }
-    for issue_type in &config.issue_types {
-        let label = format!("issue type {}", issue_type.name);
-        format_rules(&label, &issue_type.format, out);
-    }
-    format_rules("owner task", &config.owner_task, out);
 }
 
 fn format_rules(label: &str, format: &Format, out: &mut Vec<String>) {
@@ -131,6 +125,14 @@ fn format_rules(label: &str, format: &Format, out: &mut Vec<String>) {
                 "{label}: {set} section {section} is not a build section"
             ));
         }
+    }
+}
+
+fn projects(config: &Config, out: &mut Vec<String>) {
+    let mut names = Names::new("project");
+    for project in &config.projects {
+        out.extend(names.see(&project.key));
+        project_rules(project, out);
     }
 }
 
@@ -159,15 +161,13 @@ fn project_rules(project: &Project, out: &mut Vec<String>) {
         }
         ProjectKind::Delivery => {}
     }
-    let titles = project.milestones.iter().map(|m| m.title.as_str());
-    let mut twice = Vec::new();
-    duplicates("milestone", titles, &mut twice);
-    out.extend(
-        twice
-            .into_iter()
-            .map(|message| format!("project {key}: {message}")),
-    );
+    let mut titles = Names::new("milestone");
     for milestone in &project.milestones {
+        out.extend(
+            titles
+                .see(&milestone.title)
+                .map(|message| format!("project {key}: {message}")),
+        );
         if let Some(due) = milestone.due.as_deref().filter(|due| !is_date(due)) {
             out.push(format!(
                 "project {key}: milestone {} has due {due}, which is not a date YYYY-MM-DD",
