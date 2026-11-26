@@ -25,8 +25,8 @@ pub(super) fn project_fields() -> String {
     serde_json::json!({"data": {"node": {"fields": {"nodes": nodes}}}}).to_string()
 }
 
-/// The replies of the repositories and milestones steps for `config-good.toml`:
-/// every link and every milestone is there already.
+/// The replies of the repositories, milestones and workflows steps for
+/// `config-good.toml`: every link, milestone and workflow is there already.
 pub(super) fn linked_and_dated(gh: crate::gh::FakeGh) -> crate::gh::FakeGh {
     let linked = |names: &[&str]| {
         let nodes: Vec<_> = names
@@ -45,4 +45,16 @@ pub(super) fn linked_and_dated(gh: crate::gh::FakeGh) -> crate::gh::FakeGh {
     .ok("repos/acme/taskrock/milestones", milestones)
     .ok("repos/acme/taskrock-plugins/milestones", milestones)
     .ok("repos/acme/taskrock-sandbox/milestones", milestones)
+    .ok("graphql", &project_workflows())
+    .ok("graphql", &project_workflows())
+}
+
+/// The workflows of a project that needs nothing: the six on, no view.
+fn project_workflows() -> String {
+    let nodes: Vec<_> = crate::setup::workflows::NAMES
+        .iter()
+        .map(|name| serde_json::json!({"id": name, "name": name, "enabled": true}))
+        .collect();
+    serde_json::json!({"data": {"node": {"workflows": {"nodes": nodes}, "views": {"nodes": []}}}})
+        .to_string()
 }
