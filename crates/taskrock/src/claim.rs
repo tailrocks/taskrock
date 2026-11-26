@@ -10,6 +10,10 @@ use crate::github::items::{Item, project_items, project_of, set_status, status_f
 use crate::github::{get, is_status, send};
 use crate::link::{IssueLink, ProjectLink};
 
+mod stacked;
+
+pub use stacked::claim_stacked;
+
 #[cfg(test)]
 mod body_tests;
 
@@ -38,9 +42,9 @@ pub fn claim(gh: &dyn Gh, link: &str) -> Result<String, Error> {
     let project = project_of(gh, &issue)?;
     let items = project_items(gh, &project)?;
     let item = find(&items, &issue)?.clone();
-    refuse(&item)?;
+    refuse(&item, false)?;
     check_body(gh, &issue, &item)?;
-    create_branch(gh, &issue)?;
+    create_branch(gh, &issue, None)?;
     if let Err(error) = mark(gh, &project, &items, &item) {
         delete_branch(gh, &issue);
         return Err(error);
@@ -60,7 +64,7 @@ fn find<'a>(items: &'a [Item], issue: &IssueLink) -> Result<&'a Item, Error> {
         })
 }
 
-fn refuse(item: &Item) -> Result<(), Error> {
+fn refuse(item: &Item, stacked: bool) -> Result<(), Error> {
     if !item.open {
         return Err(Error::Refused("the issue is closed".to_owned()));
     }
@@ -77,7 +81,7 @@ fn refuse(item: &Item) -> Result<(), Error> {
     if item.routing.is_owner() {
         return Err(Error::Refused("this is the owner's task".to_owned()));
     }
-    if item.open_blockers > 0 {
+    if !stacked && item.open_blockers > 0 {
         return Err(Error::Refused(format!(
             "{} open issues block it. Build it only after they close",
             item.open_blockers
@@ -116,17 +120,17 @@ fn check_body(gh: &dyn Gh, issue: &IssueLink, item: &Item) -> Result<(), Error> 
     )))
 }
 
-fn create_branch(gh: &dyn Gh, issue: &IssueLink) -> Result<(), Error> {
-    let repo = get(gh, &issue.repo_path())?;
-    let default = repo["default_branch"]
-        .as_str()
-        .ok_or_else(|| Error::Json("default_branch".to_owned()))?;
+fn create_branch(gh: &dyn Gh, issue: &IssueLink, from: Option<&str>) -> Result<String, Error> {
+    let from = match from {
+        Some(branch) => branch.to_owned(),
+        None => get(gh, &issue.repo_path())?["default_branch"]
+            .as_str()
+            .ok_or_else(|| Error::Json("default_branch".to_owned()))?
+            .to_owned(),
+    };
     let tip = get(
         gh,
-        &format!(
-            "repos/{}/{}/git/ref/heads/{default}",
-            issue.owner, issue.repo
-        ),
+        &format!("repos/{}/{}/git/ref/heads/{from}", issue.owner, issue.repo),
     )?;
     let sha = tip
         .pointer("/object/sha")
@@ -135,7 +139,7 @@ fn create_branch(gh: &dyn Gh, issue: &IssueLink) -> Result<(), Error> {
     let path = format!("repos/{}/{}/git/refs", issue.owner, issue.repo);
     let body = serde_json::json!({"ref": format!("refs/heads/{}", issue.branch()), "sha": sha});
     match send(gh, "POST", &path, &body) {
-        Ok(_) => Ok(()),
+        Ok(_) => Ok(from),
         Err(error) if is_status(&error, 422) => Err(Error::Refused(format!(
             "the task is already taken: the branch {} exists",
             issue.branch()
