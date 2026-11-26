@@ -1,6 +1,6 @@
 //! The Status of the new issues: Triage for a reported issue, Todo for the
 //! rest. An issue that already has a Status keeps it, unless this run created
-//! it.
+//! it, or it is a Bug at Todo with no Agent.
 
 use std::collections::BTreeMap;
 
@@ -75,15 +75,16 @@ pub(super) fn set_statuses(
     };
     let mut lines = Vec::new();
     let items = project_items(gh, &draft.plan.project)?;
-    // A reported issue goes to Triage when this run created it or it has no
-    // Status yet (an earlier run stopped before setting one).
+    // A reported issue goes to Triage when this run created it, it has no
+    // Status yet (an earlier run stopped before setting one), or the project
+    // set Todo and no one routed it.
     let mut triaged = Vec::new();
     for issue in &draft.issues {
         let Some(item) = item_of(found, issue, &items) else {
             continue;
         };
         if reported_issues.contains(&issue) {
-            if fresh(issue) || item.status.is_none() {
+            if fresh(issue) || item.status.is_none() || untriaged(item) {
                 triaged.push(issue);
                 if item.status.as_deref() != Some(TRIAGE) {
                     change(gh, draft, &field, item, (triage, TRIAGE), &mut lines)?;
@@ -106,6 +107,13 @@ pub(super) fn set_statuses(
         }
     }
     Ok(lines)
+}
+
+/// A found Bug at Todo that no one has routed: the project set Todo, not triage.
+fn untriaged(item: &Item) -> bool {
+    item.open
+        && item.status.as_deref() == Some("Todo")
+        && item.routing.get("Agent").is_none_or(str::is_empty)
 }
 
 /// The ID of the option `Triage`.
