@@ -11,7 +11,7 @@ use crate::github;
 use crate::projects::OrgProject;
 
 #[cfg(test)]
-mod tests;
+pub(super) mod tests;
 
 /// The Status options every project has, in this order.
 const STATUS: [&str; 4] = ["Triage", "Todo", "In Progress", "Done"];
