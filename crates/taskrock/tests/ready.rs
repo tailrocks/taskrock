@@ -18,6 +18,8 @@ fn project_gh() -> FakeGh {
         .ok("3/fields", &format!("[{FIELDS}]"))
         .ok("3/items", &format!("[{ITEMS}]"))
         .ok("matching-refs", "[[]]")
+        .ok("issues?state=open", "[[]]")
+        .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)")
 }
 
 #[test]

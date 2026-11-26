@@ -1,8 +1,9 @@
 //! Tests for the ready rule.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::{Report, claimed, report, scope};
+use crate::config::default;
 use crate::fields::{ROUTING, Routing};
 use crate::gh::FakeGh;
 use crate::github::items::Item;
@@ -38,7 +39,7 @@ fn item(number: u64) -> Item {
 }
 
 fn listed(item: &Item) -> Report<'_> {
-    report(&[item], &BTreeSet::new())
+    report(&[item], &BTreeSet::new(), &BTreeMap::new(), &default())
 }
 
 fn numbers(items: &[&Item]) -> Vec<u64> {
@@ -63,7 +64,12 @@ fn status_or_claim_marks_in_progress() {
     busy.status = Some("In Progress".to_owned());
     assert_eq!(listed(&busy).in_progress, 1);
     let task = item(2);
-    let found = report(&[&task], &BTreeSet::from([link(2)]));
+    let found = report(
+        &[&task],
+        &BTreeSet::from([link(2)]),
+        &BTreeMap::new(),
+        &default(),
+    );
     assert_eq!((found.ready.len(), found.in_progress), (0, 1));
 }
 
@@ -117,7 +123,7 @@ fn ready_sorts_by_blocking_then_number() {
     let (mut low, mut tied, mut top) = (item(3), item(1), item(2));
     (low.blocking, tied.blocking, top.blocking) = (5, 5, 9);
     let scope = [&low, &tied, &top];
-    let found = report(&scope, &BTreeSet::new());
+    let found = report(&scope, &BTreeSet::new(), &BTreeMap::new(), &default());
     assert_eq!(numbers(&found.ready), [2, 1, 3]);
 }
 
