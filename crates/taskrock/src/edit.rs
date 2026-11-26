@@ -116,7 +116,7 @@ fn check_format(
 ) -> Result<(), Error> {
     let config = load(gh, &issue.owner)?;
     let name = kind.unwrap_or("none");
-    let Some(format) = kind.and_then(|kind| config.format(kind, item.routing.is_owner())) else {
+    let Some(format) = config.format(name, item.routing.is_owner()) else {
         return Err(Error::Refused(format!(
             "the config has no issue type {name}"
         )));

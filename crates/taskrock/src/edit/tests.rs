@@ -129,12 +129,14 @@ fn unknown_or_missing_type_is_refused() {
 }
 
 #[test]
-fn owner_task_uses_the_owner_format() {
-    let gh = fake(&issue("Task", "open", "x"), "Todo", AGENT);
-    let path = file("owner.md", &body("a", ""));
-    let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
-    assert!(
-        message.contains("the section ## Question is missing"),
-        "{message}"
-    );
+fn owner_task_uses_the_owner_format_whatever_the_type() {
+    for kind in ["Task", "Saga", ""] {
+        let gh = fake(&issue(kind, "open", "x"), "Todo", AGENT);
+        let path = file("owner.md", &body("a", ""));
+        let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
+        assert!(
+            message.contains("## Question is missing"),
+            "{kind}: {message}"
+        );
+    }
 }
