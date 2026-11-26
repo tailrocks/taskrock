@@ -3,18 +3,19 @@
 use crate::error::Error;
 use crate::gh::FakeGh;
 
+use super::body_tests::{task_body, with_body};
 use super::claim;
 
-const URL: &str = "https://github.com/o/r/issues/7";
+pub(super) const URL: &str = "https://github.com/o/r/issues/7";
 const TAKEN: &str = "the task is already taken: the branch feat/issue-7 exists";
 const KIDS: &str = "the issue has children. Only an issue with no children is built";
 const AGENT: &str = r#"{"issue_field_name":"Agent","single_select_option":{"name":"Owner"}}"#;
-const LOOKUP: &str = r#"{"data":{"repository":{"issue":{"projectItems":{"nodes":[{"project":{"number":10,"owner":{"login":"o"}}}]}}}}}"#;
-const FIELDS: &str = r#"[{"id":7,"name":"Status","options":[{"id":"t","name":{"raw":"Todo"}},{"id":"p","name":{"raw":"In Progress"}},{"id":"d","name":{"raw":"Done"}}]},{"id":9,"name":"Parent issue"}]"#;
-const TASK: &str = r#"{"id":7,"content_type":"Issue","content":{"html_url":"https://github.com/o/r/issues/7","id":7,"title":"T","state":"open","type":{"name":"Task"},"sub_issues_summary":{"total":0},"issue_dependencies_summary":{"blocked_by":0,"blocking":0},"issue_field_values":[]},"fields":[{"name":"Status","value":{"name":{"raw":"Todo"}}},{"name":"Parent issue","value":{"url":"https://github.com/o/r/issues/5"}}]}"#;
+pub(super) const LOOKUP: &str = r#"{"data":{"repository":{"issue":{"projectItems":{"nodes":[{"project":{"number":10,"owner":{"login":"o"}}}]}}}}}"#;
+pub(super) const FIELDS: &str = r#"[{"id":7,"name":"Status","options":[{"id":"t","name":{"raw":"Todo"}},{"id":"p","name":{"raw":"In Progress"}},{"id":"d","name":{"raw":"Done"}}]},{"id":9,"name":"Parent issue"}]"#;
+pub(super) const TASK: &str = r#"{"id":7,"content_type":"Issue","content":{"html_url":"https://github.com/o/r/issues/7","id":7,"title":"T","state":"open","type":{"name":"Task"},"sub_issues_summary":{"total":0},"issue_dependencies_summary":{"blocked_by":0,"blocking":0},"issue_field_values":[]},"fields":[{"name":"Status","value":{"name":{"raw":"Todo"}}},{"name":"Parent issue","value":{"url":"https://github.com/o/r/issues/5"}}]}"#;
 const EPIC: &str = r#"{"id":5,"content_type":"Issue","content":{"html_url":"https://github.com/o/r/issues/5","id":5,"title":"E","state":"open","type":{"name":"Epic"},"sub_issues_summary":{"total":1},"issue_dependencies_summary":{"blocked_by":0,"blocking":0},"issue_field_values":[]},"fields":[{"name":"Status","value":{"name":{"raw":"Todo"}}},{"name":"Parent issue","value":null}]}"#;
 
-fn pages(task: &str, epic: Option<&str>) -> String {
+pub(super) fn pages(task: &str, epic: Option<&str>) -> String {
     match epic {
         Some(epic) => format!("[[{task},{epic}]]"),
         None => format!("[[{task}]]"),
@@ -22,15 +23,10 @@ fn pages(task: &str, epic: Option<&str>) -> String {
 }
 
 fn base(items: &str) -> FakeGh {
-    FakeGh::new()
-        .ok("graphql", LOOKUP)
-        .ok("fields", &format!("[{FIELDS}]"))
-        .ok("items", items)
-        .ok("repos/o/r", r#"{"default_branch":"main"}"#)
-        .ok("ref/heads", r#"{"object":{"sha":"abc"}}"#)
+    with_body(items, &task_body())
 }
 
-fn full(task: &str, epic: Option<&str>) -> FakeGh {
+pub(super) fn full(task: &str, epic: Option<&str>) -> FakeGh {
     let gh = base(&pages(task, epic)).ok("POST", "{}");
     gh.ok("fields", &format!("[{FIELDS}]"))
         .ok("PATCH", "")
@@ -44,7 +40,7 @@ fn refused(bad: &str, message: &str) {
     assert!(!has(&gh, "POST"));
 }
 
-fn has(gh: &FakeGh, what: &str) -> bool {
+pub(super) fn has(gh: &FakeGh, what: &str) -> bool {
     gh.calls().into_iter().any(|(call, _)| call.contains(what))
 }
 
@@ -57,8 +53,9 @@ fn good_claim_sets_task_and_parent() {
         "taken https://github.com/o/r/issues/7\nbranch feat/issue-7"
     );
     let calls: Vec<String> = gh.calls().into_iter().map(|(call, _)| call).collect();
-    assert_eq!(calls.len(), 9, "nine calls: {calls:?}");
-    let want = "graphql fields items repo heads POST fields items/7 items/5".split(' ');
+    assert_eq!(calls.len(), 11, "eleven calls: {calls:?}");
+    let want =
+        "graphql fields items issues/7 contents repo heads POST fields items/7 items/5".split(' ');
     for (got, marker) in calls.iter().zip(want) {
         assert!(got.contains(marker), "{got} holds {marker}");
     }
@@ -73,7 +70,7 @@ fn closed_issue_is_refused() {
 fn epic_is_refused() {
     refused(
         &TASK.replace("Task", "Epic"),
-        "only a Task or a Bug can be taken",
+        "only a Task, a Bug or a Feature can be taken",
     );
 }
 
