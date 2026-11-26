@@ -5,13 +5,14 @@ use serde_json::{Value, json};
 use crate::apply::create_issues;
 use crate::gh::FakeGh;
 
-use super::super::tests::{FIELDS, created, folder, not_found, options, post_bodies};
+use super::super::tests::{FIELDS, MISSING, created, folder, not_found, options, post_bodies};
 
 #[test]
 fn missing_milestone_is_created_once() {
     let gh = created(
         not_found(
             FakeGh::new()
+                .fail("contents/taskrock.toml", MISSING)
                 .ok("issue-fields", FIELDS)
                 .ok("milestones?state=all", "[[]]")
                 .ok(

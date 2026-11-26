@@ -7,6 +7,7 @@ mod fields;
 mod marker;
 mod milestones;
 mod project;
+mod status;
 
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -53,14 +54,16 @@ pub type ApplyOutput = (draft::Draft, BTreeMap<String, Created>, Vec<String>);
 /// GitHub fails or refuses a creation.
 pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<ApplyOutput, Error> {
     let draft = draft::parse::read(folder)?;
-    let findings = draft::check::check(&draft, &config::default());
+    let owner = plan_owner(&draft)?;
+    let config = config::load::load(gh, &owner)?;
+    let findings = draft::check::check(&draft, &config);
     if !findings.is_empty() {
         for finding in &findings {
             println!("{}: {}", finding.file, finding.message);
         }
         return Err(Error::Check(findings.len()));
     }
-    let owner = plan_owner(&draft)?;
+    status::require_triage(gh, &draft)?;
     let field_ids = fields::field_ids(gh, &owner)?;
     let milestones = milestones::milestone_numbers(gh, &draft, options.dry_run)?;
     let mut found = existing::find_existing(gh, &draft)?;
@@ -103,6 +106,7 @@ pub fn run(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<String, Erro
         options.dry_run,
     )?);
     lines.extend(project::add_to_project(gh, &draft, &found, options)?);
+    lines.extend(status::set_statuses(gh, &draft, &found, options)?);
     let blockers: usize = draft
         .issues
         .iter()

@@ -39,6 +39,7 @@ fn status_field_returns_three_option_ids() {
     assert_ne!(field.todo, "");
     assert_ne!(field.in_progress, "");
     assert_ne!(field.done, "");
+    assert_eq!(field.triage, None, "the fixture has no Triage");
 }
 
 #[test]
@@ -130,6 +131,7 @@ fn set_status_sends_patch_with_field_and_option() {
         todo: "t".to_owned(),
         in_progress: "p".to_owned(),
         done: "d".to_owned(),
+        triage: None,
     };
     set_status(&gh, &project(), &field, 314, "t").expect("set");
     assert_eq!(
