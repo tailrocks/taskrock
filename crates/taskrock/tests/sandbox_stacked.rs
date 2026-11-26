@@ -28,6 +28,19 @@ fn number(value: &serde_json::Value) -> Result<u64, Error> {
         .ok_or_else(|| Error::Json("number".to_owned()))
 }
 
+fn wait_until(what: &str, mut ready: impl FnMut() -> Result<bool, Error>) -> Result<(), Error> {
+    let deadline = Instant::now() + Duration::from_secs(280);
+    loop {
+        if ready()? {
+            return Ok(());
+        }
+        if Instant::now() > deadline {
+            return Err(Error::Project(what.to_owned()));
+        }
+        std::thread::sleep(Duration::from_secs(5));
+    }
+}
+
 fn add_and_wait(gh: &RealGh, issues: &[u64]) -> Result<(), Error> {
     send(
         gh,
@@ -35,38 +48,22 @@ fn add_and_wait(gh: &RealGh, issues: &[u64]) -> Result<(), Error> {
         "orgs/tailrocks/projectsV2/10/items",
         &json!({"type": "Issue", "owner": "tailrocks", "repo": "taskrock-sandbox", "number": issues[0]}),
     )?;
-    let deadline = Instant::now() + Duration::from_secs(280);
-    loop {
+    wait_until("the issues join project 10", || {
         let items = project_items(gh, &project())?;
-        let has = |n: u64| items.iter().any(|item| item.link.number == n);
-        if issues.iter().all(|issue| has(*issue)) {
-            return Ok(());
-        }
-        if Instant::now() > deadline {
-            return Err(Error::Project("the issues join project 10".to_owned()));
-        }
-        std::thread::sleep(Duration::from_secs(5));
-    }
+        Ok(issues
+            .iter()
+            .all(|issue| items.iter().any(|item| item.link.number == *issue)))
+    })
 }
 
 fn wait_for_blocker(gh: &RealGh, stacked: u64) -> Result<(), Error> {
-    let deadline = Instant::now() + Duration::from_secs(280);
-    loop {
+    wait_until("the blocker link shows in project 10", || {
         let items = project_items(gh, &project())?;
-        let blocked = items
+        Ok(items
             .iter()
             .find(|item: &&Item| item.link.number == stacked)
-            .is_some_and(|item| item.open_blockers == 1);
-        if blocked {
-            return Ok(());
-        }
-        if Instant::now() > deadline {
-            return Err(Error::Project(
-                "the blocker link shows in project 10".to_owned(),
-            ));
-        }
-        std::thread::sleep(Duration::from_secs(5));
-    }
+            .is_some_and(|item| item.open_blockers == 1))
+    })
 }
 
 fn create_issues(gh: &RealGh, stamp: u64) -> Result<(u64, u64, u64), Error> {
