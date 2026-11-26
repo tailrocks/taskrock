@@ -15,6 +15,8 @@ mod body;
 mod problems_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod triage_tests;
 
 /// The scope sorted into groups, with the problems.
 #[derive(Debug)]
@@ -23,6 +25,9 @@ pub struct Report<'a> {
     pub ready: Vec<&'a Item>,
     /// The open issues with `Agent` set to `Owner`.
     pub waiting_on_owner: Vec<&'a Item>,
+    /// The open issues with Status Triage. They are not candidates and not
+    /// problems: a manager reads them to see what was reported.
+    pub triage: Vec<&'a Item>,
     /// How many candidates are in progress.
     pub in_progress: usize,
     /// How many candidates have an open blocker.
@@ -32,10 +37,16 @@ pub struct Report<'a> {
 }
 
 /// True when the issue can be built: open, no children, a `Task`, a `Bug` or
-/// a `Feature`.
+/// a `Feature`, and not in Triage.
 #[must_use]
 pub fn is_candidate(item: &Item) -> bool {
-    item.open && item.children == 0 && is_task_or_bug(item)
+    item.open && item.children == 0 && is_task_or_bug(item) && !is_triage(item)
+}
+
+/// True when the issue is open and its Status is Triage.
+#[must_use]
+pub fn is_triage(item: &Item) -> bool {
+    item.open && item.status.as_deref() == Some("Triage")
 }
 
 /// The items a link covers.
@@ -99,15 +110,20 @@ pub fn report<'a>(
     let mut report = Report {
         ready: Vec::new(),
         waiting_on_owner: Vec::new(),
+        triage: Vec::new(),
         in_progress: 0,
         blocked: 0,
         problems: Vec::new(),
     };
     for item in scope {
+        if is_triage(item) {
+            report.triage.push(item);
+            continue;
+        }
         push_problems(&mut report.problems, item);
         if item.open && item.routing.is_owner() {
             report.waiting_on_owner.push(item);
-        } else if is_candidate(item) && !is_triage(item) {
+        } else if is_candidate(item) {
             sort_candidate(&mut report, item, claimed, bodies, config);
         }
     }
@@ -172,11 +188,6 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
 
 fn is_task_or_bug(item: &Item) -> bool {
     matches!(item.kind.as_deref(), Some("Task" | "Bug" | "Feature"))
-}
-
-/// A reported issue waiting for triage: it has no routing yet.
-fn is_triage(item: &Item) -> bool {
-    item.status.as_deref() == Some("Triage")
 }
 
 fn below(by_link: &BTreeMap<&IssueLink, &Item>, item: &Item, target: &IssueLink) -> bool {
@@ -266,7 +277,7 @@ fn push_problems(problems: &mut Vec<String>, item: &Item) {
             "{url} has children. Only an issue with no children is built."
         ));
     }
-    if is_candidate(item) && !is_triage(item) {
+    if is_candidate(item) {
         if item.status.is_none() {
             problems.push(format!("{url} has no status. Is it in the project?"));
         }
@@ -313,6 +324,11 @@ fn text_of(report: &Report<'_>) -> String {
     for item in &report.waiting_on_owner {
         lines.push(format!("{}  {}", item.link.url(), item.title));
     }
+    lines.push(format!("TRIAGE {}", report.triage.len()));
+    for item in &report.triage {
+        let kind = item.kind.as_deref().unwrap_or("?");
+        lines.push(format!("{}  {} ({kind})", item.link.url(), item.title));
+    }
     lines.push(format!("PROBLEMS {}", report.problems.len()));
     lines.extend(report.problems.iter().cloned());
     lines.join("\n")
@@ -350,9 +366,22 @@ fn json_of(report: &Report<'_>) -> Result<String, Error> {
             "title": item.title,
         }));
     }
+    let triage: Vec<serde_json::Value> = report
+        .triage
+        .iter()
+        .map(|item| {
+            serde_json::json!({
+                "number": item.link.number,
+                "title": item.title,
+                "url": item.link.url(),
+                "type": item.kind,
+            })
+        })
+        .collect();
     let out = serde_json::json!({
         "ready": ready,
         "waiting_on_owner": waiting,
+        "triage": triage,
         "in_progress": report.in_progress,
         "blocked": report.blocked,
         "problems": report.problems,

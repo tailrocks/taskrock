@@ -28,3 +28,14 @@ fn portfolio_is_checked_like_the_id() {
         "only letters, digits and - are allowed in portfolio"
     );
 }
+
+#[test]
+fn milestone_is_optional_and_not_empty() {
+    assert_eq!(parse_plan(PLAN).expect("plan").milestone, None);
+    let plan = parse_plan(&format!("{PLAN}milestone = \"M2 Next\"\n")).expect("plan");
+    assert_eq!(plan.milestone.as_deref(), Some("M2 Next"));
+    let Err(Error::Draft { message, .. }) = parse_plan(&format!("{PLAN}milestone = \"\"\n")) else {
+        panic!("expected Error::Draft");
+    };
+    assert_eq!(message, "milestone must not be empty");
+}

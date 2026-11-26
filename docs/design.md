@@ -23,7 +23,7 @@ This page keeps each choice together with the option that was rejected and the r
 - **Ready task.** Open, no children, no open blocker, status "Todo", Agent not `Owner`, a body that has the build sections of its type, and no branch `feat/issue-<number>`.
 - **Claim.** The branch `feat/issue-<number>` on GitHub, then the status "In Progress".
 - **Giving a task back.** The status returns to "Todo" and the branch is renamed or deleted. A handoff note can be posted first.
-- **Draft.** A folder that holds a plan before it exists on GitHub. Each file is one issue. Parents and blockers name keys, so the draft is complete before any issue exists.
+- **Draft.** A folder that holds a plan before it exists on GitHub. Each file is one issue. Parents and blockers name keys, so the draft is complete before any issue exists. A parent or blocker may also be a full link to an issue that already exists, and `plan.toml` may name a milestone for every issue it creates. This files an issue inside a goal in one step.
 - **Roles.** The manager hands out tasks, starts the reviewer, posts the verdict and merges. The builder builds one task. The reviewer checks one pull request.
 
 The [README](../README.md) lists the eight commands. The skills hold the steps that use them.

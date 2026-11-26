@@ -4,6 +4,7 @@ mod blockers;
 mod create;
 mod existing;
 mod fields;
+mod links;
 mod marker;
 mod milestones;
 mod portfolio;
@@ -49,7 +50,8 @@ pub struct Created {
 pub type ApplyOutput = (draft::Draft, BTreeMap<String, Created>, Vec<String>);
 
 /// Creates the missing issues. Returns the draft, the map from key to issue,
-/// and the lines to print.
+/// and the lines to print. The map also holds the linked issues, under their
+/// link text.
 ///
 /// # Errors
 ///
@@ -70,8 +72,10 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
     status::require_triage(gh, &draft)?;
     portfolio::find_portfolio(gh, &owner, &draft)?;
     let field_ids = fields::field_ids(gh, &owner)?;
+    let linked = links::resolve(gh, &draft)?;
     let milestones = milestones::milestone_numbers(gh, &draft, options.dry_run)?;
     let mut found = existing::find_existing(gh, &draft)?;
+    found.extend(linked);
     let mut lines = Vec::with_capacity(draft.issues.len());
     for issue in create::creation_order(&draft) {
         if let Some(known) = found.get(&issue.key) {
@@ -80,7 +84,7 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
                 known.link.number, issue.key, issue.title
             ));
         } else if options.dry_run {
-            lines.push(format!("would create {} {}", issue.key, issue.title));
+            lines.extend(create::would_create(&draft, issue));
         } else {
             let created = create::create_one(gh, &draft, issue, &found, &field_ids, &milestones)?;
             lines.push(format!(

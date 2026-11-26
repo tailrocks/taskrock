@@ -12,21 +12,31 @@ use crate::github::{get_all, send};
 #[cfg(test)]
 mod tests;
 
-/// The milestone number by repository and title. Creates a milestone the
-/// repository lacks, once per title, unless `dry_run` skips every `POST`.
+/// The milestone number by repository and title. Reads the milestones of
+/// every repository and checks the plan's `milestone` in each of them
+/// first, so a missing one stops `apply` before any `POST`. Then creates a
+/// milestone the repository lacks, once per title, unless `dry_run` skips
+/// every `POST`.
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when an entry has
-/// no numeric `number` or no string `title`.
+/// Returns [`Error::Project`] when a repository lacks the plan's
+/// `milestone` and no issue of it creates the milestone, [`Error::Gh`] when
+/// `gh` fails, [`Error::Json`] when an entry has no numeric `number` or no
+/// string `title`.
 pub(super) fn milestone_numbers(
     gh: &dyn Gh,
     draft: &Draft,
     dry_run: bool,
 ) -> Result<BTreeMap<(String, String), u64>, Error> {
-    let mut numbers = BTreeMap::new();
+    let mut listings = Vec::new();
     for repo in draft_repos(draft) {
         let have = listed(gh, &repo)?;
+        check_plan_milestone(draft, &repo, &have)?;
+        listings.push((repo, have));
+    }
+    let mut numbers = BTreeMap::new();
+    for (repo, have) in listings {
         for title in wanted_titles(draft, &repo) {
             if let Some(number) = have.get(&title) {
                 numbers.insert((repo.clone(), title), *number);
@@ -35,8 +45,37 @@ pub(super) fn milestone_numbers(
                 numbers.insert((repo.clone(), title), number);
             }
         }
+        if let Some(title) = &draft.plan.milestone
+            && let Some(number) = have.get(title)
+        {
+            numbers.insert((repo, title.clone()), *number);
+        }
     }
     Ok(numbers)
+}
+
+/// Fails when an issue of `repo` gets the plan's `milestone` and `repo` has
+/// no milestone of that title. A milestone that an issue of `repo` names
+/// and `apply` creates counts as present, in a dry run as in a real run.
+/// `taskrock setup` creates the others.
+fn check_plan_milestone(
+    draft: &Draft,
+    repo: &str,
+    have: &BTreeMap<String, u64>,
+) -> Result<(), Error> {
+    let Some(title) = &draft.plan.milestone else {
+        return Ok(());
+    };
+    let used = draft
+        .issues
+        .iter()
+        .any(|issue| issue.repo == repo && issue.milestone.is_none());
+    if used && !have.contains_key(title) && !wanted_titles(draft, repo).contains(title) {
+        return Err(Error::Project(format!(
+            "no milestone {title} in {repo}. Run taskrock setup"
+        )));
+    }
+    Ok(())
 }
 
 /// Every repository the draft uses, in first-use order.
