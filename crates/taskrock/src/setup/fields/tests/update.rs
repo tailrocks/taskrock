@@ -15,7 +15,10 @@ fn missing_options_are_added_with_every_existing_id() {
         .ok("-X PATCH orgs/acme/issue-fields/1", "{}");
     let (result, lines) = run_step(&gh, &config, false);
     result.expect("step");
-    assert_eq!(lines[0], "update field Agent (add builder)");
+    assert_eq!(
+        lines[0],
+        "update field Agent (add tailrocks-systems-engineer)"
+    );
     let calls = gh.calls();
     assert_eq!(calls.len(), 2);
     let body: Value = serde_json::from_str(&calls[1].1.clone().expect("body")).expect("json");
@@ -24,7 +27,7 @@ fn missing_options_are_added_with_every_existing_id() {
         json!({"options": [
             {"id": 101, "name": "Owner", "color": "red", "priority": 1},
             {"id": 102, "name": "Extra", "color": "red", "priority": 2},
-            {"name": "builder", "color": "gray", "priority": 3},
+            {"name": "tailrocks-systems-engineer", "color": "gray", "priority": 3},
         ]})
     );
 }
@@ -77,7 +80,12 @@ fn more_than_25_fields_stop_before_any_write() {
 fn visibility_is_fixed_when_it_differs() {
     let config = good();
     let mut fields = complete(&config);
-    fields[2] = field(3, "Runtime", "all", &["claude", "codex"]);
+    fields[2] = field(
+        3,
+        "Runtime",
+        "all",
+        &["claude", "codex", "agy", "muse", "grok"],
+    );
     let gh = FakeGh::new()
         .ok("issue-fields", &reply(&fields))
         .ok("-X PATCH orgs/acme/issue-fields/3", "{}");
