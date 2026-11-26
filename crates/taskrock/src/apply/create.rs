@@ -52,10 +52,15 @@ pub(super) fn creation_order(draft: &Draft) -> Vec<&DraftIssue> {
 
 /// The lines a dry run prints for an issue it would create.
 #[must_use]
-pub(super) fn would_create(issue: &DraftIssue) -> Vec<String> {
+pub(super) fn would_create(draft: &Draft, issue: &DraftIssue) -> Vec<String> {
     let mut lines = vec![format!("would create {} {}", issue.key, issue.title)];
     if let Some(parent) = issue.parent.as_deref().filter(|parent| is_link(parent)) {
         lines.push(format!("would set parent of {} to {parent}", issue.key));
+    }
+    if issue.milestone.is_none()
+        && let Some(title) = &draft.plan.milestone
+    {
+        lines.push(format!("would set milestone {title} on {}", issue.key));
     }
     lines
 }
@@ -121,8 +126,8 @@ fn issue_body(
         )),
     );
     body.insert("type".to_owned(), Value::String(issue.kind.clone()));
-    if let Some(title) = &issue.milestone
-        && let Some(number) = milestones.get(&(issue.repo.clone(), title.clone()))
+    if let Some(title) = draft.milestone_of(issue)
+        && let Some(number) = milestones.get(&(issue.repo.clone(), title.to_owned()))
     {
         body.insert("milestone".to_owned(), Value::Number((*number).into()));
     }

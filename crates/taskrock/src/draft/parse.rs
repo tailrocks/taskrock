@@ -28,6 +28,7 @@ struct RawPlan {
     portfolio: Option<String>,
     #[serde(default)]
     milestones: Vec<RawMilestone>,
+    milestone: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -71,6 +72,9 @@ pub fn parse_plan(text: &str) -> Result<Plan, Error> {
     if let Some(portfolio) = &raw.portfolio {
         check_name(PLAN_FILE, "portfolio", portfolio)?;
     }
+    if raw.milestone.as_deref().is_some_and(str::is_empty) {
+        return Err(draft_error(PLAN_FILE, "milestone must not be empty"));
+    }
     let milestones = raw
         .milestones
         .into_iter()
@@ -85,6 +89,7 @@ pub fn parse_plan(text: &str) -> Result<Plan, Error> {
         project: parse_project_link(&raw.project)?,
         portfolio: raw.portfolio,
         milestones,
+        milestone: raw.milestone,
     })
 }
 

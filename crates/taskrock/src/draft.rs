@@ -27,6 +27,8 @@ pub struct Plan {
     /// The key of the portfolio project that gets the initiatives.
     pub portfolio: Option<String>,
     pub milestones: Vec<Milestone>,
+    /// The title of the milestone every created issue gets, unless it names its own.
+    pub milestone: Option<String>,
 }
 
 /// One issue of a draft.
@@ -52,6 +54,17 @@ pub struct DraftIssue {
 pub struct Draft {
     pub plan: Plan,
     pub issues: Vec<DraftIssue>,
+}
+
+impl Draft {
+    /// The milestone title `issue` gets: its own, or the plan's.
+    #[must_use]
+    pub fn milestone_of<'a>(&'a self, issue: &'a DraftIssue) -> Option<&'a str> {
+        issue
+            .milestone
+            .as_deref()
+            .or(self.plan.milestone.as_deref())
+    }
 }
 
 impl DraftIssue {

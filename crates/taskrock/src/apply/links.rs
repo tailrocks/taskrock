@@ -11,6 +11,8 @@ use crate::github::{get, is_status};
 #[cfg(test)]
 mod flow_tests;
 #[cfg(test)]
+mod order_tests;
+#[cfg(test)]
 mod tests;
 
 /// Reads each issue the draft uses as `parent` or in `blocked_by` by link.

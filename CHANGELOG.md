@@ -5,6 +5,7 @@ All notable changes to this project are recorded in this file.
 ## Unreleased
 
 - `apply`: `parent` and `blocked_by` in a draft may be a full issue link `https://github.com/<owner>/<repo>/issues/<number>`. `check` validates the link.
+- `apply`: `plan.toml` has an optional `milestone`, set on every created issue that names no milestone of its own.
 
 ## 0.2.0
 

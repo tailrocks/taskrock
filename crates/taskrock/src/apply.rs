@@ -84,7 +84,7 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
                 known.link.number, issue.key, issue.title
             ));
         } else if options.dry_run {
-            lines.extend(create::would_create(issue));
+            lines.extend(create::would_create(&draft, issue));
         } else {
             let created = create::create_one(gh, &draft, issue, &found, &field_ids, &milestones)?;
             lines.push(format!(
