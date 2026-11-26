@@ -7,6 +7,7 @@ use crate::link::ProjectLink;
 mod tests;
 
 pub mod check;
+pub mod coverage;
 pub mod parse;
 
 /// One milestone of the plan.

@@ -21,7 +21,9 @@ fn help_lists_every_command() {
         .expect("the taskrock binary starts");
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).expect("stdout is UTF-8");
-    for command in ["check", "apply", "ready", "claim", "release"] {
+    for command in [
+        "check", "apply", "ready", "claim", "release", "setup", "template", "edit",
+    ] {
         assert!(stdout.contains(command), "help lists {command}");
     }
 }

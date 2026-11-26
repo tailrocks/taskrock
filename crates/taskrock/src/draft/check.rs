@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use super::{Draft, DraftIssue};
+use crate::config::Config;
 use crate::error::Error;
 
 use self::body::{bodies, checkboxes, routing, sections, titles};
@@ -50,7 +51,7 @@ pub fn check(draft: &Draft) -> Vec<Finding> {
 /// # Errors
 ///
 /// Returns [`Error::Draft`] or [`Error::Check`].
-pub fn run(folder: &Path) -> Result<String, Error> {
+pub fn run(folder: &Path, _config: &Config) -> Result<String, Error> {
     let draft = super::parse::read(folder)?;
     let findings = check(&draft);
     if findings.is_empty() {

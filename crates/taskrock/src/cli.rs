@@ -18,8 +18,14 @@ pub struct Cli {
 pub enum Command {
     /// Check a draft or a config file against the rules. Uses no network.
     Check {
-        /// The draft folder, or a `taskrock.toml` file.
-        draft: PathBuf,
+        /// A draft folder, or a taskrock.toml file.
+        path: PathBuf,
+        /// Print a read-only coverage report of the draft instead.
+        #[arg(long)]
+        coverage: bool,
+        /// Read the issue formats from this config file instead of the built-in ones.
+        #[arg(long)]
+        config: Option<PathBuf>,
     },
     /// Create the plan of a draft on GitHub.
     Apply {
@@ -46,5 +52,44 @@ pub enum Command {
     Release {
         /// The link of the task.
         link: String,
+        /// Post this file as a handoff comment first.
+        #[arg(long)]
+        note: Option<PathBuf>,
+    },
+    /// Make GitHub match the organization's taskrock.toml.
+    Setup {
+        /// The organization.
+        owner: String,
+        /// Read this file instead of `<owner>/.github/taskrock.toml`.
+        #[arg(long)]
+        file: Option<PathBuf>,
+        /// Print what would change and change nothing.
+        #[arg(long)]
+        dry_run: bool,
+        /// Also delete the workflows set to false.
+        #[arg(long)]
+        yes: bool,
+    },
+    /// Print an empty body with the file sections of a type.
+    Template {
+        /// The issue type, or `owner` for an owner task.
+        #[arg(value_name = "TYPE")]
+        kind: String,
+        /// Read the formats from `<owner>/.github/taskrock.toml`.
+        #[arg(long)]
+        owner: Option<String>,
+        /// Read the formats from this file.
+        #[arg(long, conflicts_with = "owner")]
+        config: Option<PathBuf>,
+    },
+    /// Replace the body of an issue after checking it against its type.
+    Edit {
+        /// The link of the issue.
+        link: String,
+        /// A Markdown file with the new body, without front matter.
+        file: PathBuf,
+        /// Allow changes to the frozen sections of a task in progress.
+        #[arg(long)]
+        replan: bool,
     },
 }
