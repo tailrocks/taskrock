@@ -58,17 +58,17 @@ pub(super) fn set_statuses(
     found: &BTreeMap<String, Created>,
     options: &Options,
 ) -> Result<Vec<String>, Error> {
-    let all = reported(draft);
+    let reported_issues = reported(draft);
     let fresh = |issue: &DraftIssue| found.get(&issue.key).is_none_or(|known| known.fresh);
     if options.dry_run {
-        return Ok(all
+        return Ok(reported_issues
             .iter()
             .filter(|issue| fresh(issue))
             .map(|issue| format!("would set {} to {TRIAGE}", issue.key))
             .collect());
     }
     let field = status_field(gh, &draft.plan.project)?;
-    let triage = if all.is_empty() {
+    let triage = if reported_issues.is_empty() {
         ""
     } else {
         triage_option(&field)?
@@ -82,7 +82,7 @@ pub(super) fn set_statuses(
         let Some(item) = item_of(found, issue, &items) else {
             continue;
         };
-        if all.contains(&issue) {
+        if reported_issues.contains(&issue) {
             if fresh(issue) || item.status.is_none() {
                 triaged.push(issue);
                 if item.status.as_deref() != Some(TRIAGE) {

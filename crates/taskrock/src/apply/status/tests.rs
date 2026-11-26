@@ -1,6 +1,6 @@
 //! Tests of the Status of the new issues.
 
-use std::path::Path;
+use std::path::PathBuf;
 
 use serde_json::{Value, json};
 
@@ -105,10 +105,23 @@ fn dry_run_makes_no_call() {
 }
 
 #[test]
+fn dry_run_skips_a_found_bug() {
+    let (draft, mut found) = draft_and_found("draft-triage", &[("T01", 12), ("B1", 13)]);
+    found.entry("B1".to_owned()).and_modify(|c| c.fresh = false);
+    let gh = FakeGh::new();
+    let lines = set_statuses(&gh, &draft, &found, &dry_options()).expect("dry run");
+    assert_eq!(lines, Vec::<String>::new());
+    assert!(gh.calls().is_empty(), "a dry run makes no call");
+}
+
+fn draft_dir() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-triage")
+}
+
+#[test]
 fn project_without_triage_stops_before_any_creation() {
     let gh = base().ok("7/fields", &fields(false));
-    let error =
-        create_issues(&gh, Path::new("fixtures/draft-triage"), &options()).expect_err("no Triage");
+    let error = create_issues(&gh, &draft_dir(), &options()).expect_err("no Triage");
     assert!(
         matches!(&error, Error::Project(message) if message
             == "the project has no Status option Triage. Run taskrock setup"),
