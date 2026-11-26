@@ -11,6 +11,7 @@ mod project;
 use std::collections::BTreeMap;
 use std::path::Path;
 
+use crate::config;
 use crate::draft::{self};
 use crate::error::Error;
 use crate::gh::Gh;
@@ -52,7 +53,7 @@ pub type ApplyOutput = (draft::Draft, BTreeMap<String, Created>, Vec<String>);
 /// GitHub fails or refuses a creation.
 pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<ApplyOutput, Error> {
     let draft = draft::parse::read(folder)?;
-    let findings = draft::check::check(&draft);
+    let findings = draft::check::check(&draft, &config::default());
     if !findings.is_empty() {
         for finding in &findings {
             println!("{}: {}", finding.file, finding.message);

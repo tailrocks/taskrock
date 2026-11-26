@@ -3,7 +3,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::Finding;
-use super::{at, by_key, has_children, is_epic, is_task, keys};
+use super::{at, by_key, can_be_a_leaf, can_have_children, has_children, keys};
+use crate::config::Config;
 use crate::draft::{Draft, DraftIssue};
 
 pub(super) fn duplicates(draft: &Draft, out: &mut Vec<Finding>) {
@@ -20,10 +21,11 @@ pub(super) fn duplicates(draft: &Draft, out: &mut Vec<Finding>) {
     }
 }
 
-pub(super) fn kinds(draft: &Draft, out: &mut Vec<Finding>) {
+pub(super) fn kinds(draft: &Draft, config: &Config, out: &mut Vec<Finding>) {
+    let names = config.type_names();
     for issue in &draft.issues {
-        if !is_task(&issue.kind) && !is_epic(&issue.kind) {
-            let message = "type must be Initiative, Epic, Task or Bug".to_owned();
+        if !names.contains(&issue.kind.as_str()) {
+            let message = format!("type must be one of {}", names.join(", "));
             out.push(at(issue, message));
         }
     }
@@ -149,16 +151,16 @@ pub(super) fn family(draft: &Draft, out: &mut Vec<Finding>) {
     let children = has_children(draft);
     for issue in &draft.issues {
         let count = children.get(issue.key.as_str()).map_or(0, Vec::len);
-        if count > 0 && !is_epic(&issue.kind) {
+        if count > 0 && !can_have_children(&issue.kind) {
             let message = format!(
                 "{} has children, so its type cannot be {}",
                 issue.key, issue.kind
             );
             out.push(at(issue, message));
         }
-        if count == 0 && !is_task(&issue.kind) {
+        if count == 0 && !can_be_a_leaf(&issue.kind) {
             let message = format!(
-                "{} has no children, so its type must be Task or Bug",
+                "{} has no children, so its type must be Task, Bug or Feature",
                 issue.key
             );
             out.push(at(issue, message));
