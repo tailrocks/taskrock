@@ -1,14 +1,14 @@
 # Structure
 
-taskrock is one Rust crate at `crates/taskrock`. It holds a library and the `taskrock` command line. The agent skills that call the command live in a second repository, and the GitHub organization holds the issue types, fields and project that the command reads and writes. This page shows where each part lives and how one piece of work moves through them. It describes version 0.1.0 as of 2026-11-25.
+taskrock is one Rust crate at `crates/taskrock`. It holds a library and the `taskrock` command line. The agent skills that call the command live in a second repository, `tailrocks/taskrock-plugins`, and the GitHub organization holds the issue types, fields and project that the command reads and writes. This page shows where each part lives and how one piece of work moves through them. It describes version 0.1.0 as of 2026-11-25.
 
 ## The parts
 
 | Part | Where it lives | What it holds |
 |---|---|---|
 | The command | `tailrocks/taskrock`, crate `crates/taskrock` | The `taskrock` binary and its library. It has the commands `check`, `apply`, `ready`, `claim` and `release`. |
-| The skills | `tailrocks/tailrocks-taskrock-skills`, folder `skills/` | Three skills: `taskrock-plan`, `taskrock-issue` and `taskrock-goal`. Each skill has a `SKILL.md` file. The package also holds the plugin manifests for the agent hosts and an adapter for OpenCode. |
-| The marketplace | `tailrocks/tailrocks-skills` | The catalog that lists the skills package and selects its source commit. |
+| The skills | `tailrocks/taskrock-plugins`, folder `plugins/taskrock/skills/` | Three skills: `taskrock-plan`, `taskrock-issue` and `taskrock-goal`. Each skill has a `SKILL.md` file. The plugin also holds one manifest for each of the five agent CLIs. |
+| The marketplace | `tailrocks/taskrock-plugins`, files `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` | The catalog that lists the plugin `taskrock` by its local path. Claude Code and Grok Build read the first file, Codex and Muse Code the second. Antigravity installs the plugin folder from a clone. |
 | The organization setup | The section "Set up an account" of [README](../README.md) | A script that creates the issue types `Initiative` and `Epic` and the eight routing fields. |
 | The project | A project of the GitHub organization | The items of the plan, with the `Status` and `Parent issue` fields that taskrock reads and sets. A new project is a copy of one that has the fields. |
 | The sandbox | `tailrocks/taskrock-sandbox` | The repository that the live tests use. |

@@ -4,7 +4,7 @@ All notable changes to this project are recorded in this file.
 
 ## Unreleased
 
-- The skills moved to the plugin package `tailrocks/tailrocks-taskrock-skills`. Install them as a native plugin from the Tailrocks marketplace.
+- The skills moved to the plugin `taskrock` in `tailrocks/taskrock-plugins`, which is its own marketplace for Claude Code, Codex, Grok Build, Muse Code and Antigravity. The package `tailrocks/tailrocks-taskrock-skills` is replaced.
 
 ## 0.1.0
 

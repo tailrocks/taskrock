@@ -51,7 +51,7 @@ The two do different jobs. pstack describes how an agent does a piece of work an
 
 `tailrocks/tailrocks-skills` is the marketplace of Tailrocks skill packages (Apache-2.0, checked on 2026-11-25). Each package is its own repository, and each catalog entry names the repository and an exact commit.
 
-The skills of taskrock are one package of it, `tailrocks/tailrocks-taskrock-skills`. The three skills call no skill of another package. Three ideas from other packages were considered and are not in version 0.1.0: a grilling skill for the question round, the task format of the `tailrocks-plan` skill, and the pull request skill `tailrocks-pr-create`. In their place, `taskrock-plan` has its own question rule and its own task format. `taskrock-issue` writes `Closes #<number>` into the body of the pull request itself and opens it with `gh pr create`.
+The skills of taskrock were one package of it, `tailrocks/tailrocks-taskrock-skills`, until they moved to their own marketplace, `tailrocks/taskrock-plugins`. The three skills call no skill of another package. Three ideas from other packages were considered and are not in version 0.1.0: a grilling skill for the question round, the task format of the `tailrocks-plan` skill, and the pull request skill `tailrocks-pr-create`. In their place, `taskrock-plan` has its own question rule and its own task format. `taskrock-issue` writes `Closes #<number>` into the body of the pull request itself and opens it with `gh pr create`.
 
 The roadmap package carries an idea through shaping, planning and proof, and keeps its plans as files. taskrock leaves that package untouched. The plan of taskrock lives on GitHub, and each task carries routing fields.
 
