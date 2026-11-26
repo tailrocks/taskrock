@@ -125,6 +125,7 @@ fn record(
                 number,
             },
             id,
+            fresh: false,
         },
     );
     Ok(())

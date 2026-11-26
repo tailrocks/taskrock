@@ -84,6 +84,7 @@ pub(super) fn create_one(
                     number,
                 },
                 id,
+                fresh: true,
             })
         }
         Err(error) if is_status(&error, 422) => Err(Error::Apply(github_message(&error))),
