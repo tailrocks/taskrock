@@ -2,9 +2,10 @@
 
 use serde_json::json;
 
-use super::{ROUTING, fields, found, run_step, sent, wanted};
+use super::{ROUTING, fields, found, run_step, wanted};
 use crate::config::ProjectKind;
 use crate::gh::FakeGh;
+use crate::setup::projects::tests::sent;
 
 const COMPLETE: [&str; 4] = ["Todo", "In Progress", "Done", "Triage"];
 

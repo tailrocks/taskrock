@@ -8,6 +8,7 @@ use crate::error::Error;
 use crate::gh::FakeGh;
 use crate::projects::OrgProject;
 use crate::setup::Run;
+use crate::setup::projects::tests::sent;
 
 mod columns;
 
@@ -63,16 +64,6 @@ pub(super) fn fields(options: &[&str], names: &[&str]) -> String {
             .map(|name| json!({"id": format!("F_{name}"), "name": name})),
     );
     json!({"data": {"node": {"fields": {"nodes": nodes}}}}).to_string()
-}
-
-/// The GraphQL query and variables of call `index`.
-pub(super) fn sent(gh: &FakeGh, index: usize) -> (String, Value) {
-    let input = gh.calls()[index].1.clone().expect("input");
-    let body: Value = serde_json::from_str(&input).expect("json");
-    (
-        body["query"].as_str().expect("query").to_owned(),
-        body["variables"].clone(),
-    )
 }
 
 pub(super) const ROUTING: [&str; 8] = [

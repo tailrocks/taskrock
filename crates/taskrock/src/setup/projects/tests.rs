@@ -51,7 +51,7 @@ pub(super) fn run_step(gh: &FakeGh, config: &Config, dry_run: bool) -> Outcome {
 }
 
 /// The GraphQL query and variables of call `index`.
-pub(super) fn sent(gh: &FakeGh, index: usize) -> (String, Value) {
+pub(in crate::setup) fn sent(gh: &FakeGh, index: usize) -> (String, Value) {
     let input = gh.calls()[index].1.clone().expect("input");
     let body: Value = serde_json::from_str(&input).expect("json");
     (
