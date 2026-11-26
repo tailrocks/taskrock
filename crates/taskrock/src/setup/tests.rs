@@ -46,6 +46,24 @@ fn org_fields() -> String {
     serde_json::Value::Array(fields).to_string()
 }
 
+/// The two projects of `config-good.toml`, with their markers, private.
+fn org_projects() -> String {
+    let node = |number: u64, title: &str, readme: &str| serde_json::json!({"id": format!("P_{number}"), "number": number, "title": title, "readme": readme, "public": false, "closed": false});
+    let nodes = [
+        node(
+            3,
+            "taskrock",
+            "<!-- taskrock:project key=taskrock kind=delivery -->",
+        ),
+        node(
+            4,
+            "Roadmap",
+            "<!-- taskrock:project key=roadmap kind=portfolio -->",
+        ),
+    ];
+    serde_json::json!({"data": {"organization": {"projectsV2": {"nodes": nodes}}}}).to_string()
+}
+
 const ALL: [&str; 5] = ["Initiative", "Epic", "Task", "Bug", "Feature"];
 
 #[test]
@@ -74,11 +92,12 @@ fn a_missing_type_is_created() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL[..4]))
         .ok("-X POST orgs/acme/issue-types", "{}")
-        .ok("issue-fields", &org_fields());
+        .ok("issue-fields", &org_fields())
+        .ok("projectsV2", &org_projects());
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
     let calls = gh.calls();
-    assert_eq!(calls.len(), 3);
+    assert_eq!(calls.len(), 4);
     assert_eq!(
         calls[1].1.as_deref(),
         Some(r#"{"is_enabled":true,"name":"Feature"}"#)
@@ -89,18 +108,20 @@ fn a_missing_type_is_created() {
 fn dry_run_makes_no_post() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL[..4]))
-        .ok("issue-fields", &org_fields());
+        .ok("issue-fields", &org_fields())
+        .ok("projectsV2", &org_projects());
     let out = run(&gh, &options("config-good.toml", true)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
-    assert_eq!(gh.calls().len(), 2);
+    assert_eq!(gh.calls().len(), 3);
 }
 
 #[test]
 fn a_second_run_only_finds_existing_types() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL))
-        .ok("issue-fields", &org_fields());
+        .ok("issue-fields", &org_fields())
+        .ok("projectsV2", &org_projects());
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 0 changes");
-    assert_eq!(gh.calls().len(), 2);
+    assert_eq!(gh.calls().len(), 3);
 }

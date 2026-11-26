@@ -194,7 +194,7 @@ fn create(
     Ok(())
 }
 
-fn organization_id(run: &Run<'_>) -> Result<String, Error> {
+pub(super) fn organization_id(run: &Run<'_>) -> Result<String, Error> {
     let query = "query($o:String!){organization(login:$o){id}}";
     let data = github::graphql(run.gh, query, &json!({"o": run.owner}))?;
     data.pointer("/organization/id")
