@@ -133,7 +133,13 @@ pub fn report<'a>(
             .then_with(|| a.link.number.cmp(&b.link.number))
     });
     warn_shared_files(&mut report, bodies);
-    if report.ready.is_empty() && report.in_progress == 0 && report.blocked > 0 {
+    let broken_ready = scope.iter().any(|item| {
+        is_candidate(item)
+            && !is_triage(item)
+            && !item.routing.is_owner()
+            && is_ready(item, claimed)
+    });
+    if report.ready.is_empty() && report.in_progress == 0 && report.blocked > 0 && !broken_ready {
         report
             .problems
             .push("No task is ready and none is in progress. Look for a blocker cycle.".to_owned());
