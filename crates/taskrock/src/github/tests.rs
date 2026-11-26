@@ -90,3 +90,22 @@ fn graphql_turns_errors_into_gh_errors() {
         other => panic!("wrong error: {other}"),
     }
 }
+
+#[test]
+fn graphql_turns_a_failed_gh_into_the_joined_messages() {
+    let gh = FakeGh::new().fail(
+        "api graphql",
+        "gh: Field 'a' doesn't exist on type 'Query'\nField 'b' doesn't exist on type 'User'",
+    );
+    let error = graphql(&gh, "query", &json!({})).expect_err("failed gh");
+    match error {
+        Error::Gh { args, stderr } => {
+            assert_eq!(args, "api graphql");
+            assert_eq!(
+                stderr,
+                "Field 'a' doesn't exist on type 'Query'; Field 'b' doesn't exist on type 'User'"
+            );
+        }
+        other => panic!("wrong error: {other}"),
+    }
+}
