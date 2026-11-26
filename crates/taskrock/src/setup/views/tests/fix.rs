@@ -60,16 +60,57 @@ fn a_missing_column_is_added_after_the_visible_ones() {
 }
 
 #[test]
-fn a_layout_that_differs_is_noted_and_left() {
+fn a_layout_that_differs_is_fixed() {
+    let mut views = complete_views(Portfolio);
+    views[1] = view("Roadmap", TABLE, FILTER, &ROADMAP);
+    let gh = fake(&answer(None, &views), 1);
+    let (result, lines) = run_step(&gh, &existing(Portfolio), false);
+    result.expect("step");
+    assert_eq!(lines[1], "update view Roadmap (layout)");
+    assert_eq!(
+        input(&gh, 1),
+        json!({"viewId": "V_Roadmap", "layout": "ROADMAP_LAYOUT"})
+    );
+    assert_eq!(gh.calls().len(), 2);
+}
+
+#[test]
+fn a_layout_filter_and_columns_that_differ_are_fixed_by_one_update() {
+    let mut views = complete_views(Portfolio);
+    views[1] = view("Roadmap", TABLE, "type:Epic", &["Title"]);
+    let gh = fake(&answer(None, &views), 1);
+    let (result, lines) = run_step(&gh, &existing(Portfolio), false);
+    result.expect("step");
+    assert_eq!(lines[1], "update view Roadmap (layout, filter, columns)");
+    assert_eq!(
+        input(&gh, 1),
+        json!({
+            "viewId": "V_Roadmap",
+            "layout": "ROADMAP_LAYOUT",
+            "filter": FILTER,
+            "configuration": {"visibleFieldIds": ["Title", "Status", "Sub-issues progress"]},
+        })
+    );
+    assert_eq!(gh.calls().len(), 2);
+}
+
+#[test]
+fn views_with_the_wanted_layout_print_only_exists_and_write_nothing() {
+    let gh = fake(&answer(None, &complete_views(Portfolio)), 0);
+    let (result, lines) = run_step(&gh, &existing(Portfolio), false);
+    result.expect("step");
+    assert_eq!(lines, ["exists view Initiatives", "exists view Roadmap"]);
+    assert_eq!(gh.calls().len(), 1);
+}
+
+#[test]
+fn a_layout_that_differs_changes_nothing_in_a_dry_run() {
     let mut views = complete_views(Portfolio);
     views[1] = view("Roadmap", TABLE, FILTER, &ROADMAP);
     let gh = fake(&answer(None, &views), 0);
-    let (result, lines) = run_step(&gh, &existing(Portfolio), false);
+    let (result, lines) = run_step(&gh, &existing(Portfolio), true);
     result.expect("step");
-    assert_eq!(
-        lines[1],
-        "view Roadmap has layout table, wanted roadmap. The API cannot change it"
-    );
+    assert_eq!(lines[1], "update view Roadmap (layout)");
     assert_eq!(gh.calls().len(), 1);
 }
 

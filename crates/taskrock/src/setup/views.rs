@@ -1,7 +1,5 @@
 //! Step 6 of `taskrock setup`: the views of each kind of project.
 
-use std::fmt;
-
 use serde::Deserialize;
 use serde_json::{Value, json};
 
@@ -29,16 +27,6 @@ impl Layout {
             Self::Table => "TABLE_LAYOUT",
             Self::Roadmap => "ROADMAP_LAYOUT",
         }
-    }
-}
-
-impl fmt::Display for Layout {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(match self {
-            Self::Board => "board",
-            Self::Table => "table",
-            Self::Roadmap => "roadmap",
-        })
     }
 }
 
@@ -278,26 +266,19 @@ fn column_ids(
     Ok(ids)
 }
 
-/// A view that exists: fix its filter and columns, or note its layout.
+/// A view that exists: fix its layout, filter and columns in one update.
 fn fix(
     run: &mut Run<'_>,
     view: &View,
     spec: &ViewSpec,
     ids: &[(&str, String)],
 ) -> Result<(), Error> {
-    if view.layout != spec.layout.graphql() {
-        let got = [Layout::Board, Layout::Table, Layout::Roadmap]
-            .into_iter()
-            .find(|layout| layout.graphql() == view.layout)
-            .map_or_else(|| view.layout.clone(), |layout| layout.to_string());
-        run.note(format!(
-            "view {} has layout {got}, wanted {}. The API cannot change it",
-            spec.name, spec.layout
-        ));
-        return Ok(());
-    }
     let mut input = json!({"viewId": view.id});
     let mut parts = Vec::new();
+    if view.layout != spec.layout.graphql() {
+        parts.push("layout");
+        input["layout"] = spec.layout.graphql().into();
+    }
     if view.filter.as_deref().unwrap_or_default() != spec.filter {
         parts.push("filter");
         input["filter"] = spec.filter.into();
