@@ -68,7 +68,8 @@ fn scan_listing(
 }
 
 /// Reads the issues past the listing: a new issue appears in it late.
-/// Stops after [`MISSING_LIMIT`] answers in a row are HTTP 404.
+/// Stops after [`MISSING_LIMIT`] answers in a row are HTTP 404 or 410 (a
+/// deleted issue).
 fn look_past_listing(
     gh: &dyn Gh,
     draft: &Draft,
@@ -84,7 +85,7 @@ fn look_past_listing(
                 missing = 0;
                 record(draft, repo, &value, found)?;
             }
-            Err(error) if is_status(&error, 404) => missing += 1,
+            Err(error) if is_status(&error, 404) || is_status(&error, 410) => missing += 1,
             Err(error) => return Err(error),
         }
         number += 1;

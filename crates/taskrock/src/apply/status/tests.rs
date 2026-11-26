@@ -9,7 +9,6 @@ use crate::apply::{Created, create_issues};
 use crate::draft::{self, Draft};
 use crate::error::Error;
 use crate::gh::FakeGh;
-use crate::github::items::status_field;
 
 use super::super::tests::{base, dry_options, has_call, options};
 
@@ -19,18 +18,15 @@ fn folder() -> std::path::PathBuf {
     std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-triage")
 }
 
-/// The project fields, with the option `Triage` when `triage` is true.
+/// The project fields as one page, with the option `Triage` when asked.
 fn fields(triage: bool) -> String {
     let mut fields: Vec<Value> = serde_json::from_str(FIELDS).expect("fixture");
-    for field in &mut fields {
-        if field["name"] == "Status"
-            && triage
-            && let Some(list) = field["options"].as_array_mut()
-        {
-            list.push(json!({"id":"abc123","name":{"raw":"Triage","html":"Triage"}}));
-        }
+    let status = fields.iter_mut().find(|field| field["name"] == "Status");
+    let list = status.and_then(|field| field["options"].as_array_mut());
+    if let (true, Some(list)) = (triage, list) {
+        list.push(json!({"id":"abc123","name":{"raw":"Triage"}}));
     }
-    serde_json::to_string(&fields).expect("fields")
+    json!([fields]).to_string()
 }
 
 /// One project item of issue `number` with this Status.
@@ -64,7 +60,7 @@ fn draft_and_found() -> (Draft, BTreeMap<String, Created>) {
 
 /// A fake that answers the field read, then two reads of the items.
 fn fake(first: &[Value], second: &[Value]) -> FakeGh {
-    let fields = format!("[{}]", fields(true));
+    let fields = fields(true);
     FakeGh::new()
         .ok("7/fields", &fields)
         .ok("7/fields", &fields)
@@ -125,7 +121,7 @@ fn dry_run_makes_no_call() {
 
 #[test]
 fn project_without_triage_stops_before_any_creation() {
-    let gh = base().ok("7/fields", &format!("[{}]", fields(false)));
+    let gh = base().ok("7/fields", &fields(false));
     let error = create_issues(&gh, &folder(), &options()).expect_err("no Triage");
     assert!(
         matches!(&error, Error::Project(message) if message
@@ -136,11 +132,14 @@ fn project_without_triage_stops_before_any_creation() {
 }
 
 #[test]
-fn status_field_reads_triage_only_when_the_option_exists() {
-    let project = draft_and_found().0.plan.project;
-    let with = FakeGh::new().ok("7/fields", &format!("[{}]", fields(true)));
-    let without = FakeGh::new().ok("7/fields", &format!("[{}]", fields(false)));
-    let triage = status_field(&with, &project).expect("fields").triage;
-    assert_eq!(triage.as_deref(), Some("abc123"));
-    assert_eq!(status_field(&without, &project).expect("f").triage, None);
+fn task_only_draft_needs_no_triage_and_reads_the_items_once() {
+    let (mut draft, found) = draft_and_found();
+    draft.issues.retain(|issue| issue.key == "T01");
+    let no_triage = fields(false);
+    let items = json!([[item(12, None)]]).to_string();
+    let gh = FakeGh::new().ok("7/fields", &no_triage);
+    let gh = gh.ok("7/fields", &no_triage).ok("7/items?", &items);
+    let gh = gh.ok("7/items/", "{}");
+    let lines = set_statuses(&gh, &draft, &found, &options()).expect("statuses");
+    assert_eq!(lines, ["status: #12 Todo"]);
 }

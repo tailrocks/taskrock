@@ -52,7 +52,7 @@ fn write_draft(
         folder,
         "E1.md",
         &format!(
-            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Done when\n\n- [ ] The summary report downloads.\n"
+            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Decisions already made\n\n- The export is a CSV file.\n\n## Not yet specified\n\nNone. Every decision is in the tasks.\n\n## Out of scope\n\n- No other export format.\n\n## Done when\n\n- [ ] `report --format csv` prints the summary report.\n"
         ),
     )?;
     for (key, title, blocked) in tasks {

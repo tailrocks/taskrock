@@ -65,7 +65,11 @@ pub(super) fn set_statuses(
             .collect());
     }
     let field = status_field(gh, &draft.plan.project)?;
-    let triage = triage_option(&field)?;
+    let triage = if reported.is_empty() {
+        ""
+    } else {
+        triage_option(&field)?
+    };
     let mut lines = Vec::new();
     let items = project_items(gh, &draft.plan.project)?;
     for issue in &draft.issues {
@@ -79,6 +83,9 @@ pub(super) fn set_statuses(
         } else if item.status.is_none() {
             change(gh, draft, &field, item, (&field.todo, "Todo"), &mut lines)?;
         }
+    }
+    if reported.is_empty() {
+        return Ok(lines);
     }
     std::thread::sleep(options.poll);
     let items = project_items(gh, &draft.plan.project)?;

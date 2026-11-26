@@ -75,3 +75,13 @@ fn three_missing_answers_end_the_look_past_the_listing() {
         "no fourth look past the listing"
     );
 }
+
+#[test]
+fn deleted_issue_counts_as_missing_in_the_look_past_the_listing() {
+    let gh = base()
+        .ok("issues?state=all", r#"[[{"number":5,"id":55,"body":"x"}]]"#)
+        .fail("holla/issues/6", "gh: This issue was deleted (HTTP 410)");
+    let gh = created(not_found(gh, 7), 11);
+    let (_, _, lines) = create_issues(&gh, &folder(), &options()).expect("apply succeeds");
+    assert_eq!(lines.len(), 3, "every issue is created: {lines:?}");
+}
