@@ -2,11 +2,17 @@
 
 All notable changes to this project are recorded in this file.
 
-## Unreleased
+## 0.2.1
 
-- `apply`: `parent` and `blocked_by` in a draft may be a full issue link `https://github.com/<owner>/<repo>/issues/<number>`. `check` validates the link.
+- `apply`: `parent` and `blocked_by` in a draft may be a full issue link to an issue that already exists, so one draft files a Bug under an existing epic.
 - `apply`: `plan.toml` has an optional `milestone`, set on every created issue that names no milestone of its own.
+- `apply` puts in Triage only the Bugs and Features that it creates, or that have no Status. An issue that exists keeps its Status.
 - `ready`: a `TRIAGE <n>` section and a `triage` key in `--json` list the open Triage issues under the link. They are not candidates and not problems.
+- `ready` reports "has children" only for a Task or a Bug, and gives the blocker-cycle hint only when a candidate is blocked.
+- `check` refuses a title that starts with a lowercase letter, unless it starts with the name of the repository.
+- `claim` names the skill `taskrock-triage` for an issue in Triage, and says to wait for open blockers.
+- `setup` changes the layout of a view whose layout differs.
+- A GraphQL error from `gh` comes back as its messages joined by `; `.
 
 ## 0.2.0
 
