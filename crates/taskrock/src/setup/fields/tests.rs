@@ -6,6 +6,7 @@ use serde_json::{Value, json};
 
 use super::{routing_fields, wanted};
 
+mod create;
 mod update;
 mod wanted;
 use crate::config::{self, Config};

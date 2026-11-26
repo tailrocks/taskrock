@@ -119,7 +119,7 @@ pub(super) fn routing_fields(run: &mut Run<'_>, config: &Config) -> Result<(), E
     let mut owner_id = None;
     for (name, options) in &wanted {
         match present.iter().find(|field| field.name == *name) {
-            None => create(run, &mut owner_id, name, options)?,
+            None => create(run, &mut owner_id, config, name, options)?,
             Some(field) => update(run, &path, config, field, options)?,
         }
     }
@@ -155,6 +155,7 @@ fn rename_target(present: &[Field]) -> Result<Option<usize>, Error> {
 fn create(
     run: &mut Run<'_>,
     owner_id: &mut Option<String>,
+    config: &Config,
     name: &str,
     options: &[String],
 ) -> Result<(), Error> {
@@ -180,8 +181,12 @@ fn create(
             )
         })
         .collect();
+    let visibility = match config.routing.visibility {
+        Visibility::Restricted => "RESTRICTED",
+        Visibility::All => "ALL",
+    };
     let query = format!(
-        "mutation($o:ID!,$n:String!,$d:String!){{createIssueField(input:{{ownerId:$o,name:$n,description:$d,dataType:SINGLE_SELECT,options:[{}]}}){{issueField{{... on IssueFieldSingleSelect{{name}}}}}}}}",
+        "mutation($o:ID!,$n:String!,$d:String!){{createIssueField(input:{{ownerId:$o,name:$n,description:$d,dataType:SINGLE_SELECT,visibility:{visibility},options:[{}]}}){{issueField{{... on IssueFieldSingleSelect{{name}}}}}}}}",
         listed.join(",")
     );
     let variables = json!({"o": owner_id, "n": name, "d": description(name)});
