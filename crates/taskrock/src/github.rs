@@ -52,6 +52,46 @@ pub fn send(
     }
 }
 
+/// POST a GraphQL query through `gh api graphql --input -` with
+/// `{"query": ..., "variables": ...}`. Returns `data`.
+///
+/// # Errors
+///
+/// Returns [`Error::Gh`] when `gh` fails or the answer has a non-empty
+/// `errors` array (the messages joined by `; `), [`Error::Json`] when the
+/// output is not JSON.
+pub fn graphql(
+    gh: &dyn Gh,
+    query: &str,
+    variables: &serde_json::Value,
+) -> Result<serde_json::Value, Error> {
+    let input = serde_json::json!({"query": query, "variables": variables}).to_string();
+    let stdout = gh.run(&["api", "graphql", "--input", "-"], Some(&input))?;
+    let mut answer = parse(&stdout)?;
+    let errors = answer
+        .get("errors")
+        .and_then(serde_json::Value::as_array)
+        .filter(|errors| !errors.is_empty());
+    if let Some(errors) = errors {
+        let messages: Vec<&str> = errors
+            .iter()
+            .map(|error| {
+                error
+                    .get("message")
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("unknown error")
+            })
+            .collect();
+        return Err(Error::Gh {
+            args: "api graphql".to_owned(),
+            stderr: messages.join("; "),
+        });
+    }
+    Ok(answer
+        .get_mut("data")
+        .map_or(serde_json::Value::Null, serde_json::Value::take))
+}
+
 /// True when `error` is `Error::Gh` and its text contains `(HTTP <code>)`.
 #[must_use]
 pub fn is_status(error: &Error, code: u16) -> bool {

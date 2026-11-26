@@ -5,7 +5,7 @@ use serde_json::json;
 use crate::error::Error;
 use crate::gh::FakeGh;
 use crate::gh::Gh as _;
-use crate::github::{get, get_all, is_status, send};
+use crate::github::{get, get_all, graphql, is_status, send};
 
 #[test]
 fn get_parses_json() {
@@ -59,4 +59,34 @@ fn is_status_matches_http_code() {
     let error = gh.run(&["api"], None).expect_err("failed call");
     assert!(is_status(&error, 422));
     assert!(!is_status(&error, 404));
+}
+
+#[test]
+fn graphql_returns_data() {
+    let gh = FakeGh::new().ok("api graphql", r#"{"data":{"viewer":{"login":"a"}}}"#);
+    let out = graphql(&gh, "query", &json!({"x": 1})).expect("data");
+    assert_eq!(out, json!({"viewer": {"login": "a"}}));
+    assert_eq!(
+        gh.calls(),
+        [(
+            "api graphql --input -".to_owned(),
+            Some(json!({"query": "query", "variables": {"x": 1}}).to_string())
+        )]
+    );
+}
+
+#[test]
+fn graphql_turns_errors_into_gh_errors() {
+    let gh = FakeGh::new().ok(
+        "api graphql",
+        r#"{"data":null,"errors":[{"message":"one"},{"message":"two"}]}"#,
+    );
+    let error = graphql(&gh, "query", &json!({})).expect_err("errors");
+    match error {
+        Error::Gh { args, stderr } => {
+            assert_eq!(args, "api graphql");
+            assert_eq!(stderr, "one; two");
+        }
+        other => panic!("wrong error: {other}"),
+    }
 }
