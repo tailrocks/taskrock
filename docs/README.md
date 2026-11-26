@@ -6,6 +6,7 @@ These pages hold what the code cannot say: why taskrock exists, why it is design
 | --- | --- |
 | [Why taskrock exists](why.md) | Which problem it solves and why the project was born |
 | [Design](design.md) | The principles, the model, each choice with the options that were rejected, and what is left out of version 1 on purpose |
+| [Setup](setup.md) | How an organization is set up: the config file, the issue model, the kinds of project and what `taskrock setup` does |
 | [Structure](structure.md) | The parts of the project and where each part lives |
 | [Comparison](comparison.md) | How taskrock differs from the projects that were studied during the design |
 | [Facts proven by test](facts.md) | The behavior of GitHub, `gh` and the CI that the design stands on |
