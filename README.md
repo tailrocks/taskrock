@@ -7,7 +7,7 @@ GitHub is the only place work lives: issues, projects and pull requests. `taskro
 ```toml
 # mise.toml
 [tools]
-"cargo:https://github.com/tailrocks/taskrock" = { version = "tag:v0.2.0", crate = "taskrock" }
+"cargo:https://github.com/tailrocks/taskrock" = { version = "tag:v0.2.1", crate = "taskrock" }
 ```
 
 The tool needs Rust 1.100.0 or newer.
