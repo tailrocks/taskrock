@@ -2,7 +2,10 @@
 
 use std::path::PathBuf;
 
+use self::complete::project_fields;
 use super::{Action, Change, Options, fields, run};
+
+mod complete;
 use crate::config;
 use crate::error::Error;
 use crate::gh::FakeGh;
@@ -93,11 +96,13 @@ fn a_missing_type_is_created() {
         .ok("issue-types", &org_types(&ALL[..4]))
         .ok("-X POST orgs/acme/issue-types", "{}")
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects());
+        .ok("projectsV2", &org_projects())
+        .ok("graphql", &project_fields())
+        .ok("graphql", &project_fields());
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
     let calls = gh.calls();
-    assert_eq!(calls.len(), 4);
+    assert_eq!(calls.len(), 6);
     assert_eq!(
         calls[1].1.as_deref(),
         Some(r#"{"is_enabled":true,"name":"Feature"}"#)
@@ -109,10 +114,12 @@ fn dry_run_makes_no_post() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL[..4]))
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects());
+        .ok("projectsV2", &org_projects())
+        .ok("graphql", &project_fields())
+        .ok("graphql", &project_fields());
     let out = run(&gh, &options("config-good.toml", true)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
-    assert_eq!(gh.calls().len(), 3);
+    assert_eq!(gh.calls().len(), 5);
 }
 
 #[test]
@@ -120,8 +127,10 @@ fn a_second_run_only_finds_existing_types() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL))
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects());
+        .ok("projectsV2", &org_projects())
+        .ok("graphql", &project_fields())
+        .ok("graphql", &project_fields());
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 0 changes");
-    assert_eq!(gh.calls().len(), 3);
+    assert_eq!(gh.calls().len(), 5);
 }

@@ -10,7 +10,7 @@ use crate::github;
 use crate::projects::{self, Marker, OrgProject};
 
 #[cfg(test)]
-mod tests;
+pub(super) mod tests;
 
 /// Find or create each project of the config, write its marker, set its
 /// title and keep it private. `None` means the project does not exist yet,
