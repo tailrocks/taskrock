@@ -224,7 +224,7 @@ The folder `crates/taskrock/fixtures/` holds a complete example, `config-good.to
 - A delivery project has at least one repository. A portfolio project has no repositories and no milestones.
 - Each milestone due date is a real date `YYYY-MM-DD`.
 
-The limit of 25 issue fields is checked by `setup`, before it writes.
+The limit of 25 issue fields is checked by `setup` before it writes any field.
 
 ## 5. `taskrock setup`
 
@@ -234,12 +234,12 @@ taskrock setup <owner> [--file <path>] [--dry-run] [--yes]
 
 Steps, in order:
 
-1. **Read and check the file.** Stop on the first error, before any write.
+1. **Read and check the file.** Print every problem and stop, before any write.
 2. **Issue types.** Create each type in the file when missing.
-3. **Routing fields.** Create each of the eight fields when missing. Add missing options with `PATCH orgs/<owner>/issue-fields/<id>`, sending the existing options with their IDs plus the new ones (F5). Never send options through GraphQL `updateIssueField`. Extra existing options are kept. If GitHub's default `Effort` field holds only the sizes `XS`, `S`, `M`, `L` and `XL`, rename it to `Size` first. If a field `Size` exists too, stop. If the organization would have more than 25 issue fields, stop before any write. A new field gets the visibility `routing.visibility` says. An existing field whose visibility differs is changed with `update field <name> (visibility)`: `organization_members_only` for `restricted`, `all` for `all`.
+3. **Routing fields.** Create each of the eight fields when missing. Add missing options with `PATCH orgs/<owner>/issue-fields/<id>`, sending the existing options with their IDs plus the new ones (F5). Never send options through GraphQL `updateIssueField`. Extra existing options are kept. If GitHub's default `Effort` field holds only the sizes `XS`, `S`, `M`, `L` and `XL`, rename it to `Size` first. If a field `Size` exists too, stop. If the organization would have more than 25 issue fields, stop before any field write. A new field gets the visibility `routing.visibility` says. An existing field whose visibility differs is changed with `update field <name> (visibility)`: `organization_members_only` for `restricted`, `all` for `all`.
 4. **Projects.** Find each by marker, or by `number`. Create it when missing. Write the marker, set the title and keep it private, each with its own line: `update project <title> (marker)`, `(title)` or `(private)`. A project found by number whose marker has another key stops the run.
 5. **Project fields.** Status gets Triage, Todo, In Progress and Done, sent with the existing IDs (F10). Triage is added after the existing options, which keep their order. The lines are `update status <project title> (add Triage)` and `exists status <project title>`. Each delivery project gets the eight routing fields as columns (F6), with the lines `create column <project title> <field>` and `exists column <project title> <field>`. Each portfolio project gets `Start date` and `Target date`.
-6. **Views.** Turn "View 1" into the first view of the kind: name, filter, columns and, when it differs, layout. Create missing views. Set the filter and the columns of a view that differs, with a line such as `update view Ready (filter, columns)`. Never delete a view, and list extra ones with `extra view <name>`. A column that is not a field of the project stops the run.
+6. **Views.** Turn "View 1" into the first missing view of the kind: name, filter, columns and, when it differs, layout. Create missing views. Set the filter and the columns of a view that differs, with a line such as `update view Ready (filter, columns)`. Never delete a view, and list extra ones with `extra view <name>`. A column that is not a field of the project stops the run.
 7. **Repositories.** Link each repository in `repos` (F7), with the lines `create link <project title> <owner>/<repo>` and `exists link ...`. List extra links with `extra link ...` and keep them.
 8. **Milestones.** Create each shared milestone in each repository of its project, and fix its due date and description. The lines are `create milestone <repo> <title>`, `update milestone <repo> <title>` and `exists milestone <repo> <title>`. Milestones are matched by title, open or closed.
 9. **Workflows.** Keep each workflow set to `true`. Delete each one set to `false`, only with `--yes`. If a `true` workflow is missing or off, stop with `project <title>: the workflow <name> is off and the API cannot turn it on`: the API cannot turn it on again. Check that each board groups by Status (F2), and note `view <name> groups by <names>, not Status. The API cannot change it` for one that does not.
@@ -320,7 +320,7 @@ Each fact was tested in tailrocks with projects, an issue field and an issue mad
 | F4 | README marker | **Works.** An HTML comment in the README comes back through the API exactly as written. | Finds projects by the marker. |
 | F5 | Adding an issue-field option | **GraphQL `updateIssueField` replaces the whole list.** Sending only the new option deleted the old ones and wiped the value on the issue. Sending all names fails with "Name has already been taken". **REST `PATCH /orgs/<org>/issue-fields/<id>` with the existing options' `id`s plus the new option keeps every option and every value.** | Adds options only with the REST call and the existing IDs. |
 | F6 | Issue field in a project | **Works.** `createProjectV2IssueField` adds an org issue field to a project as a column. | Adds the routing fields to delivery projects. |
-| F7 | Linking a repo twice | **Works.** The second `linkProjectV2ToRepository` succeeds with no error. | Links without reading first. |
+| F7 | Linking a repo twice | **Works.** The second `linkProjectV2ToRepository` succeeds with no error. | Reads the linked repositories and links only the missing ones. |
 | F8 | An issue in two projects | **Works.** Each project's REST items call lists the issue with its own Status. One GraphQL call returns both projects with their `readme`. | Portfolio projects are allowed. |
 | F9 | Roadmap dates, Tree nesting | **Not settable.** The view configuration has only `visibleFields`. | Roadmap uses default dates. Tree is flat. |
 | F10 | Adding a Status option | **Works.** `updateProjectV2Field` with the existing options' `id`s plus "Triage" kept the item's Status. | Adds Triage with the IDs. |

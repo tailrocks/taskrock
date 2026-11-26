@@ -52,7 +52,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 **Rejected.** GraphQL for the tool, with paging. The search API for listing and for finding issues.
 
-**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The tool makes one GraphQL call, `project_of`, to find the project of an issue. `taskrock setup` also uses GraphQL, because projects, views and workflows have no REST endpoint.
+**Reason.** Three agents used up the hourly GraphQL budget of the account in one hour. Search lags behind writes. A new issue shows in a listing 6 to 8 seconds after it is created, so `apply` also looks for an issue by its number when the listing lags. The REST list of project items is correct right after a write. See [facts](facts.md). The tool reads GraphQL in a few places. `project_of` finds the project of an issue, for `claim`, `release`, `ready` and `edit`. `projects::kind_of` reads the kind of a project for `ready` with a project link, and `projects::list` lists the projects of an organization for `apply` with a portfolio key. `taskrock setup` also uses GraphQL, because projects, views and workflows have no REST endpoint.
 
 ### A plan is a draft that is applied and then used up
 
@@ -188,5 +188,5 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 - **Moving the existing trackers to this setup.** The tool does not do it.
 - **Projects owned by a personal account.** The tool reads and writes projects of an organization.
 - **A separate GitHub identity for agents.** It would let GitHub notify the owner. It is not part of version 1.
-- **Also left out.** A steering issue for corrections, export and rewrite of issues, bulk changes by query, `tree` and `waiting` commands, and an install command.
+- **Also left out.** A steering issue for corrections, export and rewrite of issues, bulk changes by query, and `tree` and `waiting` commands.
 - **What `setup` does not do.** It never deletes a type, field, option, view, link, milestone or project, and it does not copy a project. [Setup](setup.md) lists them.
