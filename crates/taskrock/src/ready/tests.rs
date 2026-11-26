@@ -17,7 +17,7 @@ fn link(number: u64) -> IssueLink {
     }
 }
 
-fn item(number: u64) -> Item {
+pub(super) fn item(number: u64) -> Item {
     let mut routing = Routing::default();
     for field in ROUTING {
         routing.set(field, "x");
@@ -38,7 +38,7 @@ fn item(number: u64) -> Item {
     }
 }
 
-fn listed(item: &Item) -> Report<'_> {
+pub(super) fn listed(item: &Item) -> Report<'_> {
     report(&[item], &BTreeSet::new(), &BTreeMap::new(), &default())
 }
 
@@ -46,7 +46,7 @@ fn numbers(items: &[&Item]) -> Vec<u64> {
     items.iter().map(|item| item.link.number).collect()
 }
 
-fn has(report: &Report<'_>, needle: &str) -> bool {
+pub(super) fn has(report: &Report<'_>, needle: &str) -> bool {
     report.problems.iter().any(|line| line.contains(needle))
 }
 

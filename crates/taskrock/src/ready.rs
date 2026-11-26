@@ -12,6 +12,8 @@ use crate::projects::kind_of;
 
 mod body;
 #[cfg(test)]
+mod problems_tests;
+#[cfg(test)]
 mod tests;
 
 /// The scope sorted into groups, with the problems.
@@ -105,7 +107,7 @@ pub fn report<'a>(
         push_problems(&mut report.problems, item);
         if item.open && item.routing.is_owner() {
             report.waiting_on_owner.push(item);
-        } else if is_candidate(item) {
+        } else if is_candidate(item) && !is_triage(item) {
             sort_candidate(&mut report, item, claimed, bodies, config);
         }
     }
@@ -119,7 +121,7 @@ pub fn report<'a>(
         && report.in_progress == 0
         && scope
             .iter()
-            .any(|item| is_candidate(item) && !item.routing.is_owner())
+            .any(|item| is_candidate(item) && !is_triage(item) && !item.routing.is_owner())
     {
         report
             .problems
@@ -175,6 +177,11 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
 
 fn is_task_or_bug(item: &Item) -> bool {
     matches!(item.kind.as_deref(), Some("Task" | "Bug" | "Feature"))
+}
+
+/// A reported issue waiting for triage: it has no routing yet.
+fn is_triage(item: &Item) -> bool {
+    item.status.as_deref() == Some("Triage")
 }
 
 fn below(by_link: &BTreeMap<&IssueLink, &Item>, item: &Item, target: &IssueLink) -> bool {
@@ -264,7 +271,7 @@ fn push_problems(problems: &mut Vec<String>, item: &Item) {
             "{url} has children. Only an issue with no children is built."
         ));
     }
-    if is_candidate(item) {
+    if is_candidate(item) && !is_triage(item) {
         if item.status.is_none() {
             problems.push(format!("{url} has no status. Is it in the project?"));
         }
