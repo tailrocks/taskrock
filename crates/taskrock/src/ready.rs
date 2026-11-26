@@ -4,15 +4,20 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::config::{Config, ProjectKind};
 use crate::error::Error;
-use crate::fields::{ROUTING, Routing, draft_key};
 use crate::gh::Gh;
 use crate::github::items::{Item, project_items, project_of};
 use crate::link::{IssueLink, Link};
 use crate::projects::kind_of;
+use crate::stack::Stack;
+use output::{json_of, text_of};
 
 mod body;
+mod output;
 #[cfg(test)]
 mod problems_tests;
+#[cfg(test)]
+mod stacked_tests;
+mod stacks;
 #[cfg(test)]
 mod tests;
 #[cfg(test)]
@@ -34,6 +39,8 @@ pub struct Report<'a> {
     pub blocked: usize,
     /// One line per problem.
     pub problems: Vec<String>,
+    /// The ready items that start from the branch of an open blocker.
+    pub stacked: BTreeMap<IssueLink, Stack>,
 }
 
 /// True when the issue can be built: open, no children, a `Task`, a `Bug` or
@@ -106,6 +113,7 @@ pub fn report<'a>(
     claimed: &BTreeSet<IssueLink>,
     bodies: &BTreeMap<IssueLink, String>,
     config: &Config,
+    stacks: &BTreeMap<IssueLink, Stack>,
 ) -> Report<'a> {
     let mut report = Report {
         ready: Vec::new(),
@@ -114,6 +122,7 @@ pub fn report<'a>(
         in_progress: 0,
         blocked: 0,
         problems: Vec::new(),
+        stacked: BTreeMap::new(),
     };
     for item in scope {
         if is_triage(item) {
@@ -124,7 +133,7 @@ pub fn report<'a>(
         if item.open && item.routing.is_owner() {
             report.waiting_on_owner.push(item);
         } else if is_candidate(item) {
-            sort_candidate(&mut report, item, claimed, bodies, config);
+            sort_candidate(&mut report, item, claimed, bodies, config, stacks);
         }
     }
     report.ready.sort_by(|a, b| {
@@ -137,7 +146,7 @@ pub fn report<'a>(
         is_candidate(item)
             && !is_triage(item)
             && !item.routing.is_owner()
-            && is_ready(item, claimed)
+            && is_ready(item, claimed, stacks)
     });
     if report.ready.is_empty() && report.in_progress == 0 && report.blocked > 0 && !broken_ready {
         report
@@ -159,7 +168,7 @@ pub fn report<'a>(
 /// not JSON, [`Error::Link`] when the link is not understood, [`Error::Project`]
 /// when a field or the project is missing, [`Error::Refused`] when the link is
 /// a portfolio project.
-pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
+pub fn run(gh: &dyn Gh, link: &str, json: bool, stacked: bool) -> Result<String, Error> {
     let link: Link = link.parse()?;
     let items = match &link {
         Link::Project(project) => {
@@ -184,7 +193,12 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
     let scope = scope(&items, &link);
     let claimed = claimed(gh, &scope)?;
     let bodies = body::bodies(gh, &scope)?;
-    let report = report(&scope, &claimed, &bodies, &config);
+    let stacks = if stacked {
+        stacks::stacks(gh, &items, &scope, &claimed)?
+    } else {
+        BTreeMap::new()
+    };
+    let report = report(&scope, &claimed, &bodies, &config, &stacks);
     if json {
         json_of(&report)
     } else {
@@ -222,8 +236,12 @@ fn claim_of(value: &serde_json::Value, owner: &str, repo: &str) -> Option<IssueL
     })
 }
 
-fn is_ready(item: &Item, claimed: &BTreeSet<IssueLink>) -> bool {
-    item.open_blockers == 0
+fn is_ready(
+    item: &Item,
+    claimed: &BTreeSet<IssueLink>,
+    stacks: &BTreeMap<IssueLink, Stack>,
+) -> bool {
+    (item.open_blockers == 0 || stacks.contains_key(&item.link))
         && item.status.as_deref() == Some("Todo")
         && !claimed.contains(&item.link)
 }
@@ -234,8 +252,12 @@ fn sort_candidate<'a>(
     claimed: &BTreeSet<IssueLink>,
     bodies: &BTreeMap<IssueLink, String>,
     config: &Config,
+    stacks: &BTreeMap<IssueLink, Stack>,
 ) {
-    if is_ready(item, claimed) {
+    if is_ready(item, claimed, stacks) {
+        if let Some(stack) = stacks.get(&item.link) {
+            report.stacked.insert(item.link.clone(), stack.clone());
+        }
         let broken = match bodies.get(&item.link) {
             Some(text) => body::build_problems(item, text, config),
             None => Vec::new(),
@@ -293,104 +315,4 @@ fn push_problems(problems: &mut Vec<String>, item: &Item) {
             }
         }
     }
-}
-
-fn show<'a>(routing: &'a Routing, field: &str) -> &'a str {
-    routing
-        .get(field)
-        .filter(|value| !value.is_empty())
-        .unwrap_or("?")
-}
-
-fn text_of(report: &Report<'_>) -> String {
-    let mut lines = vec![format!("READY {}", report.ready.len())];
-    for item in &report.ready {
-        lines.push(format!("{}  {}", item.link.url(), item.title));
-        lines.push(format!(
-            "  builds: {} / {} / {} / {}",
-            show(&item.routing, "Agent"),
-            show(&item.routing, "Runtime"),
-            show(&item.routing, "Model"),
-            show(&item.routing, "Effort"),
-        ));
-        lines.push(format!(
-            "  reviews: {} / {} / {} / {}",
-            show(&item.routing, "Review agent"),
-            show(&item.routing, "Review runtime"),
-            show(&item.routing, "Review model"),
-            show(&item.routing, "Review effort"),
-        ));
-    }
-    lines.push(format!("IN PROGRESS {}", report.in_progress));
-    lines.push(format!("BLOCKED {}", report.blocked));
-    lines.push(format!(
-        "WAITING ON OWNER {}",
-        report.waiting_on_owner.len()
-    ));
-    for item in &report.waiting_on_owner {
-        lines.push(format!("{}  {}", item.link.url(), item.title));
-    }
-    lines.push(format!("TRIAGE {}", report.triage.len()));
-    for item in &report.triage {
-        let kind = item.kind.as_deref().unwrap_or("?");
-        lines.push(format!("{}  {} ({kind})", item.link.url(), item.title));
-    }
-    lines.push(format!("PROBLEMS {}", report.problems.len()));
-    lines.extend(report.problems.iter().cloned());
-    lines.join("\n")
-}
-
-fn json_field(routing: &Routing, field: &str) -> serde_json::Value {
-    match routing.get(field).filter(|value| !value.is_empty()) {
-        Some(value) => serde_json::Value::String(value.to_owned()),
-        None => serde_json::Value::Null,
-    }
-}
-
-fn json_of(report: &Report<'_>) -> Result<String, Error> {
-    let mut ready = Vec::new();
-    for item in &report.ready {
-        let mut entry = serde_json::Map::new();
-        entry.insert("url".to_owned(), serde_json::Value::String(item.link.url()));
-        entry.insert(
-            "number".to_owned(),
-            serde_json::Value::from(item.link.number),
-        );
-        entry.insert(
-            "title".to_owned(),
-            serde_json::Value::String(item.title.clone()),
-        );
-        for field in ROUTING {
-            entry.insert(draft_key(field), json_field(&item.routing, field));
-        }
-        ready.push(serde_json::Value::Object(entry));
-    }
-    let mut waiting = Vec::new();
-    for item in &report.waiting_on_owner {
-        waiting.push(serde_json::json!({
-            "url": item.link.url(),
-            "title": item.title,
-        }));
-    }
-    let triage: Vec<serde_json::Value> = report
-        .triage
-        .iter()
-        .map(|item| {
-            serde_json::json!({
-                "number": item.link.number,
-                "title": item.title,
-                "url": item.link.url(),
-                "type": item.kind,
-            })
-        })
-        .collect();
-    let out = serde_json::json!({
-        "ready": ready,
-        "waiting_on_owner": waiting,
-        "triage": triage,
-        "in_progress": report.in_progress,
-        "blocked": report.blocked,
-        "problems": report.problems,
-    });
-    serde_json::to_string_pretty(&out).map_err(|error| Error::Json(error.to_string()))
 }

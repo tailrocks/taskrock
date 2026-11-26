@@ -49,8 +49,12 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             println!("{text}");
             Ok(())
         }
-        cli::Command::Ready { link, json } => {
-            let text = ready::run(gh, link, *json)?;
+        cli::Command::Ready {
+            link,
+            json,
+            stacked,
+        } => {
+            let text = ready::run(gh, link, *json, *stacked)?;
             println!("{text}");
             Ok(())
         }

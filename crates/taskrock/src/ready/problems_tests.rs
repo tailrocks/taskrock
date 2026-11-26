@@ -44,7 +44,13 @@ fn task_or_bug_with_children_is_still_a_problem() {
 fn broken_body_alone_does_not_blame_a_blocker_cycle() {
     let task = item(1);
     let bodies = BTreeMap::from([(task.link.clone(), "No sections here.".to_owned())]);
-    let found = report(&[&task], &BTreeSet::new(), &bodies, &default());
+    let found = report(
+        &[&task],
+        &BTreeSet::new(),
+        &bodies,
+        &default(),
+        &BTreeMap::new(),
+    );
     assert!(has(&found, "breaks the Task format"));
     assert!(!has(&found, "blocker cycle"));
 }
@@ -55,7 +61,13 @@ fn broken_body_task_does_not_trigger_the_cycle_hint() {
     let mut blocked = item(2);
     blocked.open_blockers = 1;
     let bodies = BTreeMap::from([(broken.link.clone(), "No sections here.".to_owned())]);
-    let found = report(&[&broken, &blocked], &BTreeSet::new(), &bodies, &default());
+    let found = report(
+        &[&broken, &blocked],
+        &BTreeSet::new(),
+        &bodies,
+        &default(),
+        &BTreeMap::new(),
+    );
     assert!(has(&found, "breaks the"));
     assert!(!has(&found, "blocker cycle"));
 }
@@ -70,6 +82,7 @@ fn blocked_task_with_no_ready_task_still_triggers_the_cycle_hint() {
         &BTreeSet::new(),
         &BTreeMap::new(),
         &default(),
+        &BTreeMap::new(),
     );
     assert!(has(&found, "blocker cycle"));
 }
