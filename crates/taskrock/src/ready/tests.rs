@@ -39,7 +39,12 @@ pub(super) fn item(number: u64) -> Item {
 }
 
 pub(super) fn listed(item: &Item) -> Report<'_> {
-    report(&[item], &BTreeSet::new(), &BTreeMap::new(), &default())
+    report_with(&[item], &BTreeSet::new())
+}
+
+fn report_with<'a>(scope: &[&'a Item], claimed: &BTreeSet<IssueLink>) -> Report<'a> {
+    let (bodies, stacks) = (BTreeMap::new(), BTreeMap::new());
+    report(scope, claimed, &bodies, &default(), &stacks)
 }
 
 fn numbers(items: &[&Item]) -> Vec<u64> {
@@ -64,12 +69,7 @@ fn status_or_claim_marks_in_progress() {
     busy.status = Some("In Progress".to_owned());
     assert_eq!(listed(&busy).in_progress, 1);
     let task = item(2);
-    let found = report(
-        &[&task],
-        &BTreeSet::from([link(2)]),
-        &BTreeMap::new(),
-        &default(),
-    );
+    let found = report_with(&[&task], &BTreeSet::from([link(2)]));
     assert_eq!((found.ready.len(), found.in_progress), (0, 1));
 }
 
@@ -123,7 +123,7 @@ fn ready_sorts_by_blocking_then_number() {
     let (mut low, mut tied, mut top) = (item(3), item(1), item(2));
     (low.blocking, tied.blocking, top.blocking) = (5, 5, 9);
     let scope = [&low, &tied, &top];
-    let found = report(&scope, &BTreeSet::new(), &BTreeMap::new(), &default());
+    let found = report_with(&scope, &BTreeSet::new());
     assert_eq!(numbers(&found.ready), [2, 1, 3]);
 }
 

@@ -26,7 +26,8 @@ fn numbered(number: u64) -> Item {
 }
 
 fn listed<'a>(items: &[&'a Item], bodies: &BTreeMap<IssueLink, String>) -> Report<'a> {
-    report(items, &BTreeSet::new(), bodies, &default())
+    let (claimed, stacks) = (BTreeSet::new(), BTreeMap::new());
+    report(items, &claimed, bodies, &default(), &stacks)
 }
 
 fn item(kind: &str) -> Item {

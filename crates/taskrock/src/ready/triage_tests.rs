@@ -33,7 +33,13 @@ fn triaged(number: u64, kind: &str) -> Item {
 fn triage_item_is_listed_and_is_neither_candidate_nor_problem() {
     let bug = triaged(7, "Bug");
     assert!(!is_candidate(&bug));
-    let found = report(&[&bug], &BTreeSet::new(), &BTreeMap::new(), &default());
+    let found = report(
+        &[&bug],
+        &BTreeSet::new(),
+        &BTreeMap::new(),
+        &default(),
+        &BTreeMap::new(),
+    );
     assert_eq!(found.triage.len(), 1);
     assert_eq!(found.ready.len(), 0);
     assert!(found.problems.is_empty(), "{:?}", found.problems);
@@ -43,7 +49,13 @@ fn triage_item_is_listed_and_is_neither_candidate_nor_problem() {
 fn closed_triage_item_is_not_listed() {
     let mut bug = triaged(7, "Bug");
     bug.open = false;
-    let found = report(&[&bug], &BTreeSet::new(), &BTreeMap::new(), &default());
+    let found = report(
+        &[&bug],
+        &BTreeSet::new(),
+        &BTreeMap::new(),
+        &default(),
+        &BTreeMap::new(),
+    );
     assert_eq!(found.triage.len(), 0);
 }
 
@@ -55,6 +67,7 @@ fn text_has_a_triage_section_with_the_type() {
         &BTreeSet::new(),
         &BTreeMap::new(),
         &default(),
+        &BTreeMap::new(),
     );
     let text = text_of(&found);
     assert!(text.contains("TRIAGE 2\n"), "{text}");

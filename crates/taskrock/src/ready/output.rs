@@ -4,6 +4,7 @@ use crate::error::Error;
 use crate::fields::{ROUTING, Routing, draft_key};
 
 use super::Report;
+use crate::stack::Stack;
 
 fn show<'a>(routing: &'a Routing, field: &str) -> &'a str {
     routing
@@ -30,6 +31,12 @@ pub(super) fn text_of(report: &Report<'_>) -> String {
             show(&item.routing, "Review model"),
             show(&item.routing, "Review effort"),
         ));
+        if let Some(stack) = report.stacked.get(&item.link) {
+            lines.push(format!(
+                "  stacked on: {} {}",
+                stack.base, stack.pull_request
+            ));
+        }
     }
     lines.push(format!("IN PROGRESS {}", report.in_progress));
     lines.push(format!("BLOCKED {}", report.blocked));
@@ -57,6 +64,17 @@ fn json_field(routing: &Routing, field: &str) -> serde_json::Value {
     }
 }
 
+fn stacked_json(stack: Option<&Stack>) -> serde_json::Value {
+    match stack {
+        Some(stack) => serde_json::json!({
+            "base": stack.base,
+            "blocker": stack.blocker.number,
+            "pull_request": stack.pull_request,
+        }),
+        None => serde_json::Value::Null,
+    }
+}
+
 pub(super) fn json_of(report: &Report<'_>) -> Result<String, Error> {
     let mut ready = Vec::new();
     for item in &report.ready {
@@ -73,6 +91,10 @@ pub(super) fn json_of(report: &Report<'_>) -> Result<String, Error> {
         for field in ROUTING {
             entry.insert(draft_key(field), json_field(&item.routing, field));
         }
+        entry.insert(
+            "stacked".to_owned(),
+            stacked_json(report.stacked.get(&item.link)),
+        );
         ready.push(serde_json::Value::Object(entry));
     }
     let mut waiting = Vec::new();

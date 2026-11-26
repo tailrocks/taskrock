@@ -24,9 +24,9 @@ fn project_gh() -> FakeGh {
 
 #[test]
 fn run_lists_the_project_as_text_and_json() {
-    let text = run(&project_gh(), PROJECT, false).expect("ready text");
+    let text = run(&project_gh(), PROJECT, false, false).expect("ready text");
     assert!(text.starts_with("READY "), "{text}");
-    let out = run(&project_gh(), PROJECT, true).expect("ready json");
+    let out = run(&project_gh(), PROJECT, true, false).expect("ready json");
     let json: serde_json::Value = serde_json::from_str(&out).expect("json parses");
     for key in [
         "ready",
@@ -38,14 +38,25 @@ fn run_lists_the_project_as_text_and_json() {
     ] {
         assert!(json.get(key).is_some(), "json has {key}");
     }
+    for entry in json["ready"].as_array().expect("ready is a list") {
+        assert!(
+            entry.get("stacked").is_some(),
+            "ready entry has stacked: {entry}"
+        );
+    }
 }
 
 #[test]
 fn run_refuses_a_portfolio_project() {
     let marker = "<!-- taskrock:project key=roadmap kind=portfolio -->";
     let gh = FakeGh::new().ok("graphql", &readme_answer(&format!("Plan\n\n{marker}")));
-    let error = run(&gh, "https://github.com/orgs/tailrocks/projects/4", false)
-        .expect_err("portfolio is refused");
+    let error = run(
+        &gh,
+        "https://github.com/orgs/tailrocks/projects/4",
+        false,
+        false,
+    )
+    .expect_err("portfolio is refused");
     assert!(
         matches!(&error, taskrock::error::Error::Refused(_)),
         "{error}"
@@ -74,7 +85,7 @@ fn run_json_lists_triage_items_outside_ready_and_problems() {
         .ok("matching-refs", "[[]]")
         .ok("issues?state=open", "[[]]")
         .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)");
-    let out = run(&gh, PROJECT, true).expect("ready json");
+    let out = run(&gh, PROJECT, true, false).expect("ready json");
     let json: serde_json::Value = serde_json::from_str(&out).expect("json parses");
     assert_eq!(
         json["triage"],

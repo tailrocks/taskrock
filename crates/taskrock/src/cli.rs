@@ -42,6 +42,10 @@ pub enum Command {
         /// Print JSON.
         #[arg(long)]
         json: bool,
+        /// Also list a task whose open blockers are In Progress with open pull
+        /// requests, and name the branch to stack on.
+        #[arg(long)]
+        stacked: bool,
     },
     /// Take a task.
     Claim {
