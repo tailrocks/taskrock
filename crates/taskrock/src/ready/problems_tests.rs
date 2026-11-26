@@ -1,6 +1,10 @@
 //! Tests for the problems `ready` reports.
 
+use std::collections::{BTreeMap, BTreeSet};
+
+use super::report;
 use super::tests::{has, item, listed};
+use crate::config::default;
 use crate::fields::Routing;
 
 #[test]
@@ -34,4 +38,13 @@ fn task_or_bug_with_children_is_still_a_problem() {
         parent.children = 2;
         assert!(has(&listed(&parent), "has children"), "{kind}");
     }
+}
+
+#[test]
+fn broken_body_alone_does_not_blame_a_blocker_cycle() {
+    let task = item(1);
+    let bodies = BTreeMap::from([(task.link.clone(), "No sections here.".to_owned())]);
+    let found = report(&[&task], &BTreeSet::new(), &bodies, &default());
+    assert!(has(&found, "breaks the Task format"));
+    assert!(!has(&found, "blocker cycle"));
 }
