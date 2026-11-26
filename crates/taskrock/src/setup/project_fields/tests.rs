@@ -12,7 +12,7 @@ use crate::setup::projects::tests::sent;
 
 mod columns;
 
-pub(super) fn wanted(kind: ProjectKind) -> Project {
+pub(in crate::setup) fn wanted(kind: ProjectKind) -> Project {
     Project {
         key: "taskrock".to_owned(),
         title: "taskrock".to_owned(),
@@ -24,7 +24,7 @@ pub(super) fn wanted(kind: ProjectKind) -> Project {
     }
 }
 
-pub(super) fn found() -> OrgProject {
+pub(in crate::setup) fn found() -> OrgProject {
     OrgProject {
         id: "P_3".to_owned(),
         number: 3,

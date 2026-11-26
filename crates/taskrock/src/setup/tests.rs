@@ -3,7 +3,9 @@
 use std::path::PathBuf;
 
 use self::complete::project_fields;
+use super::views::tests::complete;
 use super::{Action, Change, Options, fields, run};
+use crate::config::ProjectKind::{Delivery, Portfolio};
 
 mod complete;
 use crate::config;
@@ -98,11 +100,13 @@ fn a_missing_type_is_created() {
         .ok("issue-fields", &org_fields())
         .ok("projectsV2", &org_projects())
         .ok("graphql", &project_fields())
-        .ok("graphql", &project_fields());
+        .ok("graphql", &project_fields())
+        .ok("graphql", &complete(Delivery))
+        .ok("graphql", &complete(Portfolio));
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
     let calls = gh.calls();
-    assert_eq!(calls.len(), 6);
+    assert_eq!(calls.len(), 8);
     assert_eq!(
         calls[1].1.as_deref(),
         Some(r#"{"is_enabled":true,"name":"Feature"}"#)
@@ -116,10 +120,12 @@ fn dry_run_makes_no_post() {
         .ok("issue-fields", &org_fields())
         .ok("projectsV2", &org_projects())
         .ok("graphql", &project_fields())
-        .ok("graphql", &project_fields());
+        .ok("graphql", &project_fields())
+        .ok("graphql", &complete(Delivery))
+        .ok("graphql", &complete(Portfolio));
     let out = run(&gh, &options("config-good.toml", true)).expect("setup");
     assert_eq!(out, "DONE 1 changes");
-    assert_eq!(gh.calls().len(), 5);
+    assert_eq!(gh.calls().len(), 7);
 }
 
 #[test]
@@ -129,8 +135,10 @@ fn a_second_run_only_finds_existing_types() {
         .ok("issue-fields", &org_fields())
         .ok("projectsV2", &org_projects())
         .ok("graphql", &project_fields())
-        .ok("graphql", &project_fields());
+        .ok("graphql", &project_fields())
+        .ok("graphql", &complete(Delivery))
+        .ok("graphql", &complete(Portfolio));
     let out = run(&gh, &options("config-good.toml", false)).expect("setup");
     assert_eq!(out, "DONE 0 changes");
-    assert_eq!(gh.calls().len(), 5);
+    assert_eq!(gh.calls().len(), 7);
 }
