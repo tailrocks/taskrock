@@ -8,6 +8,7 @@ use crate::error::Error;
 use crate::gh::Gh;
 
 mod fields;
+mod project_fields;
 mod projects;
 mod types;
 
@@ -118,7 +119,8 @@ pub fn run(gh: &dyn Gh, options: &Options) -> Result<String, Error> {
     };
     types::issue_types(&mut run, &config)?;
     fields::routing_fields(&mut run, &config)?;
-    let _projects = projects::projects(&mut run, &config)?;
+    let projects = projects::projects(&mut run, &config)?;
+    project_fields::project_fields(&mut run, &projects)?;
     Ok(format!("DONE {} changes", run.changes()))
 }
 
