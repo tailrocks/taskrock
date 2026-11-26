@@ -2,11 +2,16 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::config::load::load;
 use crate::error::Error;
+use crate::format;
 use crate::gh::Gh;
 use crate::github::items::{Item, project_items, project_of, set_status, status_field};
 use crate::github::{get, is_status, send};
 use crate::link::{IssueLink, ProjectLink};
+
+#[cfg(test)]
+mod body_tests;
 
 #[cfg(test)]
 mod tests;
@@ -23,14 +28,15 @@ mod release_tests;
 ///
 /// Returns [`Error::Link`] when `link` is not an issue link, [`Error::Project`]
 /// when the issue is not an item of its project, [`Error::Refused`] when the
-/// issue cannot be taken, and [`Error::Gh`] or [`Error::Json`] when GitHub
-/// fails or answers badly.
+/// issue cannot be taken or its body breaks the build sections of its type,
+/// and [`Error::Gh`] or [`Error::Json`] when GitHub fails or answers badly.
 pub fn claim(gh: &dyn Gh, link: &str) -> Result<String, Error> {
     let issue = link.parse::<IssueLink>()?;
     let project = project_of(gh, &issue)?;
     let items = project_items(gh, &project)?;
     let item = find(&items, &issue)?.clone();
     refuse(&item)?;
+    check_body(gh, &issue, &item)?;
     create_branch(gh, &issue)?;
     if let Err(error) = mark(gh, &project, &items, &item) {
         delete_branch(gh, &issue);
@@ -55,9 +61,9 @@ fn refuse(item: &Item) -> Result<(), Error> {
     if !item.open {
         return Err(Error::Refused("the issue is closed".to_owned()));
     }
-    if !matches!(item.kind.as_deref(), Some("Task" | "Bug")) {
+    if !matches!(item.kind.as_deref(), Some("Task" | "Bug" | "Feature")) {
         return Err(Error::Refused(
-            "only a Task or a Bug can be taken".to_owned(),
+            "only a Task, a Bug or a Feature can be taken".to_owned(),
         ));
     }
     if item.children > 0 {
@@ -79,6 +85,29 @@ fn refuse(item: &Item) -> Result<(), Error> {
         Some(status) => Err(Error::Refused(format!("the status is {status}, not Todo"))),
         None => Err(Error::Refused("the issue has no status".to_owned())),
     }
+}
+
+fn check_body(gh: &dyn Gh, issue: &IssueLink, item: &Item) -> Result<(), Error> {
+    let data = get(
+        gh,
+        &format!("{}/issues/{}", issue.repo_path(), issue.number),
+    )?;
+    let body = data["body"].as_str().unwrap_or_default();
+    let config = load(gh, &issue.owner)?;
+    let kind = item.kind.as_deref().unwrap_or_default();
+    let Some(format) = config.format(kind, false) else {
+        return Err(Error::Refused(format!(
+            "the config has no issue type {kind}"
+        )));
+    };
+    let problems = format::problems(body, &format.build, &format.checklist);
+    if problems.is_empty() {
+        return Ok(());
+    }
+    Err(Error::Refused(format!(
+        "the body breaks the {kind} format: {}",
+        problems.join("; ")
+    )))
 }
 
 fn create_branch(gh: &dyn Gh, issue: &IssueLink) -> Result<(), Error> {
