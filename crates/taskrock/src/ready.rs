@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::config::ProjectKind;
+use crate::config::{Config, ProjectKind};
 use crate::error::Error;
 use crate::fields::{ROUTING, Routing, draft_key};
 use crate::gh::Gh;
@@ -10,6 +10,7 @@ use crate::github::items::{Item, project_items, project_of};
 use crate::link::{IssueLink, Link};
 use crate::projects::kind_of;
 
+mod body;
 #[cfg(test)]
 mod tests;
 
@@ -28,7 +29,8 @@ pub struct Report<'a> {
     pub problems: Vec<String>,
 }
 
-/// True when the issue can be built: open, no children, a `Task` or a `Bug`.
+/// True when the issue can be built: open, no children, a `Task`, a `Bug` or
+/// a `Feature`.
 #[must_use]
 pub fn is_candidate(item: &Item) -> bool {
     item.open && item.children == 0 && is_task_or_bug(item)
@@ -81,8 +83,17 @@ pub fn claimed(gh: &dyn Gh, scope: &[&Item]) -> Result<BTreeSet<IssueLink>, Erro
 }
 
 /// Sorts the scope into the groups.
+///
+/// A candidate that would be ready but whose body breaks the build sections
+/// of its type is not ready. Ready tasks that name the same file are warned
+/// about.
 #[must_use]
-pub fn report<'a>(scope: &[&'a Item], claimed: &BTreeSet<IssueLink>) -> Report<'a> {
+pub fn report<'a>(
+    scope: &[&'a Item],
+    claimed: &BTreeSet<IssueLink>,
+    bodies: &BTreeMap<IssueLink, String>,
+    config: &Config,
+) -> Report<'a> {
     let mut report = Report {
         ready: Vec::new(),
         waiting_on_owner: Vec::new(),
@@ -95,7 +106,7 @@ pub fn report<'a>(scope: &[&'a Item], claimed: &BTreeSet<IssueLink>) -> Report<'
         if item.open && item.routing.is_owner() {
             report.waiting_on_owner.push(item);
         } else if is_candidate(item) {
-            sort_candidate(&mut report, item, claimed);
+            sort_candidate(&mut report, item, claimed, bodies, config);
         }
     }
     report.ready.sort_by(|a, b| {
@@ -103,6 +114,7 @@ pub fn report<'a>(scope: &[&'a Item], claimed: &BTreeSet<IssueLink>) -> Report<'
             .cmp(&a.blocking)
             .then_with(|| a.link.number.cmp(&b.link.number))
     });
+    warn_shared_files(&mut report, bodies);
     if report.ready.is_empty()
         && report.in_progress == 0
         && scope
@@ -145,9 +157,15 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
             project_items(gh, &project)?
         }
     };
+    let owner = match &link {
+        Link::Project(project) => &project.owner,
+        Link::Issue(issue) => &issue.owner,
+    };
+    let config = crate::config::load::load(gh, owner)?;
     let scope = scope(&items, &link);
     let claimed = claimed(gh, &scope)?;
-    let report = report(&scope, &claimed);
+    let bodies = body::bodies(gh, &scope)?;
+    let report = report(&scope, &claimed, &bodies, &config);
     if json {
         json_of(&report)
     } else {
@@ -156,7 +174,7 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool) -> Result<String, Error> {
 }
 
 fn is_task_or_bug(item: &Item) -> bool {
-    matches!(item.kind.as_deref(), Some("Task" | "Bug"))
+    matches!(item.kind.as_deref(), Some("Task" | "Bug" | "Feature"))
 }
 
 fn below(by_link: &BTreeMap<&IssueLink, &Item>, item: &Item, target: &IssueLink) -> bool {
@@ -191,13 +209,51 @@ fn is_ready(item: &Item, claimed: &BTreeSet<IssueLink>) -> bool {
         && !claimed.contains(&item.link)
 }
 
-fn sort_candidate<'a>(report: &mut Report<'a>, item: &'a Item, claimed: &BTreeSet<IssueLink>) {
+fn sort_candidate<'a>(
+    report: &mut Report<'a>,
+    item: &'a Item,
+    claimed: &BTreeSet<IssueLink>,
+    bodies: &BTreeMap<IssueLink, String>,
+    config: &Config,
+) {
     if is_ready(item, claimed) {
-        report.ready.push(item);
+        let broken = match bodies.get(&item.link) {
+            Some(text) => body::build_problems(item, text, config),
+            None => Vec::new(),
+        };
+        if broken.is_empty() {
+            report.ready.push(item);
+        }
+        let kind = item.kind.as_deref().unwrap_or_default();
+        for message in broken {
+            let url = item.link.url();
+            report
+                .problems
+                .push(format!("{url} breaks the {kind} format: {message}"));
+        }
     } else if claimed.contains(&item.link) || item.status.as_deref() == Some("In Progress") {
         report.in_progress += 1;
     } else if item.open_blockers > 0 {
         report.blocked += 1;
+    }
+}
+
+fn warn_shared_files(report: &mut Report<'_>, bodies: &BTreeMap<IssueLink, String>) {
+    let mut named: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for item in &report.ready {
+        if let Some(text) = bodies.get(&item.link) {
+            for file in body::named_files(text) {
+                named.entry(file).or_default().push(item.link.url());
+            }
+        }
+    }
+    for (file, urls) in named {
+        if urls.len() >= 2 {
+            let list = urls.join(", ");
+            report.problems.push(format!(
+                "{file} is named by {list}. Build them one after another"
+            ));
+        }
     }
 }
 
