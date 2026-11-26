@@ -101,6 +101,23 @@ pub(super) fn titles(draft: &Draft, out: &mut Vec<Finding>) {
         if count == 0 || count > 256 {
             let message = "the title must have 1 to 256 characters".to_owned();
             out.push(at(issue, message));
+        } else if starts_lowercase(issue) {
+            let message = "the title starts with a lowercase letter. Start with a capital letter or a digit, put the code name in backticks, or start with the name of the repository".to_owned();
+            out.push(at(issue, message));
         }
     }
+}
+
+/// A lowercase first letter is allowed only when the title starts with the repository
+/// name of the issue, followed by a space or a colon.
+fn starts_lowercase(issue: &DraftIssue) -> bool {
+    if !issue.title.starts_with(|c: char| c.is_ascii_lowercase()) {
+        return false;
+    }
+    let name = issue.repo.rsplit('/').next().unwrap_or_default();
+    let named = issue
+        .title
+        .strip_prefix(name)
+        .is_some_and(|rest| rest.starts_with([' ', ':']));
+    !named
 }
