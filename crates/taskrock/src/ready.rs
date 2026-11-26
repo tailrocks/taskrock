@@ -117,12 +117,7 @@ pub fn report<'a>(
             .then_with(|| a.link.number.cmp(&b.link.number))
     });
     warn_shared_files(&mut report, bodies);
-    if report.ready.is_empty()
-        && report.in_progress == 0
-        && scope
-            .iter()
-            .any(|item| is_candidate(item) && !is_triage(item) && !item.routing.is_owner())
-    {
+    if report.ready.is_empty() && report.in_progress == 0 && report.blocked > 0 {
         report
             .problems
             .push("No task is ready and none is in progress. Look for a blocker cycle.".to_owned());
