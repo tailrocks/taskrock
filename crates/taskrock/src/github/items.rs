@@ -2,12 +2,16 @@
 
 use serde_json::Value;
 
+use crate::config::ProjectKind;
 use crate::error::Error;
 use crate::fields::{ROUTING, Routing};
 use crate::gh::Gh;
 use crate::github::{get_all, send};
 use crate::link::{IssueLink, ProjectLink};
+use crate::projects::parse_marker;
 
+#[cfg(test)]
+mod project_tests;
 #[cfg(test)]
 mod tests;
 
@@ -84,10 +88,10 @@ pub fn project_items(gh: &dyn Gh, project: &ProjectLink) -> Result<Vec<Item>, Er
 /// # Errors
 ///
 /// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
-/// not JSON, [`Error::Project`] when the issue is in no project or in more
-/// than one project.
+/// not JSON, [`Error::Project`] when the issue is in no delivery project or in
+/// more than one. A project with no marker is a delivery project.
 pub fn project_of(gh: &dyn Gh, issue: &IssueLink) -> Result<ProjectLink, Error> {
-    let query = "query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){projectItems(first:10){nodes{project{number owner{... on Organization{login}}}}}}}}";
+    let query = "query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){projectItems(first:10){nodes{project{number readme owner{... on Organization{login}}}}}}}}";
     let query = format!("query={query}");
     let owner = format!("o={}", issue.owner);
     let repo = format!("r={}", issue.repo);
@@ -111,27 +115,36 @@ pub fn project_of(gh: &dyn Gh, issue: &IssueLink) -> Result<ProjectLink, Error> 
         .pointer("/data/repository/issue/projectItems/nodes")
         .and_then(Value::as_array)
         .ok_or_else(|| Error::Json("nodes".to_owned()))?;
-    match nodes.as_slice() {
-        [node] => {
-            let number = node
-                .pointer("/project/number")
-                .and_then(Value::as_u64)
-                .ok_or_else(|| Error::Json("number".to_owned()))?;
-            let owner = node
-                .pointer("/project/owner/login")
-                .and_then(Value::as_str)
-                .ok_or_else(|| Error::Json("owner".to_owned()))?;
-            Ok(ProjectLink {
-                owner: owner.to_owned(),
-                number,
-            })
+    let mut delivery = Vec::new();
+    for node in nodes {
+        let readme = node
+            .pointer("/project/readme")
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+        if parse_marker(readme).is_some_and(|marker| marker.kind == ProjectKind::Portfolio) {
+            continue;
         }
+        let number = node
+            .pointer("/project/number")
+            .and_then(Value::as_u64)
+            .ok_or_else(|| Error::Json("number".to_owned()))?;
+        let owner = node
+            .pointer("/project/owner/login")
+            .and_then(Value::as_str)
+            .ok_or_else(|| Error::Json("owner".to_owned()))?;
+        delivery.push(ProjectLink {
+            owner: owner.to_owned(),
+            number,
+        });
+    }
+    match delivery.as_slice() {
+        [project] => Ok(project.clone()),
         [] => Err(Error::Project(format!(
-            "the issue is in no project: {}",
+            "the issue is in no delivery project: {}",
             issue.url()
         ))),
         _ => Err(Error::Project(format!(
-            "the issue is in more than one project: {}",
+            "the issue is in more than one delivery project: {}",
             issue.url()
         ))),
     }

@@ -1,9 +1,8 @@
 //! Tests of the project items.
 
-use crate::error::Error;
 use crate::gh::FakeGh;
-use crate::github::items::{project_items, project_of, set_status, status_field};
-use crate::link::{IssueLink, ProjectLink};
+use crate::github::items::{project_items, set_status, status_field};
+use crate::link::ProjectLink;
 
 use super::StatusField;
 
@@ -15,12 +14,6 @@ fn project() -> ProjectLink {
         owner: "tailrocks".to_owned(),
         number: 3,
     }
-}
-
-fn issue() -> IssueLink {
-    "https://github.com/tailrocks/taskrock/issues/12"
-        .parse()
-        .expect("link")
 }
 
 fn fields_gh() -> FakeGh {
@@ -97,30 +90,6 @@ fn null_status_value_gives_none() {
     let items = project_items(&gh, &project()).expect("items");
     assert_eq!(items.len(), 1);
     assert_eq!(items[0].status, None);
-}
-
-#[test]
-fn project_of_returns_project_three() {
-    let nodes = r#"[{"project":{"number":3,"owner":{"login":"tailrocks"}}}]"#;
-    let body =
-        r#"{"data":{"repository":{"issue":{"projectItems":{"nodes":"#.to_owned() + nodes + r"}}}}}";
-    let gh = FakeGh::new().ok("graphql", &body);
-    assert_eq!(project_of(&gh, &issue()).expect("project"), project());
-}
-
-#[test]
-fn project_of_rejects_zero_or_two_nodes() {
-    let one = r#"{"project":{"number":3,"owner":{"login":"tailrocks"}}}"#;
-    for nodes in [r"[]".to_owned(), format!("[{one},{one}]")] {
-        let body = r#"{"data":{"repository":{"issue":{"projectItems":{"nodes":"#.to_owned()
-            + &nodes
-            + r"}}}}}";
-        let gh = FakeGh::new().ok("graphql", &body);
-        assert!(matches!(
-            project_of(&gh, &issue()).expect_err("no single project"),
-            Error::Project(_)
-        ));
-    }
 }
 
 #[test]
