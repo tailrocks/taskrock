@@ -95,7 +95,14 @@ taskrock setup <owner>
 
 ## Use
 
-The owner works in three ways. To plan, explain the work, then run the skill `taskrock-plan`. In Claude Code that is `/taskrock:taskrock-plan`. To build, type `/goal Implement <link>`. For one task, type `Do <link>`.
+The owner works in three ways, each through a skill of the plugin `taskrock`. Always name the skill, so that the agent does not pick another one:
+
+| Agent | Plan | Build one task | Build an initiative, epic or project |
+| --- | --- | --- | --- |
+| Claude Code | `/taskrock:taskrock-plan` | `/taskrock:taskrock-issue <link>` | `/taskrock:taskrock-goal <link>`, or `/goal /taskrock:taskrock-goal <link>` |
+| Codex | `$taskrock:taskrock-plan` | `$taskrock:taskrock-issue <link>` | `$taskrock:taskrock-goal <link>` |
+| Grok Build, Muse Code, Antigravity | `/taskrock-plan` | `/taskrock-issue <link>` | `/taskrock-goal <link>` |
+| Any agent | "use the skill taskrock-plan" | "use the skill taskrock-issue with `<link>`" | "use the skill taskrock-goal with `<link>`" |
 
 ## Commands
 
