@@ -63,3 +63,52 @@ fn threads_resolve_needs_a_reason_and_a_reason_needs_resolve() {
         Some(2)
     );
 }
+
+/// A pull request that is merged, so that no command writes to it.
+const MERGED_PULL: &str = "https://github.com/tailrocks/taskrock/pull/153";
+
+fn run_binary(args: &[&str]) -> std::io::Result<std::process::Output> {
+    Command::new(env!("CARGO_BIN_EXE_taskrock"))
+        .args(args)
+        .output()
+}
+
+#[test]
+#[ignore = "talks to GitHub"]
+fn pr_status_json_prints_the_verdict_as_json() {
+    let output =
+        run_binary(&["pr", "status", MERGED_PULL, "--json"]).expect("the taskrock binary starts");
+    assert_eq!(output.status.code(), Some(0));
+    let verdict: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is JSON");
+    assert_eq!(verdict["state"], "MERGED");
+}
+
+#[test]
+#[ignore = "talks to GitHub"]
+fn pr_threads_json_prints_the_report_as_json() {
+    let output = run_binary(&["pr", "threads", MERGED_PULL, "--defer", "--json"])
+        .expect("the taskrock binary starts");
+    assert_eq!(output.status.code(), Some(0));
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).expect("stdout is JSON");
+    assert_eq!(report["resolved"], serde_json::json!([]));
+    assert_eq!(report["failed"], serde_json::Value::Null);
+}
+
+#[test]
+#[ignore = "talks to GitHub"]
+fn pr_threads_resolve_json_refuses_and_writes_nothing() {
+    let output = run_binary(&[
+        "pr",
+        "threads",
+        MERGED_PULL,
+        "--resolve",
+        "X",
+        "--reason",
+        "test",
+        "--json",
+    ])
+    .expect("the taskrock binary starts");
+    assert_eq!(output.status.code(), Some(3));
+    assert_eq!(output.stdout, b"");
+}
