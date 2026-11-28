@@ -1,0 +1,117 @@
+{
+  "total_count": 16,
+  "check_runs": [
+    {
+      "id": 140731815867,
+      "name": "Remove the ci:run label",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140731815435,
+      "name": "((github.event_name != 'pull_request' || (startsWith(github.ref, 'refs/pull/') && github.event.pull_request.state != 'closed')) && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) && needs.required.result == 'success' && needs.rust-plan.result == 'success' && needs.rust-plan.outputs.skip_push != 'true' && github.event.pull_request.draft != true && (github.event.action != 'labeled' || github.event.label.name == 'ci:run' || github.event.label.name == 'ci:auto') && (github.event.action != 'edited' || github.event.changes.base != null) && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && (contains(github.event.pull_request.labels.*.name, 'ci:run') || contains(github.event.pull_request.labels.*.name, 'ci:auto'))))) && format('Speed budget ({0})', (needs.rust-plan.outputs.rust_root_mode == 'all') && 'full' || ((needs.rust-plan.outputs.rust_root_mode == 'som",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140731753407,
+      "name": "Cache maintenance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140731751783,
+      "name": "Cache",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140731751341,
+      "name": "Required",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485077,
+      "name": "rust",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485073,
+      "name": "mise binary digest signature tests",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485031,
+      "name": "Generator samples",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485027,
+      "name": "hk config",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485012,
+      "name": "Jactionlint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727485011,
+      "name": "Generated workflows",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727484997,
+      "name": "Hosted phase measurement unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727484976,
+      "name": "Alint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727484962,
+      "name": "policy",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140727368219,
+      "name": "rust-plan",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    },
+    {
+      "id": 140724576740,
+      "name": "DCO",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137"
+    }
+  ]
+}

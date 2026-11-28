@@ -6,6 +6,7 @@ use crate::gh::Gh;
 use crate::link::PullLink;
 
 pub mod merge;
+pub mod snapshot;
 pub mod status;
 pub mod threads;
 

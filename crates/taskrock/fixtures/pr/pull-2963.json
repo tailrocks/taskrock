@@ -1,0 +1,25 @@
+{
+  "number": 2963,
+  "node_id": "PR_kwDOUuMw5M8AAAABSMuyqA",
+  "state": "open",
+  "merged": false,
+  "merge_commit_sha": null,
+  "draft": false,
+  "body": "## Why\n\nTask 2899 (R09): `velnor-host` gets a second launch mode, `rust-runner`, that starts `velnor-runner run --jit` once per job in the OrbStack machine `velnor` instead of creating the official runner container pair. This head also builds the controller that runs the mode (decision https://github.com/tailrocks/velnor-new/issues/2899#issuecomment-7202315412, D1 to D4 https://github.com/tailrock",
+  "mergeable": false,
+  "mergeable_state": "dirty",
+  "base": {
+    "ref": "main",
+    "repo": {
+      "full_name": "tailrocks/velnor-new",
+      "default_branch": "main"
+    }
+  },
+  "head": {
+    "ref": "feat/issue-2899",
+    "sha": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
+    "repo": {
+      "full_name": "tailrocks/velnor-new"
+    }
+  }
+}

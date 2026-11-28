@@ -1,0 +1,2081 @@
+{
+  "data": {
+    "repository": {
+      "mergeQueue": {
+        "id": "MQ_kwDOUuMw5M4ABYVJ"
+      },
+      "pullRequest": {
+        "mergeQueueEntry": null,
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMS0yN1QxMToyMjo1M1rOvMHukg=="
+          },
+          "nodes": [
+            {
+              "id": "PRRT_kwDOUuMw5M68hPo-",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222113,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222113",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Admit the fu",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713617885,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713617885",
+                    "body": "Covered by task https://github.com/tailrocks/velnor-new/issues/2967 (PR https://github.com/tailrocks",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpG",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222126,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222126",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Admit the ma",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713618199,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713618199",
+                    "body": "`vars` is covered by task https://github.com/tailrocks/velnor-new/issues/2967 (PR https://github.com",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpJ",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222137,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222137",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Obtain indep",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713618623,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713618623",
+                    "body": "Process item, no code change. The independent review of the test plan and the red/green proof is run",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpP",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222145,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222145",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Stop hashFil",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713618999,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713618999",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/cb6bae12b7c435bdcfaa01665aead00f44ec",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpV",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222157,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222157",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Apply implic",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713619278,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713619278",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/cb6bae12b7c435bdcfaa01665aead00f44ec",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpe",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222169,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222169",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Honor the re",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713619623,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713619623",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/cb6bae12b7c435bdcfaa01665aead00f44ec",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpm",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222177,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222177",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Propagate fi",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713620023,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713620023",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/cb6bae12b7c435bdcfaa01665aead00f44ec",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hPpz",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712222194,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712222194",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve the",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713620305,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713620305",
+                    "body": "Not changing, with evidence. The traversal is depth-first in name order. I ran @actions/glob 0.7.0 (",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvNp",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436646,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436646",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Keep materia",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713620679,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713620679",
+                    "body": "Already fixed. `materialize_context_values` and `materialize_context_values_ordered` return `Secret<",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvNt",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436654,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436654",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Mark every V",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713621023,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713621023",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/00d90bc6cae561c9a932b54520b76f5f7664",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvNy",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436658,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436658",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Exercise the",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713621302,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713621302",
+                    "body": "Moved to task https://github.com/tailrocks/velnor-new/issues/2927 (PR https://github.com/tailrocks/v",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvN0",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436661,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436661",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Recognize li",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713621607,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713621607",
+                    "body": "Not changing. Upstream is case-sensitive: `LexicalAnalyzer.cs` (DTExpressions2 lines 163-184 and the",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvN3",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436664,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436664",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate the",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713621830,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713621830",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/00d90bc6cae561c9a932b54520b76f5f7664",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvN5",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436671,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436671",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove the f",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713622146,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713622146",
+                    "body": "Not part of #2892: its out-of-scope list says \"Changing the protocol or job message modules from R01",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68hvN9",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712436675,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712436675",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject acqui",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713622530,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713622530",
+                    "body": "Not part of #2892: its out-of-scope list says \"Changing the protocol or job message modules from R01",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iGRD",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712594392,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712594392",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Redact conte",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713622888,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713622888",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iGRF",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712594395,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712594395",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713623174,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713623174",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iGRH",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712594399,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712594399",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve sig",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713623497,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713623497",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iO4m",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712653667,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712653667",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove the e",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713623823,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713623823",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/133c5f422c10ca9fd84abeee548bb9dc347c",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iO4p",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712653670,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712653670",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Count UTF-16",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713624200,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713624200",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68iO4s",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712653673,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712653673",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Avoid quadra",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713624674,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713624674",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68idH3",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712751848,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712751848",
+                    "body": "<!-- codex-security-review-finding:v1 -->\n\n### 🛡️ Codex Security Review · _Automatically triggered_\n",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713625060,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713625060",
+                    "body": "Not changing in #2892, with evidence. The runner has the same path-based open: `hashFiles.ts` does `",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68ikTl",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712800380,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712800380",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Normalize pa",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713625398,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713625398",
+                    "body": "Already fixed in https://github.com/tailrocks/velnor-new/commit/010cbde061ff3d089bb78e672f2cc2308e31",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68ikTo",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712800384,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712800384",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Bound hashFi",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713625862,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713625862",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68ikTt",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712800391,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712800391",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Handle a lea",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713626185,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713626185",
+                    "body": "Not changing, with evidence. Upstream has the same literal: `getLiteral` in @actions/glob `internal-",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68i-ha",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712979147,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712979147",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Serialize no",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713626448,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713626448",
+                    "body": "Not changing, with evidence. v2.338.2 `ToJson.cs` (DTExpressions2 `WriteValue`, lines 248-250) write",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68i-he",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712979154,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712979154",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Apply implic",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713626780,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713626780",
+                    "body": "Not changing, with evidence. The worker does not add `success()`. `StepsRunner.cs` (lines 202-221) e",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68i-hi",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4712979158,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4712979158",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Defer format",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713627165,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713627165",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/1560f1451f428f45f69c29f8a4de7961c6301b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68khI1",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713652997,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713652997",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Canonicalize",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713664215,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713664215",
+                    "body": "Not changing, with evidence. Upstream does not canonicalize HOME either: @actions/glob expands `~` w",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68khI4",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713653001,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713653001",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713664474,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713664474",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/35aed1f46f4505911eecdd10d5247ff4e18ee6",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68kub7",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713743972,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713743972",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Fail when a ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713764816,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713764816",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/8417b7267d198eaf05ed3e98bb904c85dfde2f",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68kucC",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713743982,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713743982",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Match Unicod",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713765162,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713765162",
+                    "body": "Not changing, recorded as a deliberate deviation in https://github.com/tailrocks/velnor-new/commit/8",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68kucI",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713743991,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713743991",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Bound the ex",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713765523,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713765523",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/8417b7267d198eaf05ed3e98bb904c85dfde2f",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68kucL",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713743995,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713743995",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Trim only th",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713765773,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713765773",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/8417b7267d198eaf05ed3e98bb904c85dfde2f",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k45v",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713815672,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713815672",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Require a de",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713831035,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713831035",
+                    "body": "Not changing, with evidence. @actions/glob 0.7.0 run as `hashFiles.ts` over a workspace holding a re",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k450",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713815679,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713815679",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Support func",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713831274,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713831274",
+                    "body": "Covered by task https://github.com/tailrocks/velnor-new/issues/2967 (PR https://github.com/tailrocks",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k451",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713815681,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713815681",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve Git",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713831541,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713831541",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/bf675ffef41d2eac5a599467e37898d03da415",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k_7k",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713863085,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713863085",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713874258,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713874258",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/4bd3bc6fc791420167aeb52b1a3874b0f4b1aa",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k_7m",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713863089,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713863089",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Revalidate d",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713874629,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713874629",
+                    "body": "Same class as the thread \"Bind hashFiles checks to the opened descriptor\" (https://github.com/tailro",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68k_7o",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713863091,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713863091",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Support mini",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713874984,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713874984",
+                    "body": "Not changing, with evidence. @actions/glob 0.7.0 builds its matcher with `noext: true` (`lib/interna",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHi2",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915410,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915410",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Redact expre",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713933561,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713933561",
+                    "body": "Not changing, with evidence. `Value` is the result of the expression, so `evaluate_expression(\"secre",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHi4",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915415,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915415",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove evalu",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713933843,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713933843",
+                    "body": "Not changing, with evidence. Upstream puts the evaluated patterns in the same text: `HashFilesFuncti",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHi_",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915422,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915422",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Terminate ti",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713934177,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713934177",
+                    "body": "Not changing in #2892. The worker thread is bounded by the evaluations of one job, ends as soon as t",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHjD",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915429,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915429",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713934453,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713934453",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/8b119fc411f5f6766c1b0cf9729e7ac6ca0459",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHjF",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915432,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915432",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve fro",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713934709,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713934709",
+                    "body": "Covered by task https://github.com/tailrocks/velnor-new/issues/2967 (PR https://github.com/tailrocks",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lHjJ",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713915438,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713915438",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reuse cached",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713935029,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713935029",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/8b119fc411f5f6766c1b0cf9729e7ac6ca0459",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lPpb",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713969597,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713969597",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Redact evalu",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713984456,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713984456",
+                    "body": "Not changing, same evidence as the thread on hashFiles errors. The upstream text is the same: `Forma",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lPpd",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713969601,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713969601",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Parse escape",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713984893,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713984893",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/d97040b4359f8ae5f6fbb8f092f02cef70ce53",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lPpe",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4713969604,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713969604",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Compare expr",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4713985371,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4713985371",
+                    "body": "Real, fixed in https://github.com/tailrocks/velnor-new/commit/d97040b4359f8ae5f6fbb8f092f02cef70ce53",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lYMa",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714026944,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714026944",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Match Window",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714226220,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714226220",
+                    "body": "Not changing this. `@actions/glob` sets `nocase: IS_WINDOWS` only on Windows: in the runner v2.338.2",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lYMe",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714026950,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714026950",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Use .NET ord",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714226806,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714226806",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/d0ca784903476de0c140b4999e37991b0d01ba62. Th",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68lYMh",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714026956,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714026956",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Bound alloca",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714227295,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714227295",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/d0ca784903476de0c140b4999e37991b0d01ba62. `f",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68mEeh",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714305227,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714305227",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve Win",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714455147,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714455147",
+                    "body": "Rejected. velnor-runner runs jobs on Linux and macOS only (goal-manager decision on this PR, review ",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68mEep",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714305237,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714305237",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Accept upper",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714455330,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714455330",
+                    "body": "Rejected. The reference evaluator is case-sensitive here: actions/runner v2.338.2 `ExpressionUtility",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68mgws",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714494832,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714494832",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Parse escape",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714683629,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714683629",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/4af52993162e45a61c24ae4509cc9208dbe979f9: `u",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68mgwy",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714494839,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714494839",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Fail closed ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4714683773,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714683773",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/4af52993162e45a61c24ae4509cc9208dbe979f9: a ",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68nnHn",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714968560,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714968560",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Evaluate the",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4715246494,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715246494",
+                    "body": "Rejected, with evidence. The runner's `contains` evaluates the needle only after it has found a non-",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68nnHp",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4714968564,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4714968564",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Keep negated",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4715246944,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715246944",
+                    "body": "Rejected, with evidence. In the shipped v2.338.2 bundle (`layoutbin/hashFiles/index.js`, minimatch 3",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68oefa",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4715337277,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715337277",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Accept signe",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4715584330,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715584330",
+                    "body": "Accepted and fixed in https://github.com/tailrocks/velnor-new/commit/e6135d963ac0f81a96f304bc80f71a9",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68oefc",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4715337279,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715337279",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Return null ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4715584494,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715584494",
+                    "body": "Rejected: the pinned runner returns an empty filtered array for a non-collection followed by a wildc",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68oefd",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4715337285,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715337285",
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Correct the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4715584642,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4715584642",
+                    "body": "Rejected: the assertion is green, and the expected order is the walk's real order.\n\n`push_children` ",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68qCyH",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4716006830,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716006830",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Stop treatin",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4716298787,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716298787",
+                    "body": "Not reproduced: the shipped runner behaves as Velnor does here. Bundle v2.338.2 `layoutbin/hashFiles",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68qCyM",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4716006836,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716006836",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Do not hash ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4716298990,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716298990",
+                    "body": "Fixed in 86df4656fd, to match the shipped runner rather than the suggestion as worded. On Linux the ",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68qCyQ",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4716006840,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716006840",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Stream forma",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4716299169,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716299169",
+                    "body": "Real, fixed in 86df4656fd. `scan_template` pushed one 32-byte `Segment` per placeholder into a `Vec`",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68qyfU",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4716329374,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716329374",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve fil",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4716646247,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4716646247",
+                    "body": "Rejected, with evidence. The v2.338.2 bundle (sha256 fbcad57b...7e56) on Node 24.22.1 linux-arm64 (b",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68saxI",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717022981,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717022981",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717160731,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717160731",
+                    "body": "Confirmed and fixed in dbba3fdf3966. Upstream rewrites a multi-span scalar into one format(...) call",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68saxU",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717022996,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717022996",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject empty",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717161125,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717161125",
+                    "body": "Confirmed and fixed in dbba3fdf3966. TemplateReader.ParseExpression (https://github.com/actions/runn",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68saxf",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 3,
+                "nodes": [
+                  {
+                    "databaseId": 4717023006,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717023006",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject colle",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717161545,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717161545",
+                    "body": "Confirmed and fixed in dbba3fdf3966. A single-span scalar stays one basic expression (TemplateReader",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  },
+                  {
+                    "databaseId": 4717441103,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717441103",
+                    "body": "Correction to the earlier reply: `Expected a string` is the upstream mapping-key error. For a value,",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68tpu8",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717551017,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717551017",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject exces",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717859598,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717859598",
+                    "body": "Not a divergence. Upstream actions/runner v2.338.2 TemplateReader.cs (lines 506-584) also builds eve",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68tpvA",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717551025,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717551025",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate con",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717859126,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717859126",
+                    "body": "Fixed in 6233f718f2: set_context now calls validate() before installing the value and returns Result",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68tpvH",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717551037,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717551037",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Search case-",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4717860022,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717860022",
+                    "body": "Fixed in 6233f718f2: ordinal_ignore_case_contains no longer builds folded copies of the haystack. It",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68ukH6",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717943990,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717943990",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Enforce the ",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4718711004,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4718711004",
+                    "body": "Fixed in 89962df37d. `toJSON` now computes the escaped string length in UTF-16 units arithmetically ",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68ukH_",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4717944005,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4717944005",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Revalidate c",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4718711474,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4718711474",
+                    "body": "Fixed in 89962df37d. The walk no longer trusts a type it read earlier: each directory is opened with",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68we6G",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4718764910,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4718764910",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Avoid deep-c",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4719939342,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4719939342",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/c39966dbb3f105a5d2b6bbffbd5ec0cf43572034. `p",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68we6O",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4718764918,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4718764918",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Terminate ha",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4719939758,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4719939758",
+                    "body": "Rejected with evidence. The runner runs `hashFiles` in a Node child process and kills the process tr",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PRRT_kwDOUuMw5M68we6S",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4718764929,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4718764929",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Serialize ob",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4719940287,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/2932#discussion_r4719940287",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/c39966dbb3f105a5d2b6bbffbd5ec0cf43572034. `t",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

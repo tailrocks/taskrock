@@ -1,0 +1,25 @@
+{
+  "number": 3033,
+  "node_id": "PR_kwDOUuMw5M8AAAABSbGlKQ",
+  "state": "open",
+  "merged": false,
+  "merge_commit_sha": "328f6b73214c0b0fe304e9e687e684b5b9bd9ab3",
+  "draft": false,
+  "body": "Part of #2911 (unit 2: the job sandbox, with the goal-manager decisions of the review round at d112c00b, the addendum and \"Decision amendment 2\").\n\nStacked on #2963 (`feat/issue-2899`). Unit 1 (#3053: machine, layout, provisioning, job user) is a separate PR; see \"Rebase onto unit 1\" at the end.\n\n## Test plan (written before the tests)\n\nEach row is a behaviour, one positive and one negative scenar",
+  "mergeable": true,
+  "mergeable_state": "unstable",
+  "base": {
+    "ref": "feat/issue-2899",
+    "repo": {
+      "full_name": "tailrocks/velnor-new",
+      "default_branch": "main"
+    }
+  },
+  "head": {
+    "ref": "feat/issue-2911-sandbox",
+    "sha": "3b6cd7b7a4bea711be14782afc0bf464ac82fc13",
+    "repo": {
+      "full_name": "tailrocks/velnor-new"
+    }
+  }
+}
