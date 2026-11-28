@@ -6,7 +6,7 @@ taskrock is one Rust crate at `crates/taskrock`. It holds a library and the `tas
 
 | Part | Where it lives | What it holds |
 |---|---|---|
-| The command | `tailrocks/taskrock`, crate `crates/taskrock` | The `taskrock` binary and its library. It has the commands `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template` and `edit`. |
+| The command | `tailrocks/taskrock`, crate `crates/taskrock` | The `taskrock` binary and its library. It has the commands `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template`, `edit` and `pr`. The `pr` command has the subcommands `status`, `threads` and `merge`. |
 | The skills | `tailrocks/taskrock-plugins`, folder `plugins/taskrock/skills/` | Five skills: `taskrock-plan`, `taskrock-issue`, `taskrock-goal`, `taskrock-triage` and `taskrock-setup`. Each skill has a `SKILL.md` file. The plugin also holds one manifest for each of the five agent CLIs. |
 | The marketplace | `tailrocks/taskrock-plugins`, files `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` | The catalog that lists the plugin `taskrock` by its local path. Claude Code and Grok Build read the first file, Codex and Muse Code the second. Antigravity installs the plugin folder from a clone. |
 | The config | `<owner>/.github/taskrock.toml` | The routing blocks, the issue formats, the projects with their repositories, workflows and shared milestones, of one organization. The views of each kind of project are fixed by the tool. |
@@ -43,9 +43,10 @@ The workspace has one member, `crates/taskrock`. The file `src/main.rs` only par
 | `projects` | `src/projects.rs` | The README marker of a project, the list of the projects of an organization and the kind of a project. |
 | `template` | `src/template.rs` | Prints an empty body with the file sections of a type. |
 | `edit` | `src/edit.rs` | Replaces the body of an issue after it checks the body against the type and the frozen sections. |
+| `pr` | `src/pr.rs`, `src/pr/` | The `taskrock pr` commands. `pr::run` matches each subcommand and calls `status::run`, `threads::run` or `merge::run`. `snapshot` reads a pull request with six REST reads and one GraphQL query. `status` judges the snapshot into a verdict, and `render` prints it. `threads` replies to and resolves bot threads, with `classify` for who must act on a thread and `severity` for the severity line of a bot comment. `merge` merges a READY pull request. |
 | `link` | `src/link.rs` | Parses the links that a person pastes into `IssueLink`, `ProjectLink` and `Link`. It builds the URLs and API paths of each. |
 | `fields` | `src/fields.rs` | The eight routing fields in the constant `ROUTING`, and `Routing`, the field values of one issue. |
-| `github` | `src/github.rs`, `src/github/items.rs` | The REST helpers `get`, `get_all`, `send` and `is_status`. `items` reads the items of a project and sets their status, and `project_of` finds the delivery project of an issue. |
+| `github` | `src/github.rs`, `src/github/items.rs` | The REST helpers `get`, `get_all`, `send` and `is_status`. `graphql` posts a GraphQL query and returns its `data`. An `errors` array becomes `Error::GraphQl`, and any other failure of `gh` stays `Error::Gh`. `items` reads the items of a project and sets their status, and `project_of` finds the delivery project of an issue. |
 | `gh` | `src/gh.rs`, `src/gh/fake.rs` | The `Gh` trait, `RealGh` that runs the `gh` program, and `FakeGh` for tests. |
 | `error` | `src/error.rs` | The `Error` type. A refusal exits with status 3. Every other error exits with status 1. |
 

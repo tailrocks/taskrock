@@ -5,7 +5,7 @@
       "members": [
         {
           "name": "taskrock",
-          "version": "0.4.0",
+          "version": "0.5.0",
           "manifest": "crates/taskrock/Cargo.toml",
           "dependencies": [
             {
@@ -197,7 +197,7 @@
     }
   },
   "manifests": {
-    "Cargo.toml": "50d6af5d499eef3ad2d317a6e639c469ed3e0221ca74fce42d6f748d061f6cb6",
+    "Cargo.toml": "625a9adb7efa039eae2143528f2bb9dcb00a6f5e1e04cb0cf46723a46501c640",
     "crates/taskrock/Cargo.toml": "fc59339aa097deeba606ed8451534e5ae00c7091275417b410fe464a5cd8c17f"
   },
   "layout": "a6a35111bbdbfa0328f43f36c11d2d32087638a60d21b6947794b1697b1f2e53"

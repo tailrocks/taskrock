@@ -2,6 +2,17 @@
 
 All notable changes to this project are recorded in this file.
 
+## 0.5.0
+
+- `pr status <link>` prints the verdict of a pull request: READY, or each reason that it is not. `--json` prints the same verdict as JSON. The exit code is 0 when the pull request is done (READY or MERGED), 10 when it waits for something that changes on its own, and 20 when it is blocked until someone acts.
+- `pr threads <link>` replies to and resolves the review threads of bots. `--defer` settles every unresolved deferrable thread, a thread of severity P3. `--resolve <id> --reason <text>` settles the one thread `<id>`. The command refuses to write when it could not read every thread, or when the pull request changed since it was read.
+- `pr merge <link>` merges a READY pull request at the head that `pr status` judged. It points each open pull request based on this pull request's head branch at the default branch, then queues the pull request when the base has a merge queue, and otherwise squash-merges it. The exit code is 0 when merged, 10 when queued, and 20 when GitHub refuses the merge. A pull request from a fork is refused with exit code 3.
+- A pull request with no check on its head is not READY. `pr status` waits with `No check has started on the head yet.`
+- `[review] max_rounds` counts the reviewed heads of a pull request: the distinct heads that have a review verdict. In 0.4.0 `check` only required it to be at least 1, and no command acted on it. `pr status` now blocks the pull request for the owner when the count reaches the limit and no PASS verdict names the current head. The default is 3.
+- New key `[review] codex`: a list of the repository names of the owner where the Codex connector reviews pull requests. `pr status` waits for the Codex code and security review of the head of a ready, non-draft pull request in a listed repository, even before the connector posts its comment. The default is an empty list. `check` refuses an empty name, a name with a `/`, and a name that is listed twice.
+- A GraphQL `errors` array from GitHub is reported as `GitHub GraphQL error: <messages>`, with the messages joined by `; `. A failure of `gh` itself, such as no answer, an HTTP error status or bad credentials, keeps the message of `gh`.
+- The layout test, `crates/taskrock/tests/layout.rs`, checks the unit-test files under `src` against `docs/structure.md`. Each test file is listed there, and each test module is declared under `#[cfg(test)]`. It runs with `cargo nextest run --workspace --all-features --locked -E 'binary(layout)'`.
+
 ## 0.4.0
 
 - Breaking: check refuses an issue that is not an Initiative and has no parent.
@@ -11,7 +22,7 @@ All notable changes to this project are recorded in this file.
 - `apply` stops before any `POST` when a link `parent` has no room for the new issues that name it: GitHub allows 100 sub-issues per parent. The message is `<link> has <n> sub-issues and GitHub allows 100: file under a child Epic of it`.
 - `ready <issue link>` lists the open Task, Bug, Feature and Epic items of the link's milestone that have no parent in a `LOOSE <n>` section and in the `--json` key `loose`, so a manager sees an issue that was filed outside its tree. A loose item is not a candidate and not a problem. A project link or a link with no milestone has none.
 - Tests remove the folders they create: a unit test no longer leaves `taskrock-*` folders in TMPDIR (#163).
-- `pr`: a preview command group, `pr status`, `pr threads` and `pr merge`. The exit codes 10 and 20 are defined, and no command returns them yet. Each subcommand prints `taskrock pr <name> is not built yet` and exits 1. They are built in 0.5.0.
+- `pr`: a preview command group, `pr status`, `pr threads` and `pr merge`. The exit codes 10 and 20 are defined, and no command returns them yet. Each subcommand is a stub: it writes `error: taskrock pr <name> is not built yet` to standard error and exits 1.
 
 ## 0.3.0
 
