@@ -3,8 +3,10 @@
 use crate::error::Error;
 use crate::gh::FakeGh;
 
+use self::support::{AGENT, MARKER, URL, body, fake, file, has, issue, refused};
 use super::run;
-use super::support::{AGENT, MARKER, URL, body, fake, file, has, issue, refused};
+
+mod support;
 
 #[test]
 fn todo_task_is_edited() {

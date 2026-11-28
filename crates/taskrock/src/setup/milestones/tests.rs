@@ -5,7 +5,7 @@ use serde_json::json;
 use super::milestones;
 use crate::config::SharedMilestone;
 use crate::gh::FakeGh;
-use crate::setup::testing::{body, project, step};
+use crate::setup::tests::testing::{body, project, step};
 
 fn wanted(due: Option<&str>, description: Option<&str>) -> Vec<SharedMilestone> {
     vec![SharedMilestone {

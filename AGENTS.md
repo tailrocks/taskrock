@@ -15,7 +15,9 @@ The plan for this repository is on GitHub: the issues of `tailrocks/taskrock` an
 - No `unwrap`, `expect`, `panic`, `todo` or `unimplemented` outside tests. Return `Result`.
 - A function is at most 80 lines. A Rust file is at most 400 lines. `lib.rs`, `main.rs` and every `tests.rs` are at most 150 lines.
 - Module files are named after the module (`link.rs`, then `link/` for its children). No `mod.rs`.
+- No `#[path]` on a module under `src`.
 - Unit tests live in `src/<module>/tests.rs`, declared in the module with `#[cfg(test)] mod tests;`. Integration tests live in `crates/taskrock/tests/`, which holds only `.rs` files. JSON test data lives in `crates/taskrock/fixtures/`.
+- `tests/layout.rs` checks the unit-test layout against docs/structure.md.
 - Every GitHub request goes through the `Gh` trait. Use the REST API. Do not use the search API: its results lag behind writes.
 - GraphQL is allowed only where REST has no equivalent: the resolved state of review threads, `resolveReviewThread`, the merge queue (`mergeQueue`, `mergeQueueEntry`, `enqueuePullRequest`), and Projects v2: projects, fields, views, items, workflows and repository links (`createIssueField`). Use `github::graphql` for it.
 - Add a dependency only when the task names it. Add it with `cargo add`, and commit `Cargo.lock`.

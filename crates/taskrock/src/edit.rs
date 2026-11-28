@@ -11,9 +11,6 @@ use crate::github::{get, send};
 use crate::link::IssueLink;
 
 #[cfg(test)]
-mod support;
-
-#[cfg(test)]
 mod tests;
 
 const FROZEN: [&str; 3] = ["Outcome", "Decisions already made", "Out of scope"];

@@ -1,15 +1,15 @@
 //! Helpers for the tests of the steps that take the list of projects.
 
-use super::Run;
 use crate::config::{Project, ProjectKind, SharedMilestone};
 use crate::error::Error;
 use crate::gh::FakeGh;
 use crate::projects::OrgProject;
+use crate::setup::Run;
 use crate::setup::project_fields::tests::{found, wanted};
 
 /// The delivery project `taskrock` with these repositories and milestones.
 /// It exists on GitHub unless `exists` is false, as in a dry run.
-pub(super) fn project(
+pub(in crate::setup) fn project(
     repos: &[&str],
     milestones: Vec<SharedMilestone>,
     exists: bool,
@@ -23,7 +23,7 @@ pub(super) fn project(
 }
 
 /// Run one step with `acme` as the owner. Returns its result and its lines.
-pub(super) fn step(
+pub(in crate::setup) fn step(
     gh: &FakeGh,
     dry_run: bool,
     step: impl FnOnce(&mut Run<'_>) -> Result<(), Error>,
@@ -40,7 +40,7 @@ pub(super) fn step(
 }
 
 /// The JSON input of the REST call `index`.
-pub(super) fn body(gh: &FakeGh, index: usize) -> serde_json::Value {
+pub(in crate::setup) fn body(gh: &FakeGh, index: usize) -> serde_json::Value {
     let input = gh.calls()[index].1.clone().unwrap_or_default();
     serde_json::from_str(&input).unwrap_or_default()
 }

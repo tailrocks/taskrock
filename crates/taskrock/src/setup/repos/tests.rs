@@ -5,7 +5,7 @@ use serde_json::json;
 use super::repos;
 use crate::gh::FakeGh;
 use crate::setup::projects::tests::sent;
-use crate::setup::testing::{project, step};
+use crate::setup::tests::testing::{project, step};
 
 fn linked(names: &[&str]) -> String {
     let nodes: Vec<_> = names.iter().map(|name| json!({"name": name})).collect();
