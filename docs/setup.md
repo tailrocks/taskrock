@@ -303,7 +303,7 @@ A workflow set to `false` is deleted for good with `--yes`, with the line `delet
 
 ## 7. The skills
 
-All skills read the config. No skill calls `gh issue create` or `gh issue edit --body`. `scripts/check.py` in taskrock-plugins fails when a skill names either. The version check asks for 0.4.0. A skill builds an issue only after taskrock claim took it, and never builds an issue in Triage.
+All skills read the config. No skill calls `gh issue create` or `gh issue edit --body`. `scripts/check.py` in taskrock-plugins fails when a skill names either. The version check of the plugin accepts the taskrock 0.4 series. A skill builds an issue only after taskrock claim took it, and never builds an issue in Triage.
 
 The goal skill lists ready tasks with `taskrock ready --stacked`, takes a stacked task with `taskrock claim --stacked`, merges a stack from the bottom up, and retargets each pull request to the default branch before its base merges.
 
