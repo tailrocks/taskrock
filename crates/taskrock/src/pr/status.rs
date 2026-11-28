@@ -24,6 +24,21 @@ pub fn verdict(gh: &dyn Gh, link: &PullLink) -> Result<(PullSnapshot, Verdict), 
     Ok((snapshot, judged))
 }
 
+/// The text of the verdict, or its JSON, and its exit code.
+fn outcome(link: &PullLink, snapshot: &PullSnapshot, judged: &Verdict, json: bool) -> (String, u8) {
+    let out = if json {
+        render::json(link, snapshot, judged)
+    } else {
+        render::text(link, snapshot, judged)
+    };
+    let code = match judged.state {
+        State::Ready | State::Merged => EXIT_DONE,
+        State::Waiting => EXIT_WAITING,
+        State::Blocked => EXIT_BLOCKED,
+    };
+    (out, code)
+}
+
 /// Run `taskrock pr status`: print the verdict and return its exit code.
 ///
 /// # Errors
@@ -31,15 +46,10 @@ pub fn verdict(gh: &dyn Gh, link: &PullLink) -> Result<(PullSnapshot, Verdict), 
 /// Returns the errors of [`verdict`].
 pub fn run(gh: &dyn Gh, link: &PullLink, json: bool) -> Result<u8, Error> {
     let (snapshot, judged) = verdict(gh, link)?;
-    let out = if json {
-        render::json(link, &snapshot, &judged)
-    } else {
-        render::text(link, &snapshot, &judged)
-    };
+    let (out, code) = outcome(link, &snapshot, &judged, json);
     println!("{out}");
-    Ok(match judged.state {
-        State::Ready | State::Merged => EXIT_DONE,
-        State::Waiting => EXIT_WAITING,
-        State::Blocked => EXIT_BLOCKED,
-    })
+    Ok(code)
 }
+
+#[cfg(test)]
+mod tests;

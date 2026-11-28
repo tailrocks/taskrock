@@ -44,16 +44,29 @@ fn status_render_json_has_the_documented_keys() {
 
 #[test]
 fn status_render_json_lists_the_unresolved_threads() {
-    let (link, snapshot, verdict) = recorded(3033);
+    let (link, mut snapshot, verdict) = recorded(3033);
+    snapshot.threads[0].resolved = true;
+    let resolved = snapshot.threads[0].id.clone();
+    assert!(
+        snapshot.threads.iter().any(|t| t.resolved),
+        "a resolved thread"
+    );
     let value: Value = serde_json::from_str(&json(&link, &snapshot, &verdict)).expect("JSON");
-    let open = snapshot.threads.iter().filter(|t| !t.resolved).count();
     let threads = value["threads"].as_array().expect("threads");
-    assert_eq!(threads.len(), open);
+    assert_eq!(threads.len(), snapshot.threads.len() - 1);
+    assert!(threads.iter().all(|t| t["id"] != resolved.as_str()));
     assert_eq!(
         sorted_keys(&threads[0]),
         ["author", "class", "id", "severity", "url"]
     );
     assert_eq!(threads[0]["class"], "blocking");
+}
+
+#[test]
+fn status_render_json_reads_the_severity_badge() {
+    let (link, snapshot, verdict) = recorded(3033);
+    let value: Value = serde_json::from_str(&json(&link, &snapshot, &verdict)).expect("JSON");
+    assert_eq!(value["threads"][0]["severity"], "P1");
 }
 
 #[test]
