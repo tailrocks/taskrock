@@ -1,7 +1,6 @@
 //! `evaluate` on the recorded pull requests of tailrocks/velnor-new.
 
-use super::tests::codes;
-use super::{State, Verdict, evaluate};
+use super::{State, Verdict, codes, evaluate};
 use crate::config;
 use crate::pr::snapshot::case_tests::Case;
 use crate::pr::snapshot::read;

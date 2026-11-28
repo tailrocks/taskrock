@@ -81,16 +81,16 @@ There are three kinds of tests.
   - `src/link/pull_tests.rs`
   - `src/pr/snapshot/case_tests.rs`
   - `src/pr/snapshot/facts_tests.rs`
-  - `src/pr/status/evaluate/blockers_tests.rs`
-  - `src/pr/status/evaluate/fixtures_tests.rs`
-  - `src/pr/status/evaluate/order_tests.rs`
-  - `src/pr/status/evaluate/waits_tests.rs`
   - `src/ready/loose_tests.rs`
   - `src/ready/problems_tests.rs`
   - `src/ready/stacked_tests.rs`
   - `src/ready/triage_tests.rs`
 - Unit tests can also sit in a `tests/` folder next to the `tests.rs` of their module. Both layouts are allowed. The `tests.rs` file declares each file of that folder with `mod <name>;`. The parent module declares that `tests.rs` file with `#[cfg(test)] mod tests;`, or with `#[cfg(test)] pub(super) mod tests;` when the tests of sibling modules import from it. These files use the `tests/` folder layout:
   - `src/apply/status/tests/rerun.rs`
+  - `src/pr/status/evaluate/tests/blockers.rs`
+  - `src/pr/status/evaluate/tests/fixtures.rs`
+  - `src/pr/status/evaluate/tests/order.rs`
+  - `src/pr/status/evaluate/tests/waits.rs`
   - `src/setup/fields/tests/create.rs`
   - `src/setup/fields/tests/update.rs`
   - `src/setup/fields/tests/wanted.rs`

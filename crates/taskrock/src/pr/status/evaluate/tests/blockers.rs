@@ -1,7 +1,6 @@
 //! One test per blocker code.
 
-use super::evaluate;
-use super::tests::{HEAD, check, codes, judge, link, ready, thread, verdict};
+use super::{HEAD, check, codes, evaluate, judge, link, ready, thread, verdict};
 use crate::config;
 
 const P2: &str = "![P2 Badge](https://img.shields.io/badge/P2-yellow)";
