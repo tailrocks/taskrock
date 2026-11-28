@@ -93,10 +93,14 @@ fn routing(config: &Config, out: &mut Vec<String>) {
 }
 
 /// The repositories of `review.codex`: bare names of the owner, each listed once.
+/// `evaluate` matches them ignoring ASCII case, so the repeat check does too.
 fn codex_repos(config: &Config, out: &mut Vec<String>) {
+    let keys: Vec<String> = (config.review.codex.iter())
+        .map(|r| r.to_ascii_lowercase())
+        .collect();
     let mut names = Names::new("review.codex repository");
-    for repo in &config.review.codex {
-        out.extend(names.see(repo));
+    for (repo, key) in config.review.codex.iter().zip(&keys) {
+        out.extend(names.see(key));
         if repo.is_empty() || repo.contains('/') {
             out.push(format!(
                 "review.codex repository {repo:?} must be a repository name of the owner, with no /"

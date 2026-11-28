@@ -174,3 +174,13 @@ fn evaluate_closes_missing_for_a_task_branch_without_the_line() {
     snapshot.body.clear();
     assert_eq!(judge(&snapshot).findings, []);
 }
+
+#[test]
+fn evaluate_a_pass_for_another_head_does_not_stop_rounds_exhausted() {
+    let mut config = config::default();
+    config.review.max_rounds = 2;
+    let mut snapshot = ready();
+    snapshot.verdicts = vec![verdict(true, &"a".repeat(40), 1), verdict(false, HEAD, 2)];
+    let found = evaluate(&snapshot, &config, &link());
+    assert_eq!(codes(&found), ["rounds_exhausted", "verdict_failed"]);
+}

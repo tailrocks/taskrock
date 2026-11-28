@@ -221,7 +221,7 @@ The folder `crates/taskrock/fixtures/` holds a complete example, `config-good.to
 **Checking the file.** `taskrock check <file>` checks the file offline and prints `OK config, <n> projects`, or one line for each problem. It checks that:
 
 - `version` is 1 and `review.max_rounds` is at least 1.
-- Each `review.codex` entry is a repository name with no `/`, listed once.
+- Each `review.codex` entry is a repository name with no `/`, listed once, ignoring case.
 - Subagent names, model names, issue type names and project keys are unique, and so are the milestone titles of a project.
 - Each subagent and model runtime is in `routing.runtimes`. Each subagent has at least one `can` value, and each model has at least one effort.
 - Each of the five required issue types is present, and the `file` and `checklist` sections of each format are also `build` sections.

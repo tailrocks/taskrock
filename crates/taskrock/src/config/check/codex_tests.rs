@@ -36,3 +36,11 @@ fn config_review_codex_lists_a_name_once() {
         ["review.codex repository a is listed twice"]
     );
 }
+
+#[test]
+fn config_review_codex_lists_a_name_once_ignoring_case() {
+    assert_eq!(
+        with_codex(&["Velnor-new", "velnor-new"]),
+        ["review.codex repository velnor-new is listed twice"]
+    );
+}
