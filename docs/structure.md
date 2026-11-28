@@ -85,6 +85,17 @@ There are three kinds of tests.
   - `src/ready/problems_tests.rs`
   - `src/ready/stacked_tests.rs`
   - `src/ready/triage_tests.rs`
+- Unit tests can also sit in a `tests/` folder next to the `tests.rs` of their module. Both layouts are allowed. The `tests.rs` file declares each file of that folder with `mod <name>;`. The parent module declares that `tests.rs` file with `#[cfg(test)] mod tests;`, or with `#[cfg(test)] pub(super) mod tests;` when the tests of sibling modules import from it. These files use the `tests/` folder layout:
+  - `src/apply/status/tests/rerun.rs`
+  - `src/setup/fields/tests/create.rs`
+  - `src/setup/fields/tests/update.rs`
+  - `src/setup/fields/tests/wanted.rs`
+  - `src/setup/project_fields/tests/columns.rs`
+  - `src/setup/projects/tests/fixes.rs`
+  - `src/setup/tests/complete.rs`
+  - `src/setup/views/tests/create.rs`
+  - `src/setup/views/tests/fix.rs`
+  - `src/setup/workflows/tests/support.rs`
 - Integration tests sit in `crates/taskrock/tests/`. `cli.rs` runs the built binary with `--version`, with `--help` and with no argument. `ready.rs` runs `ready::run` against the fixtures through `FakeGh`. `check_config.rs` runs `taskrock check` on a config file.
 - Live tests are the files whose names start with `sandbox_`. They call GitHub. Each test has the attribute `#[ignore = "talks to GitHub"]`, so a normal test run skips it. The live tests of apply and claim write to `tailrocks/taskrock-sandbox`. The live test of setup, `sandbox_setup.rs`, runs `taskrock setup` twice on the sandbox project and expects no change the second time.
 
