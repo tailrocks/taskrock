@@ -26,7 +26,7 @@ This page keeps each choice together with the option that was rejected and the r
 - **Draft.** A folder that holds a plan before it exists on GitHub. Each file is one issue. Parents and blockers name keys, so the draft is complete before any issue exists. A parent or blocker may also be a full link to an issue that already exists, and `plan.toml` may name a milestone for every issue it creates. This files an issue inside a goal in one step.
 - **Roles.** The manager hands out tasks, starts the reviewer, posts the verdict and merges. The builder builds one task. The reviewer checks one pull request.
 
-The [README](../README.md) lists the eight commands. The skills hold the steps that use them.
+The [README](../README.md) does not yet list the three `pr` commands. The skills hold the steps that use them.
 
 ## Choices and what was rejected
 
@@ -42,7 +42,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 **Chosen.** Eleven commands: `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template`, `edit`, `pr status`, `pr threads` and `pr merge`. Each does what `gh` cannot do or does badly.
 
-**Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Eight commands are enough, because `gh` does the rest.
+**Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Eleven commands are enough, because `gh` does the rest.
 
 **Reason.** `gh` has no flag for issue fields, and it cannot select children of children. It cannot check a plan. GitHub accepts a blocker cycle of three issues, and the draft check finds it. A claim needs its calls in a fixed order and an undo. A plan needs a rerun that creates nothing twice. Reading routing fields by name and writing them with their IDs works with one REST call, so `show` and `set` became `gh` commands. Account setup became `taskrock setup`, because the options of an issue field and the views of a project need calls in a fixed order that a script got wrong. Commands for blockers and for moving became `gh issue edit`. The tool calls `gh` for every request, so there is one login and one client.
 
@@ -168,7 +168,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 ### No limit on builders, and a cap on fix rounds
 
-**Chosen.** Any number of builders and goals run at once. Fix rounds are capped by `review.max_rounds` in the config, 3 by default. After that many failed reviews, or when the reviewer repeats a finding or the builder and the reviewer disagree, the task gets an owner issue that blocks it, and is given back.
+**Chosen.** Any number of builders and goals run at once. Fix rounds are capped by `review.max_rounds` in the config, 3 by default. After that many reviewed heads, or when the reviewer repeats a finding or the builder and the reviewer disagree, the task gets an owner issue that blocks it, and is given back.
 
 **Rejected.** A cap on builders. No cap on fix rounds. Review and fix with no end.
 
@@ -194,7 +194,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 **Rejected.** Three crates: a pure core, a GitHub boundary and a thin command-line crate.
 
-**Reason.** Eight commands do not need three crates. The layers are modules of one crate instead. See [structure](structure.md).
+**Reason.** Eleven commands do not need three crates. The layers are modules of one crate instead. See [structure](structure.md).
 
 ### The skills are self-contained
 
