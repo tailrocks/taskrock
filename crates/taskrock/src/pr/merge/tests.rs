@@ -8,6 +8,7 @@ use crate::gh::FakeGh;
 use crate::link::PullLink;
 
 mod land;
+mod retarget;
 mod stop;
 
 pub(super) const HEAD: &str = "0123456789abcdef0123456789abcdef01234567";
@@ -27,6 +28,7 @@ pub(super) enum Kind {
     Open,
     Merged,
     Fork,
+    MergedFork,
 }
 
 /// What the reads of the pull request find. `ready()` finds nothing to wait for.
@@ -53,8 +55,8 @@ impl Scene {
 
     fn pull(&self) -> String {
         let repo = |name: &str| json!({"full_name": name, "default_branch": "main"});
-        let merged = self.kind == Kind::Merged;
-        let head = if self.kind == Kind::Fork {
+        let merged = matches!(self.kind, Kind::Merged | Kind::MergedFork);
+        let head = if matches!(self.kind, Kind::Fork | Kind::MergedFork) {
             "someone/taskrock"
         } else {
             "tailrocks/taskrock"

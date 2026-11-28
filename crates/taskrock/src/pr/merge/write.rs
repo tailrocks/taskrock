@@ -1,4 +1,4 @@
-//! The writes of `pr merge`: retarget the stacked pull requests, then queue or merge.
+//! The writes of `pr merge`: queue or merge, and after a merge retarget the stacked pull requests.
 
 use serde_json::json;
 
@@ -38,8 +38,10 @@ pub(super) fn encode(value: &str) -> String {
         .collect()
 }
 
-/// Point every open pull request that is based on the head branch at the default branch.
-/// A rerun lists only what is left. Returns the numbers that were retargeted.
+/// Point every open pull request that is based on the head branch at the default branch. It
+/// runs only for a merged pull request, and works whether or not GitHub deleted the head
+/// branch: when it did, GitHub has retargeted the children and this finds none. A rerun lists
+/// only what is left. Returns the numbers that were retargeted.
 pub(super) fn retarget(
     gh: &dyn Gh,
     link: &PullLink,

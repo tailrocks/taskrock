@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## 0.5.2
+
+- `pr merge` retargets the open pull requests based on the head branch only after the pull request is merged. Before, it retargeted first, so a merge that GitHub refused left the children on the default branch with the commits of their base. A refused merge and a queued pull request retarget nothing: a queued report says that the children are retargeted when the merge lands, and `pr merge` run again on the merged pull request reports `already_merged` and retargets the children that are still open. It works whether or not GitHub deleted the head branch: with `delete_branch_on_merge` on, GitHub retargets the children itself and `pr merge` finds none. The `--json` key `retargeted` is empty unless the outcome is `merged` or `already_merged`.
+
 ## 0.5.1
 
 - `pr status` counts only the newest run of each check name on the head. A failed run that a later run of the same check replaced no longer blocks the pull request.

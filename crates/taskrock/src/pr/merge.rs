@@ -6,6 +6,7 @@ use crate::error::Error;
 use crate::gh::Gh;
 use crate::link::PullLink;
 use crate::pr::EXIT_WAITING;
+use crate::pr::snapshot::PullSnapshot;
 use crate::pr::status::evaluate::State;
 use crate::pr::status::{self, render};
 
@@ -36,6 +37,10 @@ struct Report {
     outcome: Outcome,
     head: String,
     merge_commit: Option<String>,
+    /// The open pull requests that were based on the head branch and now point at the default
+    /// branch. A run writes them only after the pull request is merged: the outcomes `merged`
+    /// and `already_merged`. It is empty for `queued`, `refused` and `not_ready`: a queued pull
+    /// request retargets its children when `pr merge` runs again on it after it merged.
     retargeted: Vec<u64>,
 }
 
@@ -70,6 +75,28 @@ impl Done {
         self.code = code;
         self
     }
+
+    /// Point the open pull requests based on the merged head branch at the default branch. A
+    /// pull request from a fork has a head branch in another repository, so its name says
+    /// nothing about the pull requests here: it retargets none.
+    fn retargeted(
+        mut self,
+        gh: &dyn Gh,
+        link: &PullLink,
+        snapshot: &PullSnapshot,
+    ) -> Result<Self, Error> {
+        if snapshot.cross_repository {
+            return Ok(self);
+        }
+        let moved = write::retarget(gh, link, snapshot)?;
+        self.lines.extend(
+            moved
+                .iter()
+                .map(|number| format!("retargeted #{number} to {}", snapshot.default_branch)),
+        );
+        self.report.retargeted = moved;
+        Ok(self)
+    }
 }
 
 /// Run `taskrock pr merge` and return its exit code: 0 when the pull request is merged, 10
@@ -100,7 +127,9 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
     if verdict.state == State::Merged {
         let mut done = Done::new(link, head, Outcome::AlreadyMerged);
         done.report.merge_commit.clone_from(&snapshot.merge_commit);
-        return Ok(done.ending(format!("already {}", verdict.next), 0));
+        return done
+            .ending(format!("already {}", verdict.next), 0)
+            .retargeted(gh, link, &snapshot);
     }
     if snapshot.cross_repository {
         return Err(Error::Refused("taskrock never merges a fork".to_owned()));
@@ -110,19 +139,17 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
         let code = status::exit_code(verdict.state);
         return Ok(Done::new(link, head, Outcome::NotReady).ending(text, code));
     }
-    let retargeted = write::retarget(gh, link, &snapshot)?;
     let mut done = Done::new(link, head, Outcome::Merged);
-    done.lines.extend(
-        retargeted
-            .iter()
-            .map(|number| format!("retargeted #{number} to {}", snapshot.default_branch)),
-    );
-    done.report.retargeted = retargeted;
-    Ok(match write::land(gh, link, &snapshot)? {
+    match write::land(gh, link, &snapshot)? {
         write::Land::Queued(position) => {
             done.report.outcome = Outcome::Queued;
-            let text = format!("queued at position {position} (head {})", short(head));
-            done.ending(text, EXIT_WAITING)
+            let text = format!(
+                "queued at position {position} (head {}); the pull requests based on {} are \
+                 retargeted when it merges: run pr merge again then",
+                short(head),
+                snapshot.head_ref
+            );
+            Ok(done.ending(text, EXIT_WAITING))
         }
         write::Land::Merged(commit) => {
             let text = format!(
@@ -130,14 +157,14 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
                 commit.as_deref().unwrap_or("an unknown commit")
             );
             done.report.merge_commit = commit;
-            done.ending(text, 0)
+            done.ending(text, 0).retargeted(gh, link, &snapshot)
         }
         write::Land::Refused(message) => {
             done.report.outcome = Outcome::Refused;
             done.refusal = Some(message.clone());
-            done.ending(message, crate::pr::EXIT_BLOCKED)
+            Ok(done.ending(message, crate::pr::EXIT_BLOCKED))
         }
-    })
+    }
 }
 
 /// The first seven characters of a commit.

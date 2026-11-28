@@ -62,10 +62,7 @@ fn merge_refuses_a_fork_and_writes_nothing() {
 fn merge_exits_20_when_github_refuses_a_direct_merge() {
     for status in [405, 409, 422] {
         let stderr = format!("gh: Base branch was modified. (HTTP {status})");
-        let gh = Scene::ready()
-            .gh()
-            .ok("pulls?base=", "[[]]")
-            .fail("pulls/5/merge", &stderr);
+        let gh = Scene::ready().gh().fail("pulls/5/merge", &stderr);
         let done = run(&gh).expect("refused");
         let line = format!("GitHub refused the merge: Base branch was modified. (HTTP {status})");
         assert_eq!(done.lines, std::slice::from_ref(&line));
@@ -82,7 +79,6 @@ fn merge_exits_20_when_the_enqueue_has_a_graphql_error() {
         ..Scene::ready()
     }
     .gh()
-    .ok("pulls?base=", "[[]]")
     .ok("graphql", &errors);
     let done = run(&gh).expect("refused");
     assert_eq!(
@@ -99,7 +95,6 @@ fn queued() -> crate::gh::FakeGh {
         ..Scene::ready()
     }
     .gh()
-    .ok("pulls?base=", "[[]]")
 }
 
 #[test]
@@ -148,7 +143,6 @@ fn merge_exits_20_when_the_enqueue_returns_no_queue_entry() {
 fn merge_does_not_call_a_server_error_a_refusal() {
     let gh = Scene::ready()
         .gh()
-        .ok("pulls?base=", "[[]]")
         .fail("pulls/5/merge", "gh: Server Error (HTTP 500)");
     assert!(matches!(run(&gh), Err(Error::Gh { .. })));
 }
