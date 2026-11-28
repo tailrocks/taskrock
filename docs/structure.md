@@ -74,6 +74,7 @@ There are three kinds of tests.
   - `src/claim/body_tests.rs`
   - `src/claim/refuse_tests.rs`
   - `src/claim/release_tests.rs`
+  - `src/config/check/codex_tests.rs`
   - `src/draft/check/links_tests.rs`
   - `src/draft/check/root_tests.rs`
   - `src/draft/check/title_tests.rs`

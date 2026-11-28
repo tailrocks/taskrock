@@ -121,7 +121,7 @@ fn open(snapshot: &PullSnapshot, config: &Config, link: &PullLink) -> Vec<Findin
     review::threads(snapshot, link, &mut out);
     rules::draft(snapshot, &mut out);
     rules::closes(snapshot, &mut out);
-    review::codex(snapshot, &mut out);
+    review::codex(snapshot, config, link, &mut out);
     rules::queue(snapshot, &mut out);
     out
 }

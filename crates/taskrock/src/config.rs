@@ -70,6 +70,8 @@ pub struct Model {
 pub struct ReviewConfig {
     /// Reviewed heads before the task goes to the owner.
     pub max_rounds: u32,
+    /// Repositories of the owner where the Codex connector reviews pull requests.
+    pub codex: Vec<String>,
 }
 
 /// An issue type and its format.
@@ -174,7 +176,10 @@ impl Config {
 
 impl Default for ReviewConfig {
     fn default() -> Self {
-        Self { max_rounds: 3 }
+        Self {
+            max_rounds: 3,
+            codex: Vec::new(),
+        }
     }
 }
 
