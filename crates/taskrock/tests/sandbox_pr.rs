@@ -1,4 +1,5 @@
-//! `taskrock pr merge` on a real pull request of the sandbox: open, review, merge, check.
+//! `taskrock pr merge` on a real pull request of the sandbox: open, review, merge, check. A child
+//! pull request on the branch of the first one ends up on `main`.
 
 use std::process::Command;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
@@ -42,10 +43,10 @@ fn text<'a>(value: &'a Value, what: &str) -> Result<&'a str, Error> {
         .ok_or_else(|| Error::Json(format!("no {what}")))
 }
 
-/// Create the branch from `main` and commit one file on it. Returns the head commit.
-fn push_branch(gh: &RealGh, branch: &str, name: &str) -> Result<String, Error> {
-    let main = get(gh, &format!("{REPO}/git/ref/heads/main"))?;
-    let base = text(&main["object"]["sha"], "sha of main")?;
+/// Create the branch from the branch `from` and commit one file on it. Returns the head commit.
+fn push_branch(gh: &RealGh, branch: &str, from: &str, name: &str) -> Result<String, Error> {
+    let source = get(gh, &format!("{REPO}/git/ref/heads/{from}"))?;
+    let base = text(&source["object"]["sha"], "sha of the source branch")?;
     let ref_name = format!("refs/heads/{branch}");
     send(
         gh,
@@ -64,24 +65,27 @@ fn push_branch(gh: &RealGh, branch: &str, name: &str) -> Result<String, Error> {
     Ok(text(&put["commit"]["sha"], "commit sha")?.to_owned())
 }
 
-fn open_and_review(gh: &RealGh, branch: &str, head: &str) -> Result<u64, Error> {
+fn open(gh: &RealGh, branch: &str, base: &str) -> Result<u64, Error> {
     let pull = send(
         gh,
         "POST",
         &format!("{REPO}/pulls"),
-        &json!({"title": format!("test: {branch}"), "head": branch, "base": "main",
+        &json!({"title": format!("test: {branch}"), "head": branch, "base": base,
             "body": "Live test of taskrock pr merge."}),
     )?;
-    let number = pull["number"]
+    pull["number"]
         .as_u64()
-        .ok_or_else(|| Error::Json("no pull number".to_owned()))?;
+        .ok_or_else(|| Error::Json("no pull number".to_owned()))
+}
+
+fn review(gh: &RealGh, number: u64, head: &str) -> Result<(), Error> {
     send(
         gh,
         "POST",
         &format!("{REPO}/pulls/{number}/reviews"),
         &json!({"event": "COMMENT", "body": format!("Reviewer: sandbox\nVERDICT: PASS head={head}")}),
     )?;
-    Ok(number)
+    Ok(())
 }
 
 fn taskrock(args: &[&str]) -> std::io::Result<std::process::Output> {
@@ -99,14 +103,24 @@ fn merges_a_ready_pull_request_of_the_sandbox() {
         .expect("time")
         .as_secs();
     let branch = format!("sandbox/pr-{stamp}");
+    let child_branch = format!("sandbox/child-{stamp}");
     let mut cleanup = Cleanup {
         gh: &gh,
         branch: branch.clone(),
         pull: None,
     };
-    let head = push_branch(&gh, &branch, &format!("pr-{stamp}")).expect("branch pushed");
-    let number = open_and_review(&gh, &branch, &head).expect("pull request opened");
+    let mut child_cleanup = Cleanup {
+        gh: &gh,
+        branch: child_branch.clone(),
+        pull: None,
+    };
+    let head = push_branch(&gh, &branch, "main", &format!("pr-{stamp}")).expect("branch pushed");
+    let number = open(&gh, &branch, "main").expect("pull request opened");
     cleanup.pull = Some(number);
+    review(&gh, number, &head).expect("verdict posted");
+    push_branch(&gh, &child_branch, &branch, &format!("child-{stamp}")).expect("child pushed");
+    let child = open(&gh, &child_branch, &branch).expect("child opened");
+    child_cleanup.pull = Some(child);
     let link = format!("https://github.com/tailrocks/taskrock-sandbox/pull/{number}");
 
     let deadline = Instant::now() + Duration::from_secs(280);
@@ -128,4 +142,12 @@ fn merges_a_ready_pull_request_of_the_sandbox() {
     let status = taskrock(&["pr", "status", &link]).expect("the taskrock binary starts");
     let out = String::from_utf8(status.stdout).expect("stdout is UTF-8");
     assert!(out.contains("MERGED"), "{out}");
+
+    // Whether GitHub deleted the head branch (and retargeted the child itself) or `pr merge` did.
+    let pull = get(&gh, &format!("{REPO}/pulls/{child}")).expect("the child is readable");
+    assert_eq!(
+        pull["base"]["ref"], "main",
+        "the child points at main: {said}"
+    );
+    assert_eq!(pull["state"], "open", "the child stays open");
 }

@@ -12,15 +12,15 @@ fn merge_queues_the_head_when_the_base_has_a_queue() {
         ..Scene::ready()
     }
     .gh()
-    .ok("pulls?base=", "[[]]")
     .ok(
         "graphql",
         r#"{"data":{"enqueuePullRequest":{"mergeQueueEntry":{"position":3}}}}"#,
     );
     let done = run(&gh).expect("queued");
-    assert_eq!(
-        done.lines,
-        [format!("queued at position 3 (head {})", &HEAD[..7])]
+    assert!(
+        done.lines[0].starts_with(&format!("queued at position 3 (head {})", &HEAD[..7])),
+        "{:?}",
+        done.lines
     );
     assert_eq!(done.code, 10);
     assert_eq!(
@@ -46,12 +46,13 @@ fn merge_squashes_at_the_checked_head_without_a_queue() {
 }
 
 #[test]
-fn merge_of_a_merged_pull_says_so_and_writes_nothing() {
+fn merge_of_a_merged_pull_without_children_says_so_and_writes_nothing() {
     let gh = Scene {
         kind: Kind::Merged,
         ..Scene::ready()
     }
-    .gh();
+    .gh()
+    .ok("pulls?base=", "[[]]");
     let done = run(&gh).expect("already merged");
     assert_eq!(
         done.lines,
@@ -59,38 +60,6 @@ fn merge_of_a_merged_pull_says_so_and_writes_nothing() {
     );
     assert_eq!(done.code, 0);
     assert_eq!(writes(&gh), Vec::<String>::new());
-}
-
-#[test]
-fn merge_retargets_each_stacked_pull_before_it_merges() {
-    let gh = Scene::ready()
-        .gh()
-        .ok(
-            "pulls?base=feat/issue-5&state=open",
-            r#"[[{"number":7},{"number":8}]]"#,
-        )
-        .ok("pulls/7", "{}")
-        .ok("pulls/8", "{}")
-        .ok("pulls/5/merge", r#"{"sha":"abc1234"}"#);
-    let done = run(&gh).expect("merged");
-    assert_eq!(
-        done.lines,
-        [
-            "retargeted #7 to main",
-            "retargeted #8 to main",
-            "merged as abc1234"
-        ]
-    );
-    let base = json!({"base": "main"});
-    let merge = json!({"merge_method": "squash", "sha": HEAD});
-    assert_eq!(
-        writes(&gh),
-        [
-            format!("PATCH repos/tailrocks/taskrock/pulls/7 {base}"),
-            format!("PATCH repos/tailrocks/taskrock/pulls/8 {base}"),
-            format!("PUT repos/tailrocks/taskrock/pulls/5/merge {merge}"),
-        ]
-    );
 }
 
 #[test]
@@ -104,7 +73,8 @@ fn merge_json_report_has_the_documented_keys() {
     assert_eq!(
         report,
         json!({"schema": 1, "repo": "tailrocks/taskrock", "number": 5, "outcome": "merged",
-            "head": HEAD, "merge_commit": "abc1234", "retargeted": [7]})
+            "head": HEAD, "merge_commit": "abc1234", "retargeted": [7],
+            "retarget_failures": [], "retarget_error": null})
     );
 }
 

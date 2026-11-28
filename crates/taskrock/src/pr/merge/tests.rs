@@ -8,6 +8,7 @@ use crate::gh::FakeGh;
 use crate::link::PullLink;
 
 mod land;
+mod retarget;
 mod stop;
 
 pub(super) const HEAD: &str = "0123456789abcdef0123456789abcdef01234567";
@@ -27,6 +28,7 @@ pub(super) enum Kind {
     Open,
     Merged,
     Fork,
+    MergedFork,
 }
 
 /// What the reads of the pull request find. `ready()` finds nothing to wait for.
@@ -34,6 +36,8 @@ pub(super) enum Kind {
 pub(super) struct Scene {
     pub queue: bool,
     pub kind: Kind,
+    /// The base branch of the pull request: where the merge lands.
+    pub base: &'static str,
     pub passed: bool,
     pub codex_head: Option<&'static str>,
     /// A check run on the head. Without one, CI has not started.
@@ -45,6 +49,7 @@ impl Scene {
         Self {
             queue: false,
             kind: Kind::Open,
+            base: "main",
             passed: true,
             codex_head: None,
             check_started: true,
@@ -53,8 +58,8 @@ impl Scene {
 
     fn pull(&self) -> String {
         let repo = |name: &str| json!({"full_name": name, "default_branch": "main"});
-        let merged = self.kind == Kind::Merged;
-        let head = if self.kind == Kind::Fork {
+        let merged = matches!(self.kind, Kind::Merged | Kind::MergedFork);
+        let head = if matches!(self.kind, Kind::Fork | Kind::MergedFork) {
             "someone/taskrock"
         } else {
             "tailrocks/taskrock"
@@ -63,7 +68,7 @@ impl Scene {
             "state": if merged { "closed" } else { "open" },
             "merge_commit_sha": "c0ffee0123456789c0ffee0123456789c0ffee01",
             "body": "Closes #5", "mergeable": true, "mergeable_state": "clean",
-            "base": {"ref": "main", "repo": repo("tailrocks/taskrock")},
+            "base": {"ref": self.base, "repo": repo("tailrocks/taskrock")},
             "head": {"ref": "feat/issue-5", "sha": HEAD, "repo": repo(head)}})
         .to_string()
     }
