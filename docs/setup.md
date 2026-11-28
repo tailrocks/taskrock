@@ -1,6 +1,6 @@
 # Setup
 
-This page describes version 0.5.0.
+This page describes version 0.5.1.
 
 taskrock is one system of three parts: the skills, the `taskrock` command and plain `gh`. Version 0.2.0 adds what makes it complete for an organization:
 

@@ -136,9 +136,9 @@ fn snapshot_keeps_only_the_newest_run_of_a_check_name() {
     }
     // A name keeps the place of its first appearance.
     let (checks, _) = judged_runs(&[
-        (30, "Required", "success"),
-        (20, "Other", "success"),
         (10, "Required", "failure"),
+        (20, "Other", "success"),
+        (30, "Required", "success"),
     ]);
     assert_eq!(checks[0].0, "Required");
 }

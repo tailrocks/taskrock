@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## 0.5.1
+
+- `pr status` counts only the newest run of each check name on the head. A failed run that a later run of the same check replaced no longer blocks the pull request.
+
 ## 0.5.0
 
 - `pr status <link>` prints the verdict of a pull request: READY, or each reason that it is not. `--json` prints the same verdict as JSON. The exit code is 0 when the pull request is done (READY or MERGED), 10 when it waits for something that changes on its own, and 20 when it is blocked until someone acts.
