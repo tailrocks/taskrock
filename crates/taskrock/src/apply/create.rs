@@ -8,7 +8,7 @@ use crate::apply::Created;
 use crate::apply::marker::marker;
 use crate::apply::split_repo;
 use crate::draft::links::is_link;
-use crate::draft::{Draft, DraftIssue};
+use crate::draft::{Draft, DraftIssue, ParentMilestones};
 use crate::error::Error;
 use crate::fields::ROUTING;
 use crate::gh::Gh;
@@ -52,7 +52,11 @@ pub(super) fn creation_order(draft: &Draft) -> Vec<&DraftIssue> {
 
 /// The lines a dry run prints for an issue it would create.
 #[must_use]
-pub(super) fn would_create(draft: &Draft, issue: &DraftIssue) -> Vec<String> {
+pub(super) fn would_create(
+    draft: &Draft,
+    issue: &DraftIssue,
+    parents: &ParentMilestones,
+) -> Vec<String> {
     let mut lines = vec![format!("would create {} {}", issue.key, issue.title)];
     if let Some(parent) = issue.parent.as_deref().filter(|parent| is_link(parent)) {
         lines.push(format!("would set parent of {} to {parent}", issue.key));
@@ -61,6 +65,14 @@ pub(super) fn would_create(draft: &Draft, issue: &DraftIssue) -> Vec<String> {
         && let Some(title) = &draft.plan.milestone
     {
         lines.push(format!("would set milestone {title} on {}", issue.key));
+    }
+    if let Some(title) = draft.inherited(issue, parents)
+        && let Some(parent) = &issue.parent
+    {
+        lines.push(format!(
+            "would set milestone {title} on {}, from its parent {parent}",
+            issue.key
+        ));
     }
     lines
 }
@@ -80,10 +92,11 @@ pub(super) fn create_one(
     found: &BTreeMap<String, Created>,
     fields: &BTreeMap<String, u64>,
     milestones: &BTreeMap<(String, String), u64>,
+    parents: &ParentMilestones,
 ) -> Result<Created, Error> {
     let (owner, name) = split_repo(&issue.repo)?;
     let path = format!("repos/{owner}/{name}/issues");
-    let body = issue_body(draft, issue, found, fields, milestones)?;
+    let body = issue_body(draft, issue, found, fields, milestones, parents)?;
     match send(gh, "POST", &path, &body) {
         Ok(answer) => {
             let number = answer["number"]
@@ -114,6 +127,7 @@ fn issue_body(
     found: &BTreeMap<String, Created>,
     fields: &BTreeMap<String, u64>,
     milestones: &BTreeMap<(String, String), u64>,
+    parents: &ParentMilestones,
 ) -> Result<Value, Error> {
     let mut body = Map::new();
     body.insert("title".to_owned(), Value::String(issue.title.clone()));
@@ -126,7 +140,7 @@ fn issue_body(
         )),
     );
     body.insert("type".to_owned(), Value::String(issue.kind.clone()));
-    if let Some(title) = draft.milestone_of(issue)
+    if let Some(title) = draft.milestone_of(issue, parents)
         && let Some(number) = milestones.get(&(issue.repo.clone(), title.to_owned()))
     {
         body.insert("milestone".to_owned(), Value::Number((*number).into()));

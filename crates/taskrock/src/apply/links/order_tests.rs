@@ -13,7 +13,7 @@ const PLAN: &str = "id = \"holla-order\"\nrepo = \"tailrocks/holla\"\nproject = 
 
 /// The Task `L1` of `draft-links` with `front` in place of its `parent` and `blocked_by`.
 /// A `front` with no `parent` gets the link `FIVE` as its parent.
-fn task(key: &str, front: &str) -> String {
+pub(super) fn task(key: &str, front: &str) -> String {
     let front = if front.contains("parent") {
         front.to_owned()
     } else {
@@ -30,7 +30,7 @@ fn task(key: &str, front: &str) -> String {
 }
 
 /// A draft folder in the temporary directory with `plan` and these `(file, text)` issues.
-fn draft(name: &str, plan: &str, issues: &[(&str, String)]) -> PathBuf {
+pub(super) fn draft(name: &str, plan: &str, issues: &[(&str, String)]) -> PathBuf {
     let folder = std::env::temp_dir().join(format!("taskrock-{name}-{}", std::process::id()));
     std::fs::create_dir_all(&folder).expect("folder is made");
     std::fs::write(folder.join("plan.toml"), format!("{PLAN}{plan}")).expect("plan is written");
@@ -61,7 +61,7 @@ const M2: &str = "\n[[milestones]]\ntitle = \"M2\"\n";
 fn unknown_link_stops_before_any_milestone_post() {
     let own = "milestone = \"M2\"\nparent = \"https://github.com/tailrocks/holla/issues/5\"";
     let folder = draft("link-first", M2, &[("L1.md", task("L1", own))]);
-    let gh = gh(&["[[]]"]).fail("holla/issues/5", MISSING);
+    let gh = not_found(gh(&["[[]]"]), 1).fail("holla/issues/5", MISSING);
     let Err(Error::Apply(message)) = create_issues(&gh, &folder, &options()) else {
         panic!("expected Error::Apply");
     };
@@ -80,7 +80,11 @@ fn plan_milestone_is_checked_in_every_repo_before_any_create() {
         ("B.md", task("B1", "repo = \"tailrocks/other\"")),
     ];
     let folder = draft("every-repo", &plan, &issues);
-    let gh = parented(gh(&["[[]]", "[[]]"]));
+    let gh = not_found(parented(gh(&["[[]]", "[[]]"])), 1)
+        .ok("issues?state=all", "[[]]")
+        .fail("other/issues/1", MISSING)
+        .fail("other/issues/2", MISSING)
+        .fail("other/issues/3", MISSING);
     let Err(Error::Project(message)) = create_issues(&gh, &folder, &options()) else {
         panic!("expected Error::Project");
     };

@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
-use crate::draft::Draft;
+use crate::draft::{Draft, ParentMilestones};
 use crate::error::Error;
 use crate::gh::Gh;
 use crate::github::{get_all, send};
@@ -13,29 +13,35 @@ use crate::github::{get_all, send};
 mod tests;
 
 /// The milestone number by repository and title. Reads the milestones of
-/// every repository and checks the plan's `milestone` in each of them
-/// first, so a missing one stops `apply` before any `POST`. Then creates a
-/// milestone the repository lacks, once per title, unless `dry_run` skips
-/// every `POST`.
+/// every repository and checks the plan's `milestone` and the milestones
+/// inherited from link parents in each of them first, so a missing one stops
+/// `apply` before any `POST`. Then creates a milestone the repository
+/// lacks, once per title, unless `dry_run` skips every `POST`. An inherited
+/// title is looked up, never created.
 ///
 /// # Errors
 ///
 /// Returns [`Error::Project`] when a repository lacks the plan's
-/// `milestone` and no issue of it creates the milestone, [`Error::Gh`] when
+/// `milestone` and no issue of it creates the milestone, or lacks an
+/// inherited milestone, [`Error::Gh`] when
 /// `gh` fails, [`Error::Json`] when an entry has no numeric `number` or no
 /// string `title`.
 pub(super) fn milestone_numbers(
     gh: &dyn Gh,
     draft: &Draft,
+    parents: &ParentMilestones,
     dry_run: bool,
 ) -> Result<BTreeMap<(String, String), u64>, Error> {
     let mut listings = Vec::new();
+    let mut numbers = BTreeMap::new();
     for repo in draft_repos(draft) {
         let have = listed(gh, &repo)?;
         check_plan_milestone(draft, &repo, &have)?;
+        for (title, number) in inherited_numbers(draft, &repo, parents, &have)? {
+            numbers.insert((repo.clone(), title), number);
+        }
         listings.push((repo, have));
     }
-    let mut numbers = BTreeMap::new();
     for (repo, have) in listings {
         for title in wanted_titles(draft, &repo) {
             if let Some(number) = have.get(&title) {
@@ -76,6 +82,29 @@ fn check_plan_milestone(
         )));
     }
     Ok(())
+}
+
+/// The numbers of the milestones the issues of `repo` inherit, by title.
+/// Fails when `repo` lacks one: `apply` never creates it.
+fn inherited_numbers(
+    draft: &Draft,
+    repo: &str,
+    parents: &ParentMilestones,
+    have: &BTreeMap<String, u64>,
+) -> Result<BTreeMap<String, u64>, Error> {
+    let mut numbers = BTreeMap::new();
+    for issue in draft.issues.iter().filter(|issue| issue.repo == repo) {
+        let Some(title) = draft.inherited(issue, parents) else {
+            continue;
+        };
+        let number = have.get(title).ok_or_else(|| {
+            Error::Project(format!(
+                "no milestone {title} in {repo}. Run taskrock setup"
+            ))
+        })?;
+        numbers.insert(title.to_owned(), *number);
+    }
+    Ok(numbers)
 }
 
 /// Every repository the draft uses, in first-use order.

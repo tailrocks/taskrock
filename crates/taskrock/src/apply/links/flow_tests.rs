@@ -65,16 +65,19 @@ fn dry_run_says_what_it_would_set() {
 
 #[test]
 fn missing_plan_milestone_stops_before_any_creation() {
-    let gh = FakeGh::new()
-        .fail("contents/taskrock.toml", super::super::tests::MISSING)
-        .ok("issue-fields", super::super::tests::FIELDS)
-        .ok(
-            "milestones?state=all",
-            r#"[[{"number":9,"title":"Other"}]]"#,
-        )
-        .ok("issues?state=all", "[[]]")
-        .ok("repos/tailrocks/holla/issues/5", r#"{"number":5,"id":55}"#)
-        .ok("repos/tailrocks/holla/issues/6", r#"{"number":6,"id":66}"#);
+    let gh = not_found(
+        FakeGh::new()
+            .fail("contents/taskrock.toml", super::super::tests::MISSING)
+            .ok("issue-fields", super::super::tests::FIELDS)
+            .ok(
+                "milestones?state=all",
+                r#"[[{"number":9,"title":"Other"}]]"#,
+            )
+            .ok("issues?state=all", "[[]]")
+            .ok("repos/tailrocks/holla/issues/5", r#"{"number":5,"id":55}"#)
+            .ok("repos/tailrocks/holla/issues/6", r#"{"number":6,"id":66}"#),
+        1,
+    );
     let Err(Error::Project(message)) = create_issues(&gh, &links_folder(), &options()) else {
         panic!("expected Error::Project");
     };
