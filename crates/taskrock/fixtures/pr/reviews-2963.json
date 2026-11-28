@@ -1,0 +1,1106 @@
+[
+  [
+    {
+      "id": 6079859838,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:57:02Z",
+      "commit_id": "cee26249a4234678f1a77ead43efb031e06f6277",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081071754,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:19:40Z",
+      "commit_id": "d5f51a80b92ae2ccfa1eb77290a18e151de916ae",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6081080451,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:21:09Z",
+      "commit_id": "d5f51a80b92ae2ccfa1eb77290a18e151de916ae",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081441458,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:24:50Z",
+      "commit_id": "7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3",
+      "body": "as listed. For item 9, a frozen-clock seam plus exclusive create with a retry on AlreadyExists.\n- Triage the 16 Codex threads in one pass.\n\nVERDICT: FAIL head=7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3\n"
+    },
+    {
+      "id": 6081966587,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:14Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081966814,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:16Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081967114,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:20Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081967344,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:22Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081967650,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:26Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081967920,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:29Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081968178,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:32Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081968393,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:35Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081968594,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:37Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081968806,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:40Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081969045,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:43Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081969308,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:46Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081969529,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:49Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081969737,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:52Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081969962,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:29:55Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081970481,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:30:01Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": ""
+    },
+    {
+      "id": 6081999331,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:35:59Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6082015102,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:39:15Z",
+      "commit_id": "d5deba3c915300ae215f0e4f3f04dec887e040dc",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6082131359,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T01:00:57Z",
+      "commit_id": "6659707a5275eea389d5cad99898ab8a0ff807e2",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6082258963,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T01:24:23Z",
+      "commit_id": "6659707a5275eea389d5cad99898ab8a0ff807e2",
+      "body": "Tests: implement P1-P8 exactly as approved, plus tests for items 1, 2, 3, 4 and 6 (red under single-site mutations; plans in the PR body).\n\nVERDICT: FAIL head=6659707a5275eea389d5cad99898ab8a0ff807e2\n"
+    },
+    {
+      "id": 6082817795,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:46:56Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082818205,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:46:59Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082818605,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:02Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082818916,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:04Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082819249,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:07Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082819669,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:10Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082820057,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:13Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082820388,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:15Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082820825,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:19Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082821326,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:23Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082821698,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:26Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082821958,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:28Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082822367,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:31Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082822693,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:34Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082823015,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:36Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082823320,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:47:39Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": ""
+    },
+    {
+      "id": 6082868502,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:54:35Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6083381969,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T04:08:46Z",
+      "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
+      "body": "p and exits.\n- Flake: find the root cause of the rust_runner_orb_calls hang under load and fix it (no retry or longer timeout as the fix).\n\nVERDICT: FAIL head=5dcf18a24e742f8e78f028e279bf28e0130ee882\n"
+    },
+    {
+      "id": 6084681255,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:25Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084681623,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:28Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084682031,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:31Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084682439,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:34Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084683002,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:38Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084683523,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:11:42Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": ""
+    },
+    {
+      "id": 6084815951,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:28:16Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6085487373,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:39:06Z",
+      "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
+      "body": "Note in #2984 that fault.rs' 500..=599 arm is dead for workflow_run errors (api_status already maps ≥500 to Uncertain), or remove the arm.\n\nVERDICT: FAIL head=d09329430987ab285819073ca8cf3460667d9f28\n"
+    },
+    {
+      "id": 6086140728,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:37:33Z",
+      "commit_id": "6e776471d966fe3b75b5418862e0e0796f582084",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6086154867,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:38:50Z",
+      "commit_id": "6e776471d966fe3b75b5418862e0e0796f582084",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086392902,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:58:09Z",
+      "commit_id": "a0a35243ed2e4d437c415173381d4b9d780647c8",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6086447866,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:02:56Z",
+      "commit_id": "a0a35243ed2e4d437c415173381d4b9d780647c8",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086557228,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:12:23Z",
+      "commit_id": "ff3cd505c8fe384c7e4dbd2b573009fcd423e7a8",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086735061,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:27:55Z",
+      "commit_id": "275078ab6d5c64f56bd86e79be889376db5e2877",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086837121,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:36:56Z",
+      "commit_id": "6db39d4cb96db1ec43ccfa6d6734b604bda74b28",
+      "body": ""
+    },
+    {
+      "id": 6086837696,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:36:59Z",
+      "commit_id": "6db39d4cb96db1ec43ccfa6d6734b604bda74b28",
+      "body": ""
+    },
+    {
+      "id": 6086838262,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:37:02Z",
+      "commit_id": "6db39d4cb96db1ec43ccfa6d6734b604bda74b28",
+      "body": ""
+    },
+    {
+      "id": 6086888420,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:41:34Z",
+      "commit_id": "6db39d4cb96db1ec43ccfa6d6734b604bda74b28",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6087506486,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T11:33:55Z",
+      "commit_id": "54a2910976163d65f8a2e68fdbbcc5339a99b449",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6087507331,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T11:34:00Z",
+      "commit_id": "54a2910976163d65f8a2e68fdbbcc5339a99b449",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6088241961,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T12:36:55Z",
+      "commit_id": "54a2910976163d65f8a2e68fdbbcc5339a99b449",
+      "body": "ial-mode SIGTERM now exits 0; note it on #2884 for the service unit.\n\nTESTS: CHANGES_REQUIRED head=54a2910976163d65f8a2e68fdbbcc5339a99b449\nVERDICT: FAIL head=54a2910976163d65f8a2e68fdbbcc5339a99b449\n"
+    },
+    {
+      "id": 6090068990,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:18Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090069856,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:22Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090070621,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:26Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090071332,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:30Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090072084,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:33Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090072941,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:37Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090073644,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:41Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090074391,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:45Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090075183,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:49Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090075989,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:52Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090076652,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:56Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090077197,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:03:59Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090077858,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:02Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090078464,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:05Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090079253,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:10Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090080611,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:17Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090081421,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:21Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090082221,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:25Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090083122,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:30Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090083868,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:34Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090084663,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:38Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090085210,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:41Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090085761,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:43Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090086604,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:48Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090087185,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:51Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090087842,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:54Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090088546,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:04:58Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090089177,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:01Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090089875,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:05Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090090534,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:08Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090091212,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:12Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090091975,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:16Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090092664,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:19Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090093351,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:23Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090094119,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:27Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090094696,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:30Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090095262,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:33Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    }
+  ],
+  [
+    {
+      "id": 6090095952,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:05:36Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": ""
+    },
+    {
+      "id": 6090226507,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T15:16:28Z",
+      "commit_id": "a54c54a8454d7114ccb22b1ec5cc65ef917e2cc3",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6091888287,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T18:06:21Z",
+      "commit_id": "cbfa9b1c295f2e986d465007df2273df3508ba5f",
+      "body": ""
+    },
+    {
+      "id": 6091888933,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T18:06:24Z",
+      "commit_id": "cbfa9b1c295f2e986d465007df2273df3508ba5f",
+      "body": ""
+    },
+    {
+      "id": 6091971813,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T18:13:48Z",
+      "commit_id": "cbfa9b1c295f2e986d465007df2273df3508ba5f",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6092634606,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T19:33:47Z",
+      "commit_id": "cbfa9b1c295f2e986d465007df2273df3508ba5f",
+      "body": "nd: its base #2958 is in fix round 21. Restack onto main after #2958 merges.\n\nTESTS: APPROVED head=cbfa9b1c295f2e986d465007df2273df3508ba5f\nVERDICT: FAIL head=cbfa9b1c295f2e986d465007df2273df3508ba5f\n"
+    },
+    {
+      "id": 6093080736,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T20:29:48Z",
+      "commit_id": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
+      "body": ""
+    },
+    {
+      "id": 6093080979,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T20:29:50Z",
+      "commit_id": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
+      "body": ""
+    },
+    {
+      "id": 6093081266,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T20:29:53Z",
+      "commit_id": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
+      "body": ""
+    },
+    {
+      "id": 6093800828,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T22:06:37Z",
+      "commit_id": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
+      "body": " after #2958 merges, plus a green pull_request CI run on the restacked head.\n\nTESTS: APPROVED head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\nVERDICT: PASS head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\n"
+    }
+  ]
+]

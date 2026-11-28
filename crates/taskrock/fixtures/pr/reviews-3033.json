@@ -1,0 +1,74 @@
+[
+  [
+    {
+      "id": 6092459807,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T19:14:46Z",
+      "commit_id": "d112c00b6521ec2d0c726a1901b3bfe56f88dd1b",
+      "body": "nd the reviewer runs it.\n- Mark the PR ready for review, so CI runs.\n\nTESTS: CHANGES_REQUIRED head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\nVERDICT: FAIL head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\n"
+    },
+    {
+      "id": 6092474403,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T19:16:28Z",
+      "commit_id": "d112c00b6521ec2d0c726a1901b3bfe56f88dd1b",
+      "body": "MemTotal. Live test: a fork bomb is contained and the job is killed cleanly.\n- Questions: the JIT on fd 0 is covered by decision 3 (pipe). For reaping, sandbox-apply as root pid 1 (decision 1) reaps.\n"
+    },
+    {
+      "id": 6094109978,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T22:57:25Z",
+      "commit_id": "b380bdffbc65d4be192551f58e102521ac3c422f",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6094348680,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T23:40:38Z",
+      "commit_id": "8b49656d1f1bdb558e9b10891b087f36a2fcee51",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6094366602,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T23:42:36Z",
+      "commit_id": "8b49656d1f1bdb558e9b10891b087f36a2fcee51",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6094738344,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-28T00:48:06Z",
+      "commit_id": "8b49656d1f1bdb558e9b10891b087f36a2fcee51",
+      "body": "record.\n\nSECURITY: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nTESTS: CHANGES_REQUIRED head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nVERDICT: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\n"
+    },
+    {
+      "id": 6095210510,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-28T02:34:03Z",
+      "commit_id": "3b6cd7b7a4bea711be14782afc0bf464ac82fc13",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    }
+  ]
+]

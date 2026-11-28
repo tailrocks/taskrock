@@ -1,0 +1,1266 @@
+[
+  [
+    {
+      "id": 6078988042,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T18:28:52Z",
+      "commit_id": "9023e55879a1bf15d6d7b7e4921a58a636ed186d",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6079008306,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T18:31:11Z",
+      "commit_id": "9023e55879a1bf15d6d7b7e4921a58a636ed186d",
+      "body": "JSON('\"{\"')` inside `hashFiles(format(...))`, so the generated keys must work. A non-literal argument stays an unsupported-function error.\n\nVERDICT: FAIL head=9023e55879a1bf15d6d7b7e4921a58a636ed186d\n"
+    },
+    {
+      "id": 6079233842,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T18:56:47Z",
+      "commit_id": "af52f640461f350a846b3e89bff0b24a76a4082b",
+      "body": "low-symbolic-links is rejected.\n  - Make the chmod-000 tests fail loudly (skip with a message) when run as root rather than pass silently.\n\nVERDICT: FAIL head=af52f640461f350a846b3e89bff0b24a76a4082b\n"
+    },
+    {
+      "id": 6079242530,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T18:57:43Z",
+      "commit_id": "af52f640461f350a846b3e89bff0b24a76a4082b",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6079386682,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:13:58Z",
+      "commit_id": "5c224368697b195a090c72692007a403543a7632",
+      "body": "): this is the third FAIL on task #2892, which reaches review.max_rounds. These are narrow parity fixes, so one final round is authorized.\n\nVERDICT: FAIL head=5c224368697b195a090c72692007a403543a7632\n"
+    },
+    {
+      "id": 6079430406,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:17:47Z",
+      "commit_id": "5c224368697b195a090c72692007a403543a7632",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6079507946,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:25:39Z",
+      "commit_id": "931f9f161218d24fa7886e6e8d761d7b62c05f17",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6079536022,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:28:00Z",
+      "commit_id": "931f9f161218d24fa7886e6e8d761d7b62c05f17",
+      "body": "\n- 3: correct the sentence.\n- 4: cite L90 (and L94 for statSync).\n- Q (HOME with . or ..): recorded as a deviation. It predates this diff.\n\nVERDICT: FAIL head=931f9f161218d24fa7886e6e8d761d7b62c05f17\n"
+    },
+    {
+      "id": 6079647646,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:39:26Z",
+      "commit_id": "7d06d368d0ae39e09c4456c3f72cde40e0cb38e6",
+      "body": "dex review\" or when a PR is opened), and you’re opted in so security review runs alongside code review\n\nOnce complete, Codex will leave suggestions, or a comment if no findings are found.\n\n\n</details>"
+    },
+    {
+      "id": 6079728529,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:46:34Z",
+      "commit_id": "7d06d368d0ae39e09c4456c3f72cde40e0cb38e6",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6079752490,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:48:40Z",
+      "commit_id": "7d06d368d0ae39e09c4456c3f72cde40e0cb38e6",
+      "body": " also covers the workspace path in PatternSet::new. Reword the fifth bullet to match. Add a test for the dotted HOME, red without the fix.\n\nVERDICT: FAIL head=7d06d368d0ae39e09c4456c3f72cde40e0cb38e6\n"
+    },
+    {
+      "id": 6079855141,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:56:40Z",
+      "commit_id": "c458a708e24d6a9866e84ff283e5a4fbf9884fa2",
+      "body": ". Exact quoted-path parity is not worth another round.\n- Q: a non-UTF-8 HOME or workspace errors with \"path '<lossy>' is not valid UTF-8\".\n\nVERDICT: FAIL head=c458a708e24d6a9866e84ff283e5a4fbf9884fa2\n"
+    },
+    {
+      "id": 6079891743,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T19:59:45Z",
+      "commit_id": "f6e1775a318998048115d92203e77c3193d13549",
+      "body": "OME and workspace, and no comments were added.\n- rumdl is clean, and 56/56 expr_ tests pass.\n\nMerge order: after #2926, rebased onto main.\n\nVERDICT: PASS head=f6e1775a318998048115d92203e77c3193d13549\n"
+    },
+    {
+      "id": 6079998074,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T20:11:24Z",
+      "commit_id": "f6e1775a318998048115d92203e77c3193d13549",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6080846364,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:32Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080846877,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:35Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080847598,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:39Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080848344,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:43Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080848909,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:46Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080849473,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:49Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080850095,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:53Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080850637,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:56Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080851253,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:48:59Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080851819,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:02Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080852196,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:05Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080852611,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:08Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080852979,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:11Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080853454,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:14Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080853898,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:17Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080854431,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:20Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080854897,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:24Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080855366,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:27Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080855876,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:30Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080856379,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:33Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080857016,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:37Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080857608,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:40Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080858148,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:43Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080858808,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:47Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080859339,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:50Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080859776,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:52Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080860243,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:55Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080860864,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:49:59Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": ""
+    },
+    {
+      "id": 6080897566,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:54:05Z",
+      "commit_id": "1560f1451f428f45f69c29f8a4de7961c6301b12",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6080909977,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:56:03Z",
+      "commit_id": "35aed1f46f4505911eecdd10d5247ff4e18ee680",
+      "body": ""
+    },
+    {
+      "id": 6080910281,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T21:56:06Z",
+      "commit_id": "35aed1f46f4505911eecdd10d5247ff4e18ee680",
+      "body": ""
+    },
+    {
+      "id": 6081004077,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:08:58Z",
+      "commit_id": "35aed1f46f4505911eecdd10d5247ff4e18ee680",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081028089,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:12:34Z",
+      "commit_id": "8417b7267d198eaf05ed3e98bb904c85dfde2f4a",
+      "body": ""
+    },
+    {
+      "id": 6081028434,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:12:37Z",
+      "commit_id": "8417b7267d198eaf05ed3e98bb904c85dfde2f4a",
+      "body": ""
+    },
+    {
+      "id": 6081028843,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:12:41Z",
+      "commit_id": "8417b7267d198eaf05ed3e98bb904c85dfde2f4a",
+      "body": ""
+    },
+    {
+      "id": 6081029135,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:12:44Z",
+      "commit_id": "8417b7267d198eaf05ed3e98bb904c85dfde2f4a",
+      "body": ""
+    },
+    {
+      "id": 6081084708,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:21:53Z",
+      "commit_id": "8417b7267d198eaf05ed3e98bb904c85dfde2f4a",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081102028,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:24:24Z",
+      "commit_id": "bf675ffef41d2eac5a599467e37898d03da415f7",
+      "body": ""
+    },
+    {
+      "id": 6081102327,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:24:28Z",
+      "commit_id": "bf675ffef41d2eac5a599467e37898d03da415f7",
+      "body": ""
+    },
+    {
+      "id": 6081102651,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:24:31Z",
+      "commit_id": "bf675ffef41d2eac5a599467e37898d03da415f7",
+      "body": ""
+    },
+    {
+      "id": 6081137448,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:30:30Z",
+      "commit_id": "bf675ffef41d2eac5a599467e37898d03da415f7",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081150093,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:32:35Z",
+      "commit_id": "4bd3bc6fc791420167aeb52b1a3874b0f4b1aa9e",
+      "body": ""
+    },
+    {
+      "id": 6081150539,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:32:38Z",
+      "commit_id": "4bd3bc6fc791420167aeb52b1a3874b0f4b1aa9e",
+      "body": ""
+    },
+    {
+      "id": 6081150933,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:32:42Z",
+      "commit_id": "4bd3bc6fc791420167aeb52b1a3874b0f4b1aa9e",
+      "body": ""
+    },
+    {
+      "id": 6081196521,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:40:43Z",
+      "commit_id": "4bd3bc6fc791420167aeb52b1a3874b0f4b1aa9e",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081217044,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:43:53Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081217487,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:43:57Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081217838,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:44:00Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081218202,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:44:03Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081218554,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:44:06Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081218939,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:44:10Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": ""
+    },
+    {
+      "id": 6081257399,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:50:44Z",
+      "commit_id": "8b119fc411f5f6766c1b0cf9729e7ac6ca04597c",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081273969,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:53:47Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": ""
+    },
+    {
+      "id": 6081274450,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:53:51Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": ""
+    },
+    {
+      "id": 6081275089,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T22:53:55Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": ""
+    },
+    {
+      "id": 6081321342,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:02:07Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081353953,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:07:55Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": " synchronous; the step executor must call hashFiles off the async workers (recorded for #2941).\n- Q2: accept the zero-deadline test as is.\n\nVERDICT: FAIL head=d97040b4359f8ae5f6fbb8f092f02cef70ce53c6\n"
+    },
+    {
+      "id": 6081405896,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:17:46Z",
+      "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
+      "body": "hashFiles timeout (HashFilesFunction.cs:16; kills M14d).\n6. U+001B → `\\^[` in the toJSON escape test (kills M17, uppercase hex).\n\nTESTS: CHANGES_REQUIRED head=d97040b4359f8ae5f6fbb8f092f02cef70ce53c6\n"
+    },
+    {
+      "id": 6081569595,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:40:29Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": ""
+    },
+    {
+      "id": 6081570303,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:40:32Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": ""
+    },
+    {
+      "id": 6081570859,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:40:35Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": ""
+    },
+    {
+      "id": 6081667484,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:48:54Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081679589,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:49:56Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": "the length and the `...` suffix before the full text.\nThe reviewer would approve once 1 lands, with no further red/green rounds.\n\nTESTS: CHANGES_REQUIRED head=d0ca784903476de0c140b4999e37991b0d01ba62\n"
+    },
+    {
+      "id": 6081742065,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-26T23:55:24Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": "s case-sensitive) and resolve.\n- Test item 1: a bounded-mismatch helper (length plus a 200-character prefix) for long-input error asserts.\n\nVERDICT: FAIL head=d0ca784903476de0c140b4999e37991b0d01ba62\n"
+    },
+    {
+      "id": 6081881813,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:12:41Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": ""
+    },
+    {
+      "id": 6081882020,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:12:43Z",
+      "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
+      "body": ""
+    },
+    {
+      "id": 6081926397,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:21:29Z",
+      "commit_id": "8d805c4e7adc46e88094b0f436e1a77457c6283b",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6081979626,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T00:31:57Z",
+      "commit_id": "8d805c4e7adc46e88094b0f436e1a77457c6283b",
+      "body": "Unicode 18 simple uppercase; .NET 8 uses its own ICU and Unicode 15 data for those few letters).\n- Reply on both threads and resolve them.\n\nVERDICT: FAIL head=8d805c4e7adc46e88094b0f436e1a77457c6283b\n"
+    },
+    {
+      "id": 6082146672,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T01:03:52Z",
+      "commit_id": "ba8244b56794bbde3378152bbd152a275928a2d1",
+      "body": ""
+    },
+    {
+      "id": 6082146852,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T01:03:55Z",
+      "commit_id": "ba8244b56794bbde3378152bbd152a275928a2d1",
+      "body": ""
+    },
+    {
+      "id": 6082294651,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T01:31:42Z",
+      "commit_id": "ba8244b56794bbde3378152bbd152a275928a2d1",
+      "body": "ample boundary names.\n- Tests: bound the length-limit test's failure output; add the search-root test (`[!]` → only `!`; `[]]` → nothing).\n\nVERDICT: FAIL head=ba8244b56794bbde3378152bbd152a275928a2d1\n"
+    },
+    {
+      "id": 6082562399,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:05:54Z",
+      "commit_id": "338ad67e43e66fec039145a3f360912b9408f7ad",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6082643420,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:20:05Z",
+      "commit_id": "338ad67e43e66fec039145a3f360912b9408f7ad",
+      "body": "\n- Test: add the reviewer's `Room::new(\"w[]x[y/z]\", 0)` case, red under X1-X3.\n- Threads: reject both with the cited evidence and resolve.\n\nVERDICT: FAIL head=338ad67e43e66fec039145a3f360912b9408f7ad\n"
+    },
+    {
+      "id": 6082897537,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:58:58Z",
+      "commit_id": "829c073a6977d82017cd129a6b3ac233adde6e5b",
+      "body": ""
+    },
+    {
+      "id": 6082898017,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T02:59:01Z",
+      "commit_id": "829c073a6977d82017cd129a6b3ac233adde6e5b",
+      "body": ""
+    },
+    {
+      "id": 6083005698,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T03:16:30Z",
+      "commit_id": "07fe1e784df71d166a5da90cfbd432e214ea8513",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6083071344,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T03:28:37Z",
+      "commit_id": "07fe1e784df71d166a5da90cfbd432e214ea8513",
+      "body": "tory (test reviewer's note).\n- Threads: reject index.rs:32 and hash_files_fs.rs:62 with the cited evidence; fix number.rs:35. Resolve all.\n\nVERDICT: FAIL head=07fe1e784df71d166a5da90cfbd432e214ea8513\n"
+    },
+    {
+      "id": 6083378477,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T04:08:19Z",
+      "commit_id": "e6135d963ac0f81a96f304bc80f71a92b9475281",
+      "body": ""
+    },
+    {
+      "id": 6083378738,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T04:08:21Z",
+      "commit_id": "e6135d963ac0f81a96f304bc80f71a92b9475281",
+      "body": ""
+    },
+    {
+      "id": 6083378976,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T04:08:23Z",
+      "commit_id": "e6135d963ac0f81a96f304bc80f71a92b9475281",
+      "body": ""
+    },
+    {
+      "id": 6083669620,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T04:57:36Z",
+      "commit_id": "4f584118ab35db0c6e59809a98541c45da3177c0",
+      "body": " thresholds.\n- Optional, accepted: bound the longest_missing_parent loop, and take the expected error text from the probe's own io::Error.\n\nVERDICT: FAIL head=4f584118ab35db0c6e59809a98541c45da3177c0\n"
+    },
+    {
+      "id": 6083888119,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T05:31:54Z",
+      "commit_id": "95784c20d3cf310b75ffe60acc8cb474e2a9919d",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6084012616,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T05:49:00Z",
+      "commit_id": "95784c20d3cf310b75ffe60acc8cb474e2a9919d",
+      "body": ", asserted). For format.rs:161, analyse it, then fix it with a test or reject it with evidence. Reply and resolve all three.\n- 4: re-wrap.\n\nVERDICT: FAIL head=95784c20d3cf310b75ffe60acc8cb474e2a9919d\n"
+    },
+    {
+      "id": 6084316009,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T06:21:02Z",
+      "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
+      "body": ""
+    },
+    {
+      "id": 6084316233,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T06:21:04Z",
+      "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
+      "body": ""
+    },
+    {
+      "id": 6084316430,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T06:21:06Z",
+      "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
+      "body": ""
+    }
+  ],
+  [
+    {
+      "id": 6084352841,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T06:26:25Z",
+      "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6084613114,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:02:40Z",
+      "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
+      "body": "move .partial on a write failure; fix the body.\n- Add the ci:run label before pushing so CI runs the tests, including the Linux-only ones.\n\nVERDICT: FAIL head=86df4656fd0d71a65632ce7010dba215c894d5a9\n"
+    },
+    {
+      "id": 6084738750,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:18:34Z",
+      "commit_id": "dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075",
+      "body": ""
+    },
+    {
+      "id": 6084969006,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T07:46:36Z",
+      "commit_id": "dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075",
+      "body": "r naming `e/c�`). Show O3 red on Linux with nextest.\n- Optional nit (accepted): point the non-UTF-8 paragraph at the outside-symlink rule.\n\nVERDICT: FAIL head=dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075\n"
+    },
+    {
+      "id": 6085202764,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:11:04Z",
+      "commit_id": "a3a7ecff606d65182583da1885d2bb036a0f3333",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6085279015,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:18:20Z",
+      "commit_id": "a3a7ecff606d65182583da1885d2bb036a0f3333",
+      "body": "st).\n- A single span keeps its value's type.\n- The argument limit applies as upstream does.\nEach with a red/green test. Reply and resolve.\n\nVERDICT: FAIL head=a3a7ecff606d65182583da1885d2bb036a0f3333\n"
+    },
+    {
+      "id": 6085384559,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:28:27Z",
+      "commit_id": "dbba3fdf3966d101a29f3e207db546b1eb05239b",
+      "body": ""
+    },
+    {
+      "id": 6085385011,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:28:30Z",
+      "commit_id": "dbba3fdf3966d101a29f3e207db546b1eb05239b",
+      "body": ""
+    },
+    {
+      "id": 6085385471,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:28:33Z",
+      "commit_id": "dbba3fdf3966d101a29f3e207db546b1eb05239b",
+      "body": ""
+    },
+    {
+      "id": 6085636637,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T08:53:09Z",
+      "commit_id": "dbba3fdf3966d101a29f3e207db546b1eb05239b",
+      "body": "ion span fails rather than keeping its type.\n- Nit: fix it.\n- CI: rerun after the push; the main-branch timeout is tracked in its own Bug.\n\nVERDICT: FAIL head=dbba3fdf3966d101a29f3e207db546b1eb05239b\n"
+    },
+    {
+      "id": 6085733703,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:01:45Z",
+      "commit_id": "4804f8b6d048318d56a7a7016939c55a8f4b8811",
+      "body": ""
+    },
+    {
+      "id": 6085880503,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:14:01Z",
+      "commit_id": "4804f8b6d048318d56a7a7016939c55a8f4b8811",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086125022,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:36:11Z",
+      "commit_id": "4804f8b6d048318d56a7a7016939c55a8f4b8811",
+      "body": "whose printed form is longer than its source (`1==1`) to the at-limit length test, red under O7.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=4804f8b6d048318d56a7a7016939c55a8f4b8811\n"
+    },
+    {
+      "id": 6086263669,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:47:56Z",
+      "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
+      "body": ""
+    },
+    {
+      "id": 6086264204,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:47:59Z",
+      "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
+      "body": ""
+    },
+    {
+      "id": 6086264761,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:48:02Z",
+      "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
+      "body": ""
+    },
+    {
+      "id": 6086371833,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T09:56:37Z",
+      "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6086667618,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T10:21:55Z",
+      "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
+      "body": "n in the PR body for the next verification to approve.\n- Reply on and resolve both threads.\n- Bug #2990 is being fixed on main separately.\n\nVERDICT: FAIL head=6233f718f24f92fd461f0d85075991c7a3b6c81f\n"
+    },
+    {
+      "id": 6087322556,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T11:17:01Z",
+      "commit_id": "89962df37d20605e6163840620a0d682071b9c0c",
+      "body": ""
+    },
+    {
+      "id": 6087323127,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T11:17:04Z",
+      "commit_id": "89962df37d20605e6163840620a0d682071b9c0c",
+      "body": ""
+    },
+    {
+      "id": 6087388931,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T11:22:52Z",
+      "commit_id": "89962df37d20605e6163840620a0d682071b9c0c",
+      "body": "\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    },
+    {
+      "id": 6087827840,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T12:02:52Z",
+      "commit_id": "89962df37d20605e6163840620a0d682071b9c0c",
+      "body": "s the call; a leaked worker needs a hung filesystem; record it under the deliberate differences.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=89962df37d20605e6163840620a0d682071b9c0c\n"
+    },
+    {
+      "id": 6088847377,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T13:25:19Z",
+      "commit_id": "e1eb043a7e3b2befadea35273e5c00e55a024435",
+      "body": ""
+    },
+    {
+      "id": 6088847950,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T13:25:22Z",
+      "commit_id": "e1eb043a7e3b2befadea35273e5c00e55a024435",
+      "body": ""
+    },
+    {
+      "id": 6088848615,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T13:25:26Z",
+      "commit_id": "e1eb043a7e3b2befadea35273e5c00e55a024435",
+      "body": ""
+    },
+    {
+      "id": 6089327564,
+      "user": {
+        "login": "donbeave"
+      },
+      "state": "COMMENTED",
+      "submitted_at": "2026-11-27T14:05:17Z",
+      "commit_id": "75c6f1aca47e653f7c77fee6c016bde2ff679a32",
+      "body": "failed with EINVAL during concurrent renames (fails closed); filed as a Bug.\n\nTESTS: APPROVED head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\nVERDICT: PASS head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\n"
+    }
+  ]
+]

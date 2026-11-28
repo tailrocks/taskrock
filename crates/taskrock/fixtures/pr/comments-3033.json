@@ -1,0 +1,13 @@
+[
+  [
+    {
+      "id": 7229613047,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "created_at": "2026-11-27T22:46:57Z",
+      "updated_at": "2026-11-28T02:27:55Z",
+      "body": "<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 {\"code_review\":{\"commit_sha\":\"3b6cd7b7a4bea711be14782afc0bf464ac82fc13\",\"has_any_findings\":null,\"has_unresolved_findings\":null,\"status\":\"running\"},\"security_review\":{\"commit_sha\":\"3b6cd7b7a4bea711be14782afc0bf464ac82fc13\",\"has_any_findings\":null,\"has_unresolved_findings\":null,\"status\":\"running\"}} -->\n<!-- codex-security-review:v1 {\"blockingSeverityThreshold\":\"P0\",\"headSha\":\"3b6cd7b7a4bea711be14782afc0bf464ac82fc13\",\"mergeGateEnabled\":false,\"pullRequestNumber\":3033,\"repository\":\"tailrocks/velnor-new\",\"status\":\"running\"} -->\n<details>\n<summary><strong>Codex Review Summary</strong>: 🔄 Running</summary>\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | 🔄 **Running** since <relative-time datetime=\"2026-11-28T02:27:49.541491Z\">2026-11-28T02:27:49.541491Z</relative-time> | `3b6cd7b` | New commits |\n| 🔒 **Security Review** | 🔄 **Running** since <relative-time datetime=\"2026-11-28T02:27:49.593655Z\">2026-11-28T02:27:49.593655Z</relative-time> | `3b6cd7b` | New commits |\n\n### Security findings\n\n#### Advisory findings (1)\n\n- 🟡 [Keep cleanup descriptor use independent of tree depth](https://github.com/tailrocks/velnor-new/pull/3033#discussion_r4724424495) · **Medium**\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.\n\n</details>\n\n</details>"
+    }
+  ]
+]

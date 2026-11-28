@@ -1,0 +1,25 @@
+{
+  "number": 2932,
+  "node_id": "PR_kwDOUuMw5M8AAAABSLqTjw",
+  "state": "closed",
+  "merged": true,
+  "merge_commit_sha": "e9830e2dc6ab82db1e47e4ca909b4b53672ce2c2",
+  "draft": false,
+  "body": "Base: `main` (#2926 is merged). Later PRs stack on this branch, so it only moves forward by fast-forward pushes.\n\n## Why\n\nR03 (the step executor) needs an expression evaluator for `${{ }}` and step `if` conditions that does exactly what GitHub does for the small surface velnor-new's generated workflows use, and refuses everything else with a clear error. Borrowed from velnor-legacy `1b9fc038` (Apa",
+  "mergeable": null,
+  "mergeable_state": "unknown",
+  "base": {
+    "ref": "main",
+    "repo": {
+      "full_name": "tailrocks/velnor-new",
+      "default_branch": "main"
+    }
+  },
+  "head": {
+    "ref": "feat/issue-2892",
+    "sha": "75c6f1aca47e653f7c77fee6c016bde2ff679a32",
+    "repo": {
+      "full_name": "tailrocks/velnor-new"
+    }
+  }
+}
