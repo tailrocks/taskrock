@@ -105,6 +105,14 @@ fn run_json_lists_triage_items_outside_ready_and_problems() {
 
 #[test]
 fn run_json_lists_the_loose_issues_of_the_link_milestone() {
+    // Item 99 is unblocked, so it would be ready if the scope reached it.
+    let mut items: Vec<serde_json::Value> = serde_json::from_str(ITEMS).expect("fixture parses");
+    for item in &mut items {
+        if item["content"]["number"] == 99 {
+            item["content"]["issue_dependencies_summary"]["blocked_by"] = serde_json::json!(0);
+        }
+    }
+    let unblocked = serde_json::Value::Array(items).to_string();
     let projects = serde_json::json!({"data": {"repository": {"issue": {"projectItems": {
         "nodes": [{"project": {
             "number": 3,
@@ -115,7 +123,7 @@ fn run_json_lists_the_loose_issues_of_the_link_milestone() {
     let gh = FakeGh::new()
         .ok("graphql", &projects.to_string())
         .ok("3/fields", &format!("[{FIELDS}]"))
-        .ok("3/items", &format!("[{ITEMS}]"))
+        .ok("3/items", &format!("[{unblocked}]"))
         .ok("matching-refs", "[[]]")
         .ok("issues?state=open", "[[]]")
         .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)");

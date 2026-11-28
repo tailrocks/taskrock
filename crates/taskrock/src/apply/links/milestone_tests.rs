@@ -13,11 +13,12 @@ use super::super::tests::{
 use super::order_tests::{draft, task};
 use super::tests::FIVE;
 
-const TWO_MILESTONES: &str = r#"[[{"number":4,"title":"M1 Export"},{"number":5,"title":"M2"}]]"#;
+pub(super) const TWO_MILESTONES: &str =
+    r#"[[{"number":4,"title":"M1 Export"},{"number":5,"title":"M2"}]]"#;
 const M2: &str = "milestone = \"M2\"";
 
 /// The parent `FIVE`, with `extra` JSON members, and the `milestones` listing.
-fn parented(milestones: &str, extra: &str) -> FakeGh {
+pub(super) fn parented(milestones: &str, extra: &str) -> FakeGh {
     let parent = format!(r#"{{"number":5,"id":55{extra}}}"#);
     FakeGh::new()
         .fail("contents/taskrock.toml", MISSING)
@@ -31,7 +32,7 @@ fn inheriting(extra: &str) -> FakeGh {
     created(not_found(parented(MILESTONES, extra), 1), 11)
 }
 
-const M1_PARENT: &str = r#","milestone":{"title":"M1 Export"}"#;
+pub(super) const M1_PARENT: &str = r#","milestone":{"title":"M1 Export"}"#;
 
 /// Two tasks, `A1` with no milestone and `B1` with `M2`, in a plan with `plan`.
 fn two_tasks(name: &str, plan: &str) -> Scratch {
