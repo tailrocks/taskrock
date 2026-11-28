@@ -37,8 +37,20 @@ const QUERY: &str =
 #[derive(Debug, Default)]
 pub(super) struct Graph {
     pub threads: Vec<ThreadFact>,
+    /// One sentence for each reason the threads were not read in full.
+    pub unread: Vec<String>,
     pub has_queue: bool,
     pub entry: Option<QueueEntry>,
+}
+
+impl Graph {
+    /// Nothing was read, for `reason`.
+    pub(super) fn failed(reason: String) -> Self {
+        Self {
+            unread: vec![reason],
+            ..Self::default()
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -124,7 +136,7 @@ pub(super) fn read(
         let data = match fetch(gh, link, base, cursor.as_deref()) {
             Ok(data) => data,
             Err(error) if page > 0 => {
-                problems.push(format!(
+                graph.unread.push(format!(
                     "The review threads of the later pages could not be read, so the snapshot holds only the {} threads of the earlier pages: {error}.",
                     graph.threads.len()
                 ));
@@ -141,6 +153,12 @@ pub(super) fn read(
             });
         }
         for thread in pull.review_threads.nodes {
+            if thread.comments.total_count > PAGE {
+                graph.unread.push(format!(
+                    "The review thread {} has {} comments and only {PAGE} were read.",
+                    thread.id, thread.comments.total_count
+                ));
+            }
             graph.threads.extend(fact(thread, problems));
         }
         let info = pull.review_threads.page_info;
@@ -149,7 +167,7 @@ pub(super) fn read(
             None => return Ok(graph),
         }
     }
-    problems.push(format!(
+    graph.unread.push(format!(
         "The pull request has more than {MAX_PAGES} pages of review threads and only {} were read.",
         graph.threads.len()
     ));
@@ -157,12 +175,6 @@ pub(super) fn read(
 }
 
 fn fact(thread: Thread, problems: &mut Vec<String>) -> Option<ThreadFact> {
-    if thread.comments.total_count > PAGE {
-        problems.push(format!(
-            "The review thread {} has {} comments and only {PAGE} were read.",
-            thread.id, thread.comments.total_count
-        ));
-    }
     let Some(first) = thread.comments.nodes.first() else {
         problems.push(format!("The review thread {} has no comments.", thread.id));
         return None;

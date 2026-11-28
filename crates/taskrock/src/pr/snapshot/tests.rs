@@ -94,14 +94,14 @@ fn snapshot_stops_after_ten_pages_and_says_so() {
     case.graphs = vec![page(1, Some("C"), 1); 11];
     let snapshot = snapshot(&case);
     assert_eq!(snapshot.threads.len(), 10);
-    assert!(snapshot.problems[0].contains("10 pages"));
+    assert!(snapshot.threads_unread[0].contains("10 pages"));
 }
 
 #[test]
 fn snapshot_a_thread_of_over_100_comments_is_a_problem() {
     let mut case = Case::recorded(2963);
     case.graphs = vec![page(1, None, 101)];
-    assert!(snapshot(&case).problems[0].contains("101 comments"));
+    assert!(snapshot(&case).threads_unread[0].contains("101 comments"));
 }
 
 #[test]

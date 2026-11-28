@@ -133,7 +133,7 @@ pub enum PrCommand {
         #[arg(long, requires = "reason")]
         resolve: Option<String>,
         /// Why the thread is resolved.
-        #[arg(long, requires = "resolve")]
+        #[arg(long, requires = "resolve", conflicts_with = "defer")]
         reason: Option<String>,
     },
     /// Merge a pull request.

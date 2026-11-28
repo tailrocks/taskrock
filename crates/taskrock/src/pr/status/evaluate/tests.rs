@@ -46,6 +46,7 @@ pub(super) fn ready() -> PullSnapshot {
         },
         codex: None,
         problems: Vec::new(),
+        threads_unread: Vec::new(),
     }
 }
 

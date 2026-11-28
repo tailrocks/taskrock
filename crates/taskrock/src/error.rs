@@ -32,6 +32,9 @@ pub enum Error {
     /// GitHub refuses to create an issue.
     #[error("{0}")]
     Apply(String),
+    /// GitHub answered a `resolveReviewThread` without saying the thread is resolved.
+    #[error("GitHub did not resolve the thread {0}")]
+    NotResolved(String),
     /// A command that is planned and not built yet.
     #[error("taskrock {0} is not built yet")]
     NotBuilt(&'static str),
