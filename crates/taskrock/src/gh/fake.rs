@@ -15,7 +15,7 @@ pub struct FakeGh {
 #[derive(Debug)]
 struct Reply {
     when: String,
-    stdout: Result<String, String>,
+    stdout: Result<String, (String, String)>,
     used: bool,
 }
 
@@ -37,7 +37,15 @@ impl FakeGh {
     /// Adds a failing reply. The call returns `Error::Gh` with this `stderr`.
     #[must_use]
     pub fn fail(self, when: &str, stderr: &str) -> Self {
-        self.push(when, Err(stderr.to_owned()));
+        self.push(when, Err((stderr.to_owned(), String::new())));
+        self
+    }
+
+    /// Adds a failing reply that printed `stdout` before it failed, as the real `gh` does
+    /// for a GraphQL answer with `errors`.
+    #[must_use]
+    pub fn fail_with_output(self, when: &str, stderr: &str, stdout: &str) -> Self {
+        self.push(when, Err((stderr.to_owned(), stdout.to_owned())));
         self
     }
 
@@ -47,7 +55,7 @@ impl FakeGh {
         self.calls.borrow().clone()
     }
 
-    fn push(&self, when: &str, stdout: Result<String, String>) {
+    fn push(&self, when: &str, stdout: Result<String, (String, String)>) {
         self.replies.borrow_mut().push(Reply {
             when: when.to_owned(),
             stdout,
@@ -71,15 +79,17 @@ impl Gh for FakeGh {
                 reply.used = true;
                 match reply.stdout.clone() {
                     Ok(stdout) => Ok(stdout),
-                    Err(stderr) => Err(Error::Gh {
+                    Err((stderr, stdout)) => Err(Error::Gh {
                         args: joined,
                         stderr,
+                        stdout,
                     }),
                 }
             }
             None => Err(Error::Gh {
                 args: joined.clone(),
                 stderr: format!("no fake reply for: {joined}"),
+                stdout: String::new(),
             }),
         }
     }

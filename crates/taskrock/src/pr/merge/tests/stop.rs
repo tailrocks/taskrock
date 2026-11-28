@@ -45,7 +45,7 @@ fn merge_of_a_blocked_pull_exits_20_and_writes_nothing() {
 }
 
 #[test]
-fn merge_refuses_a_fork_before_it_reads_anything_else_or_writes() {
+fn merge_refuses_a_fork_and_writes_nothing() {
     let gh = Scene {
         kind: Kind::Fork,
         ..Scene::ready()
@@ -91,6 +91,57 @@ fn merge_exits_20_when_the_enqueue_has_a_graphql_error() {
     );
     assert_eq!(done.code, 20);
     assert_eq!(writes(&gh).len(), 1);
+}
+
+fn queued() -> crate::gh::FakeGh {
+    Scene {
+        queue: true,
+        ..Scene::ready()
+    }
+    .gh()
+    .ok("pulls?base=", "[[]]")
+}
+
+#[test]
+fn merge_exits_20_when_gh_fails_on_a_graphql_errors_answer() {
+    let errors = json!({"errors": [{"message": "Head sha does not match"}]}).to_string();
+    let gh = queued().fail_with_output("graphql", "gh: Head sha does not match", &errors);
+    let done = run(&gh).expect("refused");
+    assert_eq!(
+        done.lines,
+        ["GitHub refused the merge: Head sha does not match"]
+    );
+    assert_eq!(done.code, 20);
+}
+
+#[test]
+fn merge_does_not_call_a_failure_of_the_enqueue_a_refusal() {
+    let failures = [
+        "gh: HTTP 502: Bad Gateway (https://api.github.com/graphql)",
+        "Post \"https://api.github.com/graphql\": dial tcp: lookup api.github.com: no such host",
+        "gh: Bad credentials (HTTP 401)",
+    ];
+    for stderr in failures {
+        let gh = queued().fail("graphql", stderr);
+        match run(&gh) {
+            Err(Error::Gh { stderr: seen, .. }) => assert_eq!(seen, stderr),
+            other => panic!("{stderr:?} is an error, got {:?}", other.map(|d| d.code)),
+        }
+    }
+}
+
+#[test]
+fn merge_exits_20_when_the_enqueue_returns_no_queue_entry() {
+    let gh = queued().ok(
+        "graphql",
+        r#"{"data":{"enqueuePullRequest":{"mergeQueueEntry":null}}}"#,
+    );
+    let done = run(&gh).expect("refused");
+    assert_eq!(
+        done.lines,
+        ["GitHub refused the merge: GitHub returned no merge queue entry"]
+    );
+    assert_eq!(done.code, 20);
 }
 
 #[test]

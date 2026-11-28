@@ -86,7 +86,7 @@ fn enqueue(gh: &dyn Gh, snapshot: &PullSnapshot) -> Result<Land, Error> {
                 || Land::Refused(refusal("GitHub returned no merge queue entry")),
                 Land::Queued,
             )),
-        Err(error @ Error::Gh { .. }) => Ok(Land::Refused(refusal(&message(&error)))),
+        Err(Error::GraphQl { message }) => Ok(Land::Refused(refusal(&message))),
         Err(error) => Err(error),
     }
 }

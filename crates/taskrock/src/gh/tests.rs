@@ -18,7 +18,7 @@ fn call_without_reply_fails() {
     let gh = FakeGh::new();
     let error = gh.run(&["api", "missing"], None).expect_err("no reply");
     match error {
-        Error::Gh { args, stderr } => {
+        Error::Gh { args, stderr, .. } => {
             assert_eq!(args, "api missing");
             assert_eq!(stderr, "no fake reply for: api missing");
         }

@@ -76,36 +76,47 @@ fn graphql_returns_data() {
 }
 
 #[test]
-fn graphql_turns_errors_into_gh_errors() {
+fn graphql_turns_an_errors_answer_into_a_graphql_error() {
     let gh = FakeGh::new().ok(
         "api graphql",
         r#"{"data":null,"errors":[{"message":"one"},{"message":"two"}]}"#,
     );
     let error = graphql(&gh, "query", &json!({})).expect_err("errors");
-    match error {
-        Error::Gh { args, stderr } => {
-            assert_eq!(args, "api graphql");
-            assert_eq!(stderr, "one; two");
-        }
-        other => panic!("wrong error: {other}"),
-    }
+    assert!(
+        matches!(&error, Error::GraphQl { message } if message == "one; two"),
+        "{error}"
+    );
 }
 
 #[test]
-fn graphql_turns_a_failed_gh_into_the_joined_messages() {
-    let gh = FakeGh::new().fail(
-        "api graphql",
-        "gh: Field 'a' doesn't exist on type 'Query'\nField 'b' doesn't exist on type 'User'",
-    );
+fn graphql_turns_a_failed_gh_with_an_errors_answer_into_a_graphql_error() {
+    let body = r#"{"errors":[{"message":"Field 'a' is wrong"},{"message":"Field 'b' is wrong"}]}"#;
+    let gh = FakeGh::new().fail_with_output("api graphql", "gh: Field 'a' is wrong", body);
     let error = graphql(&gh, "query", &json!({})).expect_err("failed gh");
-    match error {
-        Error::Gh { args, stderr } => {
-            assert_eq!(args, "api graphql");
-            assert_eq!(
-                stderr,
-                "Field 'a' doesn't exist on type 'Query'; Field 'b' doesn't exist on type 'User'"
-            );
-        }
-        other => panic!("wrong error: {other}"),
+    let want = "Field 'a' is wrong; Field 'b' is wrong";
+    assert!(
+        matches!(&error, Error::GraphQl { message } if message == want),
+        "{error}"
+    );
+}
+
+#[test]
+fn graphql_keeps_a_failure_that_is_not_an_answer_as_a_gh_error() {
+    let body = r#"{"errors":[{"message":"Something went wrong"}]}"#;
+    let cases = [
+        ("gh: Bad Gateway (HTTP 502)", body),
+        (
+            "gh: Bad credentials (HTTP 401)",
+            r#"{"message":"Bad credentials"}"#,
+        ),
+        ("Post \"https://api.github.com/graphql\": no such host", ""),
+    ];
+    for (stderr, stdout) in cases {
+        let gh = FakeGh::new().fail_with_output("api graphql", stderr, stdout);
+        let error = graphql(&gh, "query", &json!({})).expect_err("failed gh");
+        assert!(
+            matches!(&error, Error::Gh { stderr: seen, .. } if seen == stderr),
+            "{error}"
+        );
     }
 }

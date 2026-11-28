@@ -5,9 +5,17 @@ use thiserror::Error;
 /// The errors of taskrock.
 #[derive(Debug, Error)]
 pub enum Error {
-    /// The `gh` command failed.
+    /// The `gh` command failed. `stdout` is what it printed before it failed: a GraphQL
+    /// `errors` answer is on standard output.
     #[error("gh {args} failed: {stderr}")]
-    Gh { args: String, stderr: String },
+    Gh {
+        args: String,
+        stderr: String,
+        stdout: String,
+    },
+    /// GitHub answered a GraphQL call with an `errors` array. Nothing failed on the way.
+    #[error("GitHub GraphQL error: {message}")]
+    GraphQl { message: String },
     /// GitHub sent output that is not JSON.
     #[error("GitHub sent JSON that taskrock cannot read: {0}")]
     Json(String),
