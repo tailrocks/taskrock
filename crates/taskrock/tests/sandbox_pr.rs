@@ -11,6 +11,8 @@ use taskrock::github::{get, send};
 
 const REPO: &str = "repos/tailrocks/taskrock-sandbox";
 const SIGN_OFF: &str = "Signed-off-by: taskrock sandbox <noreply@github.com>";
+/// The author of the commit, so that the DCO check finds its sign-off matching.
+const WHO: (&str, &str) = ("taskrock sandbox", "noreply@github.com");
 
 /// Closes the pull request and deletes its branch, also when the test fails.
 struct Cleanup<'a> {
@@ -56,7 +58,8 @@ fn push_branch(gh: &RealGh, branch: &str, name: &str) -> Result<String, Error> {
         gh,
         "PUT",
         &format!("{REPO}/contents/sandbox/{name}.txt"),
-        &json!({"message": message, "content": "c2FuZGJveAo=", "branch": branch}),
+        &json!({"message": message, "content": "c2FuZGJveAo=", "branch": branch,
+            "author": {"name": WHO.0, "email": WHO.1}, "committer": {"name": WHO.0, "email": WHO.1}}),
     )?;
     Ok(text(&put["commit"]["sha"], "commit sha")?.to_owned())
 }
@@ -107,15 +110,20 @@ fn merges_a_ready_pull_request_of_the_sandbox() {
     let link = format!("https://github.com/tailrocks/taskrock-sandbox/pull/{number}");
 
     let deadline = Instant::now() + Duration::from_secs(280);
-    let code = loop {
+    let (code, said) = loop {
         let output = taskrock(&["pr", "merge", &link]).expect("the taskrock binary starts");
         let code = output.status.code();
         if code != Some(10) || Instant::now() > deadline {
-            break code;
+            let said = format!(
+                "{}{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+            break (code, said);
         }
         std::thread::sleep(Duration::from_secs(5));
     };
-    assert_eq!(code, Some(0), "pr merge ends with 0");
+    assert_eq!(code, Some(0), "pr merge ends with 0: {said}");
 
     let status = taskrock(&["pr", "status", &link]).expect("the taskrock binary starts");
     let out = String::from_utf8(status.stdout).expect("stdout is UTF-8");
