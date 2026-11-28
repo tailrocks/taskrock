@@ -66,7 +66,7 @@ fn org_projects() -> String {
             "<!-- taskrock:project key=roadmap kind=portfolio -->",
         ),
     ];
-    serde_json::json!({"data": {"organization": {"projectsV2": {"nodes": nodes}}}}).to_string()
+    serde_json::json!({"data": {"repositoryOwner": {"projectsV2": {"nodes": nodes}}}}).to_string()
 }
 
 const ALL: [&str; 5] = ["Initiative", "Epic", "Task", "Bug", "Feature"];
@@ -98,7 +98,7 @@ fn a_missing_type_is_created() {
         .ok("issue-types", &org_types(&ALL[..4]))
         .ok("-X POST orgs/acme/issue-types", "{}")
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects())
+        .ok("graphql", &org_projects())
         .ok("graphql", &project_fields())
         .ok("graphql", &project_fields())
         .ok("graphql", &complete(Delivery))
@@ -119,7 +119,7 @@ fn dry_run_makes_no_post() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL[..4]))
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects())
+        .ok("graphql", &org_projects())
         .ok("graphql", &project_fields())
         .ok("graphql", &project_fields())
         .ok("graphql", &complete(Delivery))
@@ -135,7 +135,7 @@ fn a_second_run_only_finds_existing_types() {
     let gh = FakeGh::new()
         .ok("issue-types", &org_types(&ALL))
         .ok("issue-fields", &org_fields())
-        .ok("projectsV2", &org_projects())
+        .ok("graphql", &org_projects())
         .ok("graphql", &project_fields())
         .ok("graphql", &project_fields())
         .ok("graphql", &complete(Delivery))

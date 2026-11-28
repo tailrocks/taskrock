@@ -20,7 +20,7 @@ fn project(number: u64) -> ProjectLink {
 }
 
 fn readme_answer(readme: &str) -> String {
-    serde_json::json!({"data": {"organization": {"projectV2": {"readme": readme}}}}).to_string()
+    serde_json::json!({"data": {"repositoryOwner": {"projectV2": {"readme": readme}}}}).to_string()
 }
 
 #[test]
@@ -82,7 +82,7 @@ fn with_marker_replaces_an_old_marker() {
 #[test]
 fn list_returns_open_projects_with_their_markers() {
     let line = marker_line(&marker("roadmap", ProjectKind::Portfolio));
-    let body = serde_json::json!({"data": {"organization": {"projectsV2": {"nodes": [
+    let body = serde_json::json!({"data": {"repositoryOwner": {"projectsV2": {"nodes": [
         {"id": "P1", "number": 3, "title": "taskrock", "readme": null, "public": false, "closed": false},
         {"id": "P2", "number": 4, "title": "Roadmap", "readme": format!("Plan\n\n{line}"), "public": true, "closed": false},
         {"id": "P3", "number": 5, "title": "Old", "readme": "", "public": false, "closed": true},

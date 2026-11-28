@@ -67,7 +67,7 @@ pub(super) fn complete(config: &Config) -> Vec<Value> {
 fn missing_fields_are_created_with_graphql() {
     let mut gh = FakeGh::new()
         .ok("issue-fields", "[]")
-        .ok("graphql", r#"{"data":{"organization":{"id":"O_1"}}}"#);
+        .ok("api orgs/acme", r#"{"node_id":"O_1"}"#);
     for _ in 0..8 {
         gh = gh.ok("graphql", r#"{"data":{}}"#);
     }

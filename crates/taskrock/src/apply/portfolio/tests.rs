@@ -20,7 +20,7 @@ fn folder() -> std::path::PathBuf {
 fn projects(key: &str, kind: &str) -> String {
     let readme = format!("Roadmap.\n\n<!-- taskrock:project key={key} kind={kind} -->");
     let delivery = "<!-- taskrock:project key=roadmap kind=delivery -->";
-    json!({"data":{"organization":{"projectsV2":{"nodes":[
+    json!({"data":{"repositoryOwner": {"projectsV2":{"nodes":[
         {"id":"P1","number":7,"title":"holla","readme":delivery,"public":false,"closed":false},
         {"id":"P2","number":9,"title":"Roadmap","readme":readme,"public":false,"closed":false}
     ]}}}})
