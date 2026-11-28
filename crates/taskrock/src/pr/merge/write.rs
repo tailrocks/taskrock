@@ -38,35 +38,55 @@ pub(super) fn encode(value: &str) -> String {
         .collect()
 }
 
-/// Point every open pull request that is based on the head branch at the default branch. It
-/// runs only for a merged pull request, and works whether or not GitHub deleted the head
-/// branch: when it did, GitHub has retargeted the children and this finds none. A rerun lists
-/// only what is left. Returns the numbers that were retargeted.
-pub(super) fn retarget(
-    gh: &dyn Gh,
-    link: &PullLink,
-    snapshot: &PullSnapshot,
-) -> Result<Vec<u64>, Error> {
+/// What a retarget did: the numbers it moved, and a line for each failure.
+pub(super) struct Retargeted {
+    pub moved: Vec<u64>,
+    pub failures: Vec<String>,
+}
+
+/// Point every open pull request that is based on the head branch at the branch the pull
+/// request merged into (its base). It runs only for a merged pull request, and works whether
+/// or not GitHub deleted the head branch: when it did, GitHub has retargeted the children and
+/// this finds none. It tries every child and never fails: the merge landed, so a child that
+/// GitHub refuses is a line in `failures`, and a rerun lists only what is left.
+pub(super) fn retarget(gh: &dyn Gh, link: &PullLink, snapshot: &PullSnapshot) -> Retargeted {
     let path = format!(
         "{}/pulls?base={}&state=open&per_page=100",
         link.repo_path(),
         encode(&snapshot.head_ref)
     );
-    let mut moved = Vec::new();
-    for pull in get_all(gh, &path)? {
-        let number = pull["number"]
-            .as_u64()
-            .ok_or_else(|| Error::Json("pulls: a pull request has no number".to_owned()))?;
+    let mut done = Retargeted {
+        moved: Vec::new(),
+        failures: Vec::new(),
+    };
+    let pulls = match get_all(gh, &path) {
+        Ok(pulls) => pulls,
+        Err(error) => {
+            done.failures.push(format!(
+                "could not list the pull requests based on {}: {}",
+                snapshot.head_ref,
+                message(&error)
+            ));
+            return done;
+        }
+    };
+    for pull in pulls {
+        let Some(number) = pull["number"].as_u64() else {
+            done.failures
+                .push("could not retarget a pull request that has no number".to_owned());
+            continue;
+        };
         let path = format!("{}/pulls/{number}", link.repo_path());
-        send(
-            gh,
-            "PATCH",
-            &path,
-            &json!({"base": snapshot.default_branch}),
-        )?;
-        moved.push(number);
+        match send(gh, "PATCH", &path, &json!({"base": snapshot.base_ref})) {
+            Ok(_) => done.moved.push(number),
+            Err(error) => done.failures.push(format!(
+                "could not retarget #{number} to {}: {}",
+                snapshot.base_ref,
+                message(&error)
+            )),
+        }
     }
-    Ok(moved)
+    done
 }
 
 /// Queue the pull request when its base has a merge queue, otherwise squash-merge it.

@@ -72,7 +72,7 @@ fn post_comment(gh: &dyn Gh, issue: &IssueLink, stack: &Stack) -> Result<u64, Er
     let branch = issue.branch();
     let base = &stack.base;
     let body = format!(
-        "Stacked on {blocker}: the branch {branch} starts from {base}, whose pull request is {}. Open the pull request of this task with the base {base}. Before {blocker} merges, the manager retargets it to the default branch.\n\n<!-- taskrock:stacked-on {base} -->",
+        "Stacked on {blocker}: the branch {branch} starts from {base}, whose pull request is {}. Open the pull request of this task with the base {base}. When `taskrock pr merge` merges {blocker}, it retargets this pull request after the merge lands.\n\n<!-- taskrock:stacked-on {base} -->",
         stack.pull_request
     );
     let answer = send(

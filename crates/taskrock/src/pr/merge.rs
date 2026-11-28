@@ -37,9 +37,10 @@ struct Report {
     outcome: Outcome,
     head: String,
     merge_commit: Option<String>,
-    /// The open pull requests that were based on the head branch and now point at the default
-    /// branch. A run writes them only after the pull request is merged: the outcomes `merged`
-    /// and `already_merged`. It is empty for `queued`, `refused` and `not_ready`: a queued pull
+    /// The open pull requests that were based on the head branch and now point at the branch
+    /// the pull request merged into (its base, which is the default branch only for a pull
+    /// request that was not stacked). A run writes them only after the pull request is merged:
+    /// the outcomes `merged` and `already_merged`. It is empty for `queued`, `refused` and `not_ready`: a queued pull
     /// request retargets its children when `pr merge` runs again on it after it merged.
     retargeted: Vec<u64>,
 }
@@ -49,6 +50,8 @@ struct Done {
     report: Report,
     lines: Vec<String>,
     refusal: Option<String>,
+    /// The retargets that failed after the merge landed. They do not undo the merge.
+    failures: Vec<String>,
     code: u8,
 }
 
@@ -66,6 +69,7 @@ impl Done {
             },
             lines: Vec::new(),
             refusal: None,
+            failures: Vec::new(),
             code: 0,
         }
     }
@@ -76,26 +80,24 @@ impl Done {
         self
     }
 
-    /// Point the open pull requests based on the merged head branch at the default branch. A
-    /// pull request from a fork has a head branch in another repository, so its name says
-    /// nothing about the pull requests here: it retargets none.
-    fn retargeted(
-        mut self,
-        gh: &dyn Gh,
-        link: &PullLink,
-        snapshot: &PullSnapshot,
-    ) -> Result<Self, Error> {
+    /// Point the open pull requests based on the merged head branch at the branch it merged
+    /// into. A pull request from a fork has a head branch in another repository, so its name
+    /// says nothing about the pull requests here: it retargets none. A failed retarget is a
+    /// line, never an error: the merge already landed.
+    fn retargeted(mut self, gh: &dyn Gh, link: &PullLink, snapshot: &PullSnapshot) -> Self {
         if snapshot.cross_repository {
-            return Ok(self);
+            return self;
         }
-        let moved = write::retarget(gh, link, snapshot)?;
+        let write::Retargeted { moved, failures } = write::retarget(gh, link, snapshot);
         self.lines.extend(
             moved
                 .iter()
-                .map(|number| format!("retargeted #{number} to {}", snapshot.default_branch)),
+                .map(|number| format!("retargeted #{number} to {}", snapshot.base_ref)),
         );
+        self.lines.extend(failures.iter().cloned());
+        self.failures = failures;
         self.report.retargeted = moved;
-        Ok(self)
+        self
     }
 }
 
@@ -105,14 +107,16 @@ impl Done {
 /// # Errors
 ///
 /// Returns the errors of [`status::verdict`], [`Error::Refused`] for a pull request from a
-/// fork, and the error of a write that GitHub did not refuse by a status of 405, 409 or 422.
+/// fork, and the error of a merge or enqueue that GitHub did not refuse by a status of 405,
+/// 409 or 422. A retarget that fails after the merge landed is a line of the output, not an
+/// error.
 pub fn run(gh: &dyn Gh, link: &PullLink, json: bool) -> Result<u8, Error> {
     let done = execute(gh, link)?;
     if json {
         let out = serde_json::to_string_pretty(&done.report)
             .map_err(|error| Error::Json(error.to_string()))?;
         println!("{out}");
-        if let Some(message) = &done.refusal {
+        for message in done.refusal.iter().chain(&done.failures) {
             eprintln!("{message}");
         }
     } else {
@@ -127,9 +131,9 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
     if verdict.state == State::Merged {
         let mut done = Done::new(link, head, Outcome::AlreadyMerged);
         done.report.merge_commit.clone_from(&snapshot.merge_commit);
-        return done
+        return Ok(done
             .ending(format!("already {}", verdict.next), 0)
-            .retargeted(gh, link, &snapshot);
+            .retargeted(gh, link, &snapshot));
     }
     if snapshot.cross_repository {
         return Err(Error::Refused("taskrock never merges a fork".to_owned()));
@@ -145,9 +149,10 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
             done.report.outcome = Outcome::Queued;
             let text = format!(
                 "queued at position {position} (head {}); the pull requests based on {} are \
-                 retargeted when it merges: run pr merge again then",
+                 retargeted when it merges: run taskrock pr merge {} again then",
                 short(head),
-                snapshot.head_ref
+                snapshot.head_ref,
+                link.url()
             );
             Ok(done.ending(text, EXIT_WAITING))
         }
@@ -157,7 +162,7 @@ fn execute(gh: &dyn Gh, link: &PullLink) -> Result<Done, Error> {
                 commit.as_deref().unwrap_or("an unknown commit")
             );
             done.report.merge_commit = commit;
-            done.ending(text, 0).retargeted(gh, link, &snapshot)
+            Ok(done.ending(text, 0).retargeted(gh, link, &snapshot))
         }
         write::Land::Refused(message) => {
             done.report.outcome = Outcome::Refused;

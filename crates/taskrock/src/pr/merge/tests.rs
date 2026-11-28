@@ -36,6 +36,8 @@ pub(super) enum Kind {
 pub(super) struct Scene {
     pub queue: bool,
     pub kind: Kind,
+    /// The base branch of the pull request: where the merge lands.
+    pub base: &'static str,
     pub passed: bool,
     pub codex_head: Option<&'static str>,
     /// A check run on the head. Without one, CI has not started.
@@ -47,6 +49,7 @@ impl Scene {
         Self {
             queue: false,
             kind: Kind::Open,
+            base: "main",
             passed: true,
             codex_head: None,
             check_started: true,
@@ -65,7 +68,7 @@ impl Scene {
             "state": if merged { "closed" } else { "open" },
             "merge_commit_sha": "c0ffee0123456789c0ffee0123456789c0ffee01",
             "body": "Closes #5", "mergeable": true, "mergeable_state": "clean",
-            "base": {"ref": "main", "repo": repo("tailrocks/taskrock")},
+            "base": {"ref": self.base, "repo": repo("tailrocks/taskrock")},
             "head": {"ref": "feat/issue-5", "sha": HEAD, "repo": repo(head)}})
         .to_string()
     }

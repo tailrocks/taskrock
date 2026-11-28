@@ -46,7 +46,7 @@ fn merge_squashes_at_the_checked_head_without_a_queue() {
 }
 
 #[test]
-fn merge_of_a_merged_pull_says_so_and_writes_nothing() {
+fn merge_of_a_merged_pull_without_children_says_so_and_writes_nothing() {
     let gh = Scene {
         kind: Kind::Merged,
         ..Scene::ready()

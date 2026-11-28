@@ -72,7 +72,8 @@ fn merge_retargets_nothing_when_the_pull_request_is_queued() {
         done.lines,
         [format!(
             "queued at position 3 (head {}); the pull requests based on feat/issue-5 are \
-             retargeted when it merges: run pr merge again then",
+             retargeted when it merges: run taskrock pr merge \
+             https://github.com/tailrocks/taskrock/pull/5 again then",
             &HEAD[..7]
         )]
     );
@@ -127,4 +128,75 @@ fn merge_of_a_merged_fork_pull_retargets_nothing() {
     assert_eq!(done.report.outcome, Outcome::AlreadyMerged);
     assert_eq!(done.report.retargeted, Vec::<u64>::new());
     assert_eq!(writes(&gh), Vec::<String>::new());
+}
+
+fn patch_to(base: &str, number: u64) -> String {
+    format!(
+        "PATCH repos/tailrocks/taskrock/pulls/{number} {}",
+        json!({ "base": base })
+    )
+}
+
+#[test]
+fn merge_retargets_the_children_to_the_branch_the_merge_landed_on() {
+    // A stacked pull request merged into `feat/issue-4`, in the web page: its children go
+    // there, not to the default branch, which would carry the commits of `feat/issue-4`.
+    let scene = Scene {
+        kind: Kind::Merged,
+        base: "feat/issue-4",
+        ..Scene::ready()
+    };
+    let gh = children(scene.gh());
+    let done = run(&gh).expect("already merged");
+    assert_eq!(done.report.outcome, Outcome::AlreadyMerged);
+    assert_eq!(done.lines[1], "retargeted #7 to feat/issue-4");
+    assert_eq!(done.report.retargeted, [7, 8]);
+    assert_eq!(
+        writes(&gh),
+        [patch_to("feat/issue-4", 7), patch_to("feat/issue-4", 8)]
+    );
+}
+
+#[test]
+fn merge_keeps_the_merged_outcome_when_a_child_cannot_be_retargeted() {
+    let gh = Scene::ready()
+        .gh()
+        .ok(
+            "pulls?base=feat/issue-5&state=open",
+            r#"[[{"number":7},{"number":8}]]"#,
+        )
+        .ok("pulls/5/merge", r#"{"sha":"abc1234"}"#)
+        .fail("pulls/7", "gh: Unprocessable Entity (HTTP 422)")
+        .ok("pulls/8", "{}");
+    let done = run(&gh).expect("the merge landed");
+    assert_eq!(done.report.outcome, Outcome::Merged);
+    assert_eq!(done.report.merge_commit.as_deref(), Some("abc1234"));
+    assert_eq!(done.code, 0);
+    assert_eq!(
+        done.lines,
+        [
+            "merged as abc1234",
+            "retargeted #8 to main",
+            "could not retarget #7 to main: Unprocessable Entity (HTTP 422)"
+        ]
+    );
+    assert_eq!(done.report.retargeted, [8]);
+}
+
+#[test]
+fn merge_keeps_the_merged_outcome_when_the_children_cannot_be_listed() {
+    let gh = Scene::ready()
+        .gh()
+        .fail(
+            "pulls?base=feat/issue-5&state=open",
+            "gh: Bad Gateway (HTTP 502)",
+        )
+        .ok("pulls/5/merge", r#"{"sha":"abc1234"}"#);
+    let done = run(&gh).expect("the merge landed");
+    assert_eq!(done.report.outcome, Outcome::Merged);
+    assert_eq!(done.code, 0);
+    assert_eq!(
+        done.lines[1],
+        "could not list the pull requests based on feat/issue-5: Bad Gateway (HTTP 502)"
+    );
 }
