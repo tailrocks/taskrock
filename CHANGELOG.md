@@ -2,6 +2,11 @@
 
 All notable changes to this project are recorded in this file.
 
+## Unreleased
+
+- `check` and `apply` refuse an issue that has no `parent` unless it is an Initiative.
+- `check` and `apply` answer a `parent` or `blocked_by` value that is a bare issue number, like `2878` or `#2878`, with the link to write: `https://github.com/<owner>/<repo>/issues/<number>`.
+
 ## 0.3.0
 
 - `ready --stacked` also lists a Todo task whose open blockers form one stack: each is In Progress with an open pull request from `feat/issue-<blocker>`. The text line `stacked on:` and the `--json` key `stacked` (`base`, `blocker`, `pull_request`) name the branch to start from. Every ready entry of `--json` has the key, `null` for a task that is not stacked.

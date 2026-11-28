@@ -29,7 +29,7 @@ fn write_file(folder: &Path, name: &str, text: &str) -> Result<(), Error> {
     })
 }
 
-/// Writes the draft: the plan, the epic, and one task file per `tasks` entry
+/// Writes the draft: the plan, the initiative, the epic, and one task file per `tasks` entry
 /// of `(key, title, blocked_by line or "")`.
 fn write_draft(
     folder: &Path,
@@ -50,9 +50,16 @@ fn write_draft(
     )?;
     write_file(
         folder,
+        "I1.md",
+        &format!(
+            "+++\nkey = \"I1\"\ntitle = \"[apply test] initiative {stamp}\"\ntype = \"Initiative\"\n+++\n## Outcome\n\nUsers export every report.\n\n## Why\n\nUsers copy the reports by hand.\n\n## Not yet specified\n\nNone. Every decision is in the epics.\n\n## Out of scope\n\n- No other export format.\n\n## Done when\n\n- [ ] `report --format csv` prints the summary report.\n"
+        ),
+    )?;
+    write_file(
+        folder,
         "E1.md",
         &format!(
-            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Decisions already made\n\n- The export is a CSV file.\n\n## Not yet specified\n\nNone. Every decision is in the tasks.\n\n## Out of scope\n\n- No other export format.\n\n## Done when\n\n- [ ] `report --format csv` prints the summary report.\n"
+            "+++\nkey = \"E1\"\ntitle = \"[apply test] epic {stamp}\"\ntype = \"Epic\"\nparent = \"I1\"\n+++\n## Outcome\n\nUsers export the summary report.\n\n## Decisions already made\n\n- The export is a CSV file.\n\n## Not yet specified\n\nNone. Every decision is in the tasks.\n\n## Out of scope\n\n- No other export format.\n\n## Done when\n\n- [ ] `report --format csv` prints the summary report.\n"
         ),
     )?;
     for (key, title, blocked) in tasks {
@@ -111,7 +118,7 @@ fn second_apply_creates_nothing() {
     };
     let (_, first, first_lines) = create_issues(&gh, &folder, &options).expect("first apply");
     let (_, second, second_lines) = create_issues(&gh, &folder, &options).expect("second apply");
-    assert_eq!(first_lines.len(), 3, "three issues are created");
+    assert_eq!(first_lines.len(), 4, "four issues are created");
     assert!(
         first_lines.iter().all(|line| line.starts_with("created ")),
         "first run creates: {first_lines:?}"
@@ -136,7 +143,7 @@ fn second_apply_creates_nothing() {
         Some(8),
         "the task has eight routing keys"
     );
-    let numbers: Vec<u64> = ["E1", "T01", "T02"]
+    let numbers: Vec<u64> = ["I1", "E1", "T01", "T02"]
         .into_iter()
         .map(|key| first.get(key).expect("key is mapped").link.number)
         .collect();
@@ -193,7 +200,7 @@ fn second_apply_links_nothing_twice() {
     for (name, text) in [("first", &first), ("second", &second)] {
         assert_eq!(
             text.lines().last(),
-            Some("DONE 4 issues, 2 blockers"),
+            Some("DONE 5 issues, 2 blockers"),
             "{name} run ends with DONE: {text}"
         );
     }
@@ -204,7 +211,7 @@ fn second_apply_links_nothing_twice() {
         "second run links nothing twice: {second}"
     );
     let numbers = created_numbers(&first);
-    assert_eq!(numbers.len(), 4, "four issues are created: {first}");
+    assert_eq!(numbers.len(), 5, "five issues are created: {first}");
     let project = ProjectLink {
         owner: "tailrocks".to_owned(),
         number: 10,
@@ -225,8 +232,8 @@ fn second_apply_links_nothing_twice() {
     std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }
 
-/// Writes a draft of one Task and one Bug. The Bug has the four file
-/// sections and no routing.
+/// Writes a draft of one Task and one Bug under the epic. The Bug has the four
+/// file sections and no routing.
 fn write_triage_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> {
     write_draft(
         folder,
@@ -234,20 +241,11 @@ fn write_triage_draft(folder: &Path, id: &str, stamp: u64) -> Result<(), Error> 
         stamp,
         &[("T01", format!("[apply test] task {stamp}"), "")],
     )?;
-    std::fs::remove_file(folder.join("E1.md")).map_err(|error| Error::Draft {
-        file: "E1.md".to_owned(),
-        message: error.to_string(),
-    })?;
-    let task = std::fs::read_to_string(folder.join("T01.md")).map_err(|error| Error::Draft {
-        file: "T01.md".to_owned(),
-        message: error.to_string(),
-    })?;
-    write_file(folder, "T01.md", &task.replace("parent = \"E1\"\n", ""))?;
     write_file(
         folder,
         "B1.md",
         &format!(
-            "+++\nkey = \"B1\"\ntitle = \"[apply test] bug {stamp}\"\ntype = \"Bug\"\n+++\n## What happens\n\nThe report command drops the last row.\n\n## Expected\n\nThe report command prints every row.\n\n## How to reproduce\n\n1. Run `report --format csv` on three rows.\n\n## Environment\n\ntaskrock 0.2.0.\n"
+            "+++\nkey = \"B1\"\ntitle = \"[apply test] bug {stamp}\"\ntype = \"Bug\"\nparent = \"E1\"\n+++\n## What happens\n\nThe report command drops the last row.\n\n## Expected\n\nThe report command prints every row.\n\n## How to reproduce\n\n1. Run `report --format csv` on three rows.\n\n## Environment\n\ntaskrock 0.2.0.\n"
         ),
     )
 }
@@ -270,7 +268,7 @@ fn apply_puts_a_bug_in_triage_and_a_task_in_todo() {
     };
     let text = run(&gh, &folder, &options).expect("apply");
     let numbers = created_numbers(&text);
-    assert_eq!(numbers.len(), 2, "two issues are created: {text}");
+    assert_eq!(numbers.len(), 4, "four issues are created: {text}");
     let project = ProjectLink {
         owner: "tailrocks".to_owned(),
         number: 10,

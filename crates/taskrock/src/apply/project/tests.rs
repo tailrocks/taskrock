@@ -51,10 +51,14 @@ fn added(first: &str, second: &str) -> (Vec<String>, Vec<Value>) {
 
 #[test]
 fn only_the_issue_with_no_parent_is_added() {
-    let e1 = item(11, 111, "CSV export");
-    let t01 = item(12, 112, "Add CSV rendering to the report command");
-    let t02 = item(13, 113, "Add `--format csv` to the report command");
-    let (lines, posts) = added(&format!("{t01},{t02}"), &format!("{e1},{t01},{t02}"));
+    let i1 = item(11, 111, "CSV export everywhere");
+    let e1 = item(12, 112, "CSV export");
+    let t01 = item(13, 113, "Add CSV rendering to the report command");
+    let t02 = item(14, 114, "Add `--format csv` to the report command");
+    let (lines, posts) = added(
+        &format!("{e1},{t01},{t02}"),
+        &format!("{i1},{e1},{t01},{t02}"),
+    );
     assert_eq!(lines, ["project: added #11"]);
     assert_eq!(
         posts,
@@ -64,25 +68,27 @@ fn only_the_issue_with_no_parent_is_added() {
 
 #[test]
 fn second_read_with_every_issue_sends_no_further_post() {
-    let e1 = item(11, 111, "CSV export");
-    let t01 = item(12, 112, "Add CSV rendering to the report command");
-    let t02 = item(13, 113, "Add `--format csv` to the report command");
-    let (lines, posts) = added("", &format!("{e1},{t01},{t02}"));
+    let i1 = item(11, 111, "CSV export everywhere");
+    let e1 = item(12, 112, "CSV export");
+    let t01 = item(13, 113, "Add CSV rendering to the report command");
+    let t02 = item(14, 114, "Add `--format csv` to the report command");
+    let (lines, posts) = added("", &format!("{i1},{e1},{t01},{t02}"));
     assert_eq!(lines, ["project: added #11"]);
     assert_eq!(posts.len(), 1, "no further POST is sent");
 }
 
 #[test]
 fn issue_missing_after_last_read_is_added() {
-    let e1 = item(11, 111, "CSV export");
-    let t01 = item(12, 112, "Add CSV rendering to the report command");
-    let (lines, posts) = added("", &format!("{e1},{t01}"));
-    assert_eq!(lines, ["project: added #11", "project: added #13"]);
+    let i1 = item(11, 111, "CSV export everywhere");
+    let e1 = item(12, 112, "CSV export");
+    let t01 = item(13, 113, "Add CSV rendering to the report command");
+    let (lines, posts) = added("", &format!("{i1},{e1},{t01}"));
+    assert_eq!(lines, ["project: added #11", "project: added #14"]);
     assert_eq!(
         posts,
         [
             json!({"type":"Issue","owner":"tailrocks","repo":"holla","number":11}),
-            json!({"type":"Issue","owner":"tailrocks","repo":"holla","number":13}),
+            json!({"type":"Issue","owner":"tailrocks","repo":"holla","number":14}),
         ]
     );
 }
@@ -94,5 +100,5 @@ fn dry_run_sends_no_post() {
         create_issues(&gh, &folder(), &dry_options()).expect("dry run succeeds");
     let lines = add_to_project(&gh, &draft, &found, &dry_options()).expect("dry run succeeds");
     assert!(!has_call(&gh, "POST"), "a dry run sends no POST");
-    assert_eq!(lines, ["would add E1 to project"]);
+    assert_eq!(lines, ["would add I1 to project"]);
 }

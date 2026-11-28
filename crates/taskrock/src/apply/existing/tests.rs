@@ -14,17 +14,18 @@ fn existing_markers_send_no_post() {
     assert_eq!(
         lines,
         [
-            "exists  #21 E1 CSV export",
-            "exists  #22 T01 Add CSV rendering to the report command",
-            "exists  #23 T02 Add `--format csv` to the report command",
+            "exists  #21 I1 CSV export everywhere",
+            "exists  #22 E1 CSV export",
+            "exists  #23 T01 Add CSV rendering to the report command",
+            "exists  #24 T02 Add `--format csv` to the report command",
         ]
     );
-    assert_eq!(map["T01"].link.number, 22);
-    assert_eq!(map["T01"].id, 202);
+    assert_eq!(map["T01"].link.number, 23);
+    assert_eq!(map["T01"].id, 203);
 }
 
 #[test]
-fn late_issue_after_empty_listing_creates_other_two() {
+fn late_issue_after_empty_listing_creates_the_others() {
     let gh = created(
         not_found(
             base().ok("issues?state=all", "[[]]").ok(
@@ -39,12 +40,13 @@ fn late_issue_after_empty_listing_creates_other_two() {
     assert_eq!(
         lines,
         [
-            "created #11 E1 CSV export",
+            "created #11 I1 CSV export everywhere",
+            "created #12 E1 CSV export",
             "exists  #1 T01 Add CSV rendering to the report command",
-            "created #12 T02 Add `--format csv` to the report command",
+            "created #13 T02 Add `--format csv` to the report command",
         ]
     );
-    assert_eq!(post_bodies(&gh).len(), 2, "T01 already exists");
+    assert_eq!(post_bodies(&gh).len(), 3, "T01 already exists");
     assert_eq!(map["T01"].id, 50, "the late issue is kept");
 }
 
@@ -64,12 +66,13 @@ fn three_missing_answers_end_the_look_past_the_listing() {
     assert_eq!(
         lines,
         [
-            "created #11 E1 CSV export",
-            "created #12 T01 Add CSV rendering to the report command",
-            "created #13 T02 Add `--format csv` to the report command",
+            "created #11 I1 CSV export everywhere",
+            "created #12 E1 CSV export",
+            "created #13 T01 Add CSV rendering to the report command",
+            "created #14 T02 Add `--format csv` to the report command",
         ]
     );
-    assert_eq!(post_bodies(&gh).len(), 3, "every issue is created");
+    assert_eq!(post_bodies(&gh).len(), 4, "every issue is created");
     assert!(
         !has_call(&gh, "holla/issues/9"),
         "no fourth look past the listing"
@@ -83,5 +86,5 @@ fn deleted_issue_counts_as_missing_in_the_look_past_the_listing() {
         .fail("holla/issues/6", "gh: This issue was deleted (HTTP 410)");
     let gh = created(not_found(gh, 7), 11);
     let (_, _, lines) = create_issues(&gh, &folder(), &options()).expect("apply succeeds");
-    assert_eq!(lines.len(), 3, "every issue is created: {lines:?}");
+    assert_eq!(lines.len(), 4, "every issue is created: {lines:?}");
 }

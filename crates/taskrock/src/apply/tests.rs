@@ -72,7 +72,7 @@ pub(super) fn base() -> FakeGh {
 
 pub(super) fn not_found(gh: FakeGh, first: u64) -> FakeGh {
     let mut gh = gh;
-    for number in first..first + 3 {
+    for number in first..first + 4 {
         gh = gh.fail(&format!("holla/issues/{number}"), MISSING);
     }
     gh
@@ -80,7 +80,7 @@ pub(super) fn not_found(gh: FakeGh, first: u64) -> FakeGh {
 
 pub(super) fn created(gh: FakeGh, first: u64) -> FakeGh {
     let mut gh = gh;
-    for number in first..first + 3 {
+    for number in first..first + 4 {
         let id = 100 + number;
         gh = gh.ok(
             "POST repos/tailrocks/holla/issues",
@@ -106,7 +106,7 @@ pub(super) fn has_call(gh: &FakeGh, what: &str) -> bool {
 }
 
 /// The listing with two unrelated issues and nothing past it, then the
-/// three issues of `draft-good` created with numbers 11 to 13.
+/// four issues of `draft-good` created with numbers 11 to 14.
 pub(super) fn fresh() -> FakeGh {
     created(
         not_found(
@@ -120,14 +120,14 @@ pub(super) fn fresh() -> FakeGh {
     )
 }
 
-/// The three issues of `draft-good` already on GitHub with numbers 21 to 23.
+/// The four issues of `draft-good` already on GitHub with numbers 21 to 24.
 pub(super) fn all_existing() -> FakeGh {
     not_found(
         base().ok(
             "issues?state=all",
-            r#"[[{"number":21,"id":201,"body":"a\n\n<!-- taskrock:holla-csv:E1 -->"},{"number":22,"id":202,"body":"b\n\n<!-- taskrock:holla-csv:T01 -->"},{"number":23,"id":203,"body":"c\n\n<!-- taskrock:holla-csv:T02 -->"}]]"#,
+            r#"[[{"number":21,"id":201,"body":"i\n\n<!-- taskrock:holla-csv:I1 -->"},{"number":22,"id":202,"body":"a\n\n<!-- taskrock:holla-csv:E1 -->"},{"number":23,"id":203,"body":"b\n\n<!-- taskrock:holla-csv:T01 -->"},{"number":24,"id":204,"body":"c\n\n<!-- taskrock:holla-csv:T02 -->"}]]"#,
         ),
-        24,
+        25,
     )
 }
 

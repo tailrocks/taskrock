@@ -7,11 +7,18 @@ use crate::error::Error;
 use crate::gh::FakeGh;
 
 use super::super::tests::{FIELDS, MISSING, created, dry_options, has_call, not_found, options};
+use super::tests::FIVE;
 
 const PLAN: &str = "id = \"holla-order\"\nrepo = \"tailrocks/holla\"\nproject = \"https://github.com/orgs/tailrocks/projects/7\"\n";
 
 /// The Task `L1` of `draft-links` with `front` in place of its `parent` and `blocked_by`.
+/// A `front` with no `parent` gets the link `FIVE` as its parent.
 fn task(key: &str, front: &str) -> String {
+    let front = if front.contains("parent") {
+        front.to_owned()
+    } else {
+        format!("{front}\nparent = \"{FIVE}\"")
+    };
     let path = super::tests::links_folder().join("L1.md");
     let text = std::fs::read_to_string(path).expect("fixture reads");
     let text = text
@@ -43,6 +50,11 @@ fn gh(milestones: &[&str]) -> FakeGh {
     gh.ok("issues?state=all", "[[]]")
 }
 
+/// `gh` with the reply for the issue `FIVE`, the parent of the tasks.
+fn parented(gh: FakeGh) -> FakeGh {
+    gh.ok("repos/tailrocks/holla/issues/5", r#"{"number":5,"id":55}"#)
+}
+
 const M2: &str = "\n[[milestones]]\ntitle = \"M2\"\n";
 
 #[test]
@@ -68,7 +80,7 @@ fn plan_milestone_is_checked_in_every_repo_before_any_create() {
         ("B.md", task("B1", "repo = \"tailrocks/other\"")),
     ];
     let folder = draft("every-repo", &plan, &issues);
-    let gh = gh(&["[[]]", "[[]]"]);
+    let gh = parented(gh(&["[[]]", "[[]]"]));
     let Err(Error::Project(message)) = create_issues(&gh, &folder, &options()) else {
         panic!("expected Error::Project");
     };
@@ -90,7 +102,7 @@ fn dry_run_and_real_run_agree_on_a_plan_milestone_that_apply_creates() {
         ("B.md", task("B1", "")),
     ];
     let folder = draft("agree", &plan, &issues);
-    let dry = not_found(gh(&["[[]]"]), 1);
+    let dry = not_found(parented(gh(&["[[]]"])), 1);
     let (_, _, lines) = create_issues(&dry, &folder, &dry_options()).expect("dry run succeeds");
     assert!(
         lines.contains(&"would set milestone M2 on B1".to_owned()),
@@ -98,7 +110,7 @@ fn dry_run_and_real_run_agree_on_a_plan_milestone_that_apply_creates() {
     );
     let real = created(
         not_found(
-            gh(&["[[]]"]).ok(
+            parented(gh(&["[[]]"])).ok(
                 "POST repos/tailrocks/holla/milestones",
                 r#"{"number":4,"title":"M2"}"#,
             ),
