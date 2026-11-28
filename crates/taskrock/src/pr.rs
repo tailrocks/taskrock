@@ -49,6 +49,6 @@ pub fn run(gh: &dyn Gh, command: &PrCommand) -> Result<u8, Error> {
             };
             threads::run(gh, &link.parse::<PullLink>()?, &action, *json)
         }
-        PrCommand::Merge { link, .. } => merge::run(gh, &link.parse::<PullLink>()?),
+        PrCommand::Merge { link, json } => merge::run(gh, &link.parse::<PullLink>()?, *json),
     }
 }

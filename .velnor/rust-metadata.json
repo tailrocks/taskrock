@@ -132,6 +132,16 @@
               "requires_features": false
             },
             {
+              "name": "sandbox_pr",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_pr.rs",
+              "requires_features": false
+            },
+            {
               "name": "sandbox_setup",
               "kinds": [
                 "test"

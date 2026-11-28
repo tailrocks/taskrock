@@ -31,12 +31,17 @@ fn outcome(link: &PullLink, snapshot: &PullSnapshot, judged: &Verdict, json: boo
     } else {
         render::text(link, snapshot, judged)
     };
-    let code = match judged.state {
+    (out, exit_code(judged.state))
+}
+
+/// The exit code of a state: done, waiting or blocked.
+#[must_use]
+pub const fn exit_code(state: State) -> u8 {
+    match state {
         State::Ready | State::Merged => EXIT_DONE,
         State::Waiting => EXIT_WAITING,
         State::Blocked => EXIT_BLOCKED,
-    };
-    (out, code)
+    }
 }
 
 /// Run `taskrock pr status`: print the verdict and return its exit code.
