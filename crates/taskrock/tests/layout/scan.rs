@@ -1,121 +1,14 @@
 //! A scan of the module declarations of a Rust file, from its code and not from its lines.
 
+use std::collections::BTreeSet;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
+use super::lex::{Tok, group_end, lex};
+
 pub(crate) fn file_name(path: &Path) -> &str {
     path.file_name().and_then(|n| n.to_str()).unwrap_or("")
-}
-
-/// A word (an identifier or a number) or one other character of Rust code.
-#[derive(PartialEq)]
-enum Tok {
-    Word(String),
-    Sym(char),
-}
-
-/// The index after a block comment that starts at `i`; block comments nest.
-fn skip_block_comment(c: &[char], mut i: usize) -> usize {
-    let mut depth = 0;
-    while i < c.len() {
-        if c[i..].starts_with(&['/', '*']) {
-            depth += 1;
-            i += 2;
-        } else if c[i..].starts_with(&['*', '/']) {
-            depth -= 1;
-            i += 2;
-            if depth == 0 {
-                break;
-            }
-        } else {
-            i += 1;
-        }
-    }
-    i
-}
-
-/// The index after a string whose opening quote ends just before `i`.
-/// `raw` is the number of `#` of a raw string.
-fn skip_string(c: &[char], mut i: usize, raw: Option<usize>) -> usize {
-    while i < c.len() {
-        let hashes = raw.unwrap_or(0);
-        let closing = c[i] == '"' && c[i + 1..].iter().take_while(|h| **h == '#').count() >= hashes;
-        if closing {
-            return i + 1 + hashes;
-        }
-        i += if c[i] == '\\' && raw.is_none() { 2 } else { 1 };
-    }
-    i
-}
-
-/// The index after the char literal at `i`; a lifetime is one quote.
-fn skip_char(c: &[char], i: usize) -> usize {
-    if c.get(i + 1) == Some(&'\\') {
-        let close = c
-            .get(i + 3..)
-            .and_then(|rest| rest.iter().position(|ch| *ch == '\''));
-        return close.map_or(c.len(), |at| i + 3 + at + 1);
-    }
-    if c.get(i + 2) == Some(&'\'') {
-        i + 3
-    } else {
-        i + 1
-    }
-}
-
-/// `(hashes, index after the quote)` when a raw string opens at `i`.
-fn raw_string_open(c: &[char], i: usize) -> Option<(usize, usize)> {
-    let hashes = c[i..].iter().take_while(|h| **h == '#').count();
-    (c.get(i + hashes) == Some(&'"')).then_some((hashes, i + hashes + 1))
-}
-
-/// The code of a file as words and symbols, without comments, strings and chars.
-fn lex(text: &str) -> Vec<Tok> {
-    let c: Vec<char> = text.chars().collect();
-    let is_word = |ch: char| ch.is_alphanumeric() || ch == '_';
-    let (mut toks, mut i) = (Vec::new(), 0);
-    while i < c.len() {
-        if c[i].is_whitespace() {
-            i += 1;
-        } else if c[i..].starts_with(&['/', '/']) {
-            i += c[i..].iter().take_while(|ch| **ch != '\n').count();
-        } else if c[i..].starts_with(&['/', '*']) {
-            i = skip_block_comment(&c, i);
-        } else if c[i] == '"' {
-            i = skip_string(&c, i + 1, None);
-        } else if c[i] == '\'' {
-            i = skip_char(&c, i);
-        } else if is_word(c[i]) {
-            let len = c[i..].iter().take_while(|ch| is_word(**ch)).count();
-            let word: String = c[i..i + len].iter().collect();
-            i += len;
-            match raw_string_open(&c, i).filter(|_| word == "r" || word == "br") {
-                Some((hashes, after)) => i = skip_string(&c, after, Some(hashes)),
-                None => toks.push(Tok::Word(word)),
-            }
-        } else {
-            toks.push(Tok::Sym(c[i]));
-            i += 1;
-        }
-    }
-    toks
-}
-
-/// The index of the symbol that closes the group opened at `open`.
-fn group_end(toks: &[Tok], open: usize) -> usize {
-    let mut depth = 0;
-    for (at, tok) in toks.iter().enumerate().skip(open) {
-        match tok {
-            Tok::Sym('[' | '(') => depth += 1,
-            Tok::Sym(']' | ')') => depth -= 1,
-            _ => {}
-        }
-        if depth == 0 {
-            return at;
-        }
-    }
-    toks.len()
 }
 
 fn attribute_text(toks: &[Tok]) -> String {
@@ -126,39 +19,70 @@ fn attribute_text(toks: &[Tok]) -> String {
     toks.iter().map(part).collect()
 }
 
-/// One `mod name;` of a file, and where the file of the module is.
+/// One `mod name;` or `mod name { … }` of a file, and where the file of the module is.
 pub(crate) struct Decl {
-    pub(crate) file: PathBuf,
+    /// The file of the module; an inline module has none.
+    pub(crate) file: Option<PathBuf>,
     pub(crate) parent: PathBuf,
-    /// The declaration has the attribute `#[cfg(test)]`.
-    pub(crate) attr: bool,
+    pub(crate) gate: Gate,
     /// The declaration sits in an inline module under `#[cfg(test)]`.
     pub(crate) nested: bool,
-    /// The declaration, or an inline module around it, has a `#[path]` attribute.
+    /// The declaration has a `#[path]` attribute.
     pub(crate) path: bool,
     pub(crate) name: String,
+}
+
+/// What the `cfg(…)` attributes of a module say about `test`.
+#[derive(Clone, Copy, Default, PartialEq)]
+pub(crate) enum Gate {
+    /// No `cfg(…)` attribute mentions `test`.
+    #[default]
+    None,
+    /// The attribute `#[cfg(test)]`.
+    Test,
+    /// A `cfg(…)` attribute that mentions `test` in another form, such as `cfg(all(test))`.
+    Other,
+}
+
+impl Gate {
+    /// The gate of two attributes on one item: `Other` wins, then `Test`.
+    fn merge(self, next: Self) -> Self {
+        match (self, next) {
+            (Self::Other, _) | (_, Self::Other) => Self::Other,
+            (Self::Test, _) | (_, Self::Test) => Self::Test,
+            _ => Self::None,
+        }
+    }
+}
+
+impl Decl {
+    /// The declaration has the attribute `#[cfg(test)]`.
+    pub(crate) fn is_cfg_test(&self) -> bool {
+        self.gate == Gate::Test
+    }
 }
 
 /// The attributes seen since the last item, which the next `mod` takes.
 #[derive(Clone, Copy, Default)]
 struct Attrs {
-    test: bool,
+    gate: Gate,
     path: bool,
 }
 
-/// An open `{` of a file: the inline module it opens, or none.
-struct Frame {
-    name: String,
-    attrs: Attrs,
-}
-
-/// The attribute text of `#[cfg(test)]`, and whether it is a `path` attribute,
-/// also under `cfg_attr`.
-fn read_attrs(text: &str) -> Attrs {
-    let cfg_attr = text.starts_with("cfg_attr(");
+/// The attribute `#[cfg(test)]`, a `cfg(…)` that mentions `test` in another form, and
+/// a `path` attribute, also under `cfg_attr`.
+fn read_attrs(toks: &[Tok]) -> Attrs {
+    let code = attribute_text(toks);
+    let mentions_test = toks.contains(&Tok::Word("test".to_owned()));
+    let gate = match code.as_str() {
+        "cfg(test)" => Gate::Test,
+        _ if code.starts_with("cfg(") && mentions_test => Gate::Other,
+        _ => Gate::None,
+    };
+    let cfg_attr = code.starts_with("cfg_attr(");
     Attrs {
-        test: text == "cfg(test)",
-        path: text.starts_with("path=") || (cfg_attr && text.contains(",path=")),
+        gate,
+        path: code.starts_with("path=") || (cfg_attr && code.contains(",path=")),
     }
 }
 
@@ -173,78 +97,146 @@ fn module_file(parent: &Path, inline: &[&str], name: &str) -> PathBuf {
     path.join(format!("{name}.rs"))
 }
 
-/// Every `mod name;` that a file declares, read from its code and not from its lines.
-fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
-    let toks = lex(&fs::read_to_string(parent)?);
-    let (mut found, mut frames) = (Vec::new(), Vec::<Option<Frame>>::new());
-    let (mut attrs, mut i) = (Attrs::default(), 0);
-    while i < toks.len() {
+/// An open `{` of a file: the inline module it opens, or none.
+struct Frame {
+    name: String,
+    test: bool,
+}
+
+/// The state of a scan of one file.
+struct Scan<'a> {
+    parent: &'a Path,
+    frames: Vec<Option<Frame>>,
+    attrs: Attrs,
+    found: Vec<Decl>,
+}
+
+impl Scan<'_> {
+    /// Record the module `name`, which has a body when `inline`, and open it.
+    fn module(&mut self, name: &str, inline: bool) {
+        let modules: Vec<&str> = self
+            .frames
+            .iter()
+            .flatten()
+            .map(|f| f.name.as_str())
+            .collect();
+        let nested = self.frames.iter().flatten().any(|f| f.test);
+        self.found.push(Decl {
+            file: (!inline).then(|| module_file(self.parent, &modules, name)),
+            parent: self.parent.to_path_buf(),
+            gate: self.attrs.gate,
+            nested,
+            path: self.attrs.path,
+            name: name.to_owned(),
+        });
+        if inline {
+            let test = self.attrs.gate == Gate::Test;
+            self.frames.push(Some(Frame {
+                name: name.to_owned(),
+                test,
+            }));
+        }
+        self.attrs = Attrs::default();
+    }
+
+    /// The attribute at `i`; the index after it.
+    fn attribute(&mut self, toks: &[Tok], i: usize) -> usize {
+        let inner = toks.get(i + 1) == Some(&Tok::Sym('!'));
+        let open = i + 1 + usize::from(inner);
+        if toks.get(open) != Some(&Tok::Sym('[')) {
+            self.attrs = Attrs::default();
+            return i + 1;
+        }
+        let end = group_end(toks, open);
+        if !inner {
+            let read = read_attrs(&toks[open + 1..end]);
+            self.attrs.gate = self.attrs.gate.merge(read.gate);
+            self.attrs.path |= read.path;
+        }
+        end + 1
+    }
+
+    /// The token at `i`; the index of the next one. A macro invocation and the body of
+    /// `macro_rules!` are opaque token trees: no `mod` inside them is a module item.
+    fn step(&mut self, toks: &[Tok], i: usize) -> usize {
+        let open = |at: usize| matches!(toks.get(at), Some(Tok::Sym('(' | '[' | '{')));
+        let reset = |scan: &mut Self, next: usize| {
+            scan.attrs = Attrs::default();
+            next
+        };
         match (&toks[i], toks.get(i + 1), toks.get(i + 2)) {
-            (Tok::Sym('#'), next, _) => {
-                let open = i + 1 + usize::from(next == Some(&Tok::Sym('!')));
-                if toks.get(open) != Some(&Tok::Sym('[')) {
-                    attrs = Attrs::default();
-                    i += 1;
-                    continue;
-                }
-                let end = group_end(&toks, open);
-                if next != Some(&Tok::Sym('!')) {
-                    let read = read_attrs(&attribute_text(&toks[open + 1..end]));
-                    attrs.test |= read.test;
-                    attrs.path |= read.path;
-                }
-                i = end + 1;
-            }
+            (Tok::Sym('#'), ..) => self.attribute(toks, i),
             (Tok::Word(word), Some(Tok::Sym('(')), _) if word == "pub" => {
-                i = group_end(&toks, i + 1) + 1;
+                group_end(toks, i + 1) + 1
             }
-            (Tok::Word(word), _, _) if word == "pub" => i += 1,
+            (Tok::Word(word), ..) if word == "pub" => i + 1,
             (Tok::Word(word), Some(Tok::Word(name)), Some(Tok::Sym(end @ (';' | '{'))))
                 if word == "mod" =>
             {
-                if *end == ';' {
-                    let inline: Vec<&str> =
-                        frames.iter().flatten().map(|f| f.name.as_str()).collect();
-                    found.push(Decl {
-                        file: module_file(parent, &inline, name),
-                        parent: parent.to_path_buf(),
-                        attr: attrs.test,
-                        nested: frames.iter().flatten().any(|f| f.attrs.test),
-                        path: attrs.path || frames.iter().flatten().any(|f| f.attrs.path),
-                        name: name.clone(),
-                    });
-                } else {
-                    frames.push(Some(Frame {
-                        name: name.clone(),
-                        attrs,
-                    }));
-                }
-                attrs = Attrs::default();
-                i += 3;
+                self.module(name, *end == '{');
+                i + 3
             }
-            (Tok::Sym('{'), _, _) => {
-                frames.push(None);
-                attrs = Attrs::default();
-                i += 1;
+            (Tok::Word(word), Some(Tok::Sym('!')), Some(Tok::Word(_)))
+                if word == "macro_rules" && open(i + 3) =>
+            {
+                reset(self, group_end(toks, i + 3) + 1)
             }
-            (Tok::Sym('}'), _, _) => {
-                frames.pop();
-                attrs = Attrs::default();
-                i += 1;
+            (Tok::Word(_), Some(Tok::Sym('!')), _) if open(i + 2) => {
+                reset(self, group_end(toks, i + 2) + 1)
             }
-            _ => {
-                attrs = Attrs::default();
-                i += 1;
+            (Tok::Sym('{'), ..) => {
+                self.frames.push(None);
+                reset(self, i + 1)
             }
+            (Tok::Sym('}'), ..) => {
+                self.frames.pop();
+                reset(self, i + 1)
+            }
+            _ => reset(self, i + 1),
         }
     }
-    Ok(found)
 }
 
-pub(crate) fn all_declarations(files: &[PathBuf]) -> io::Result<Vec<Decl>> {
-    let mut found = Vec::new();
-    for file in files {
-        found.extend(declarations(file)?);
+/// Every `mod` item of a file, read from its code and not from its lines.
+fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
+    let toks = lex(&fs::read_to_string(parent)?);
+    let mut scan = Scan {
+        parent,
+        frames: Vec::new(),
+        attrs: Attrs::default(),
+        found: Vec::new(),
+    };
+    let mut i = 0;
+    while i < toks.len() {
+        i = scan.step(&toks, i);
     }
-    Ok(found)
+    Ok(scan.found)
+}
+
+/// The module tree that `src/lib.rs` and `src/main.rs` reach, and the `mod` items in it.
+pub(crate) struct Tree {
+    pub(crate) files: Vec<PathBuf>,
+    pub(crate) decls: Vec<Decl>,
+}
+
+pub(crate) fn module_tree(src: &Path) -> io::Result<Tree> {
+    let roots = ["lib.rs", "main.rs"].map(|name| src.join(name));
+    let mut todo: Vec<PathBuf> = roots.into_iter().filter(|root| root.is_file()).collect();
+    let (mut files, mut decls) = (BTreeSet::new(), Vec::new());
+    while let Some(file) = todo.pop() {
+        if files.insert(file.clone()) {
+            let found = declarations(&file)?;
+            todo.extend(
+                found
+                    .iter()
+                    .filter_map(|d| d.file.clone())
+                    .filter(|f| f.is_file()),
+            );
+            decls.extend(found);
+        }
+    }
+    Ok(Tree {
+        files: files.into_iter().collect(),
+        decls,
+    })
 }
