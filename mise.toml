@@ -19,9 +19,11 @@ cargo-binstall = "1.26.2"
 "github:asamarts/alint" = "0.21.1"
 # velnor-gen writes the CI workflows. Linux takes the release asset. The
 # release has no macOS asset, so macOS builds the same commit from source.
-# The version here must equal the version in .velnor/rust-ci.lock.
+# The version here must equal the version in .velnor/rust-ci.lock. `matching`
+# (not a glob `asset_pattern`) keeps the asset choice arch-aware: a glob locks
+# the x86_64 archive into the linux-arm64 slots of mise.lock.
 # Bump both with `velnor-gen pin-helper <version>`.
-"github:tailrocks/velnor-new" = { version = "tools-v0.1.116", asset_pattern = "velnor-gen-*-unknown-linux-musl.tar.gz", os = ["linux"] }
+"github:tailrocks/velnor-new" = { version = "tools-v0.1.116", matching = "velnor-gen", os = ["linux"] }
 "cargo:https://github.com/tailrocks/velnor-new" = { version = "rev:5e3c38d6eca734106e0f2b0e677f9191be26c012", crate = "velnor-gen", os = ["macos"] }
 
 [settings]
