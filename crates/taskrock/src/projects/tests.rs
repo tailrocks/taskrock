@@ -114,3 +114,37 @@ fn kind_of_reads_the_marker_and_defaults_to_delivery() {
         ProjectKind::Delivery
     );
 }
+
+/// The JSON body that the one call sent to `gh api graphql --input -`.
+fn sent(gh: &FakeGh) -> serde_json::Value {
+    let calls = gh.calls();
+    assert_eq!(calls.len(), 1);
+    assert_eq!(calls[0].0, "api graphql --input -");
+    serde_json::from_str(calls[0].1.as_deref().expect("input")).expect("json")
+}
+
+#[test]
+fn kind_of_sends_the_organization_query_with_a_numeric_number() {
+    let gh = FakeGh::new().ok("graphql", &readme_answer(""));
+    kind_of(&gh, &project(4)).expect("kind");
+    let sent = sent(&gh);
+    let query = sent["query"].as_str().expect("query");
+    assert!(query.contains("organization(login:$o){projectV2(number:$n)"));
+    assert_eq!(
+        sent["variables"],
+        serde_json::json!({"o": "tailrocks", "n": 4})
+    );
+}
+
+#[test]
+fn list_sends_the_organization_query_with_the_owner() {
+    let gh = FakeGh::new().ok(
+        "graphql",
+        r#"{"data":{"organization":{"projectsV2":{"nodes":[]}}}}"#,
+    );
+    list(&gh, "tailrocks").expect("list");
+    let sent = sent(&gh);
+    let query = sent["query"].as_str().expect("query");
+    assert!(query.contains("organization(login:$o){projectsV2(first:100)"));
+    assert_eq!(sent["variables"], serde_json::json!({"o": "tailrocks"}));
+}

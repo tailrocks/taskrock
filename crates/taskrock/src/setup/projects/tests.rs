@@ -63,7 +63,7 @@ pub(in crate::setup) fn sent(gh: &FakeGh, index: usize) -> (String, Value) {
 #[test]
 fn a_project_found_by_marker_exists() {
     let found = node(9, "taskrock", DELIVERY, false);
-    let gh = FakeGh::new().ok("projectsV2", &listing(&[found]));
+    let gh = FakeGh::new().ok("graphql", &listing(&[found]));
     let (result, lines) = run_step(&gh, &one(), false);
     let projects = result.expect("step");
     assert_eq!(lines, ["exists project taskrock"]);
@@ -75,7 +75,7 @@ fn a_project_found_by_marker_exists() {
 fn a_project_found_by_number_is_marked() {
     let found = node(3, "taskrock", "About it.", false);
     let gh = FakeGh::new()
-        .ok("projectsV2", &listing(&[found]))
+        .ok("graphql", &listing(&[found]))
         .ok("graphql", r#"{"data":{}}"#);
     let (result, lines) = run_step(&gh, &one(), false);
     result.expect("step");
@@ -92,7 +92,7 @@ fn a_project_found_by_number_is_marked() {
 #[test]
 fn a_project_with_the_marker_of_another_key_is_refused() {
     let found = node(3, "taskrock", PORTFOLIO, false);
-    let gh = FakeGh::new().ok("projectsV2", &listing(&[found]));
+    let gh = FakeGh::new().ok("graphql", &listing(&[found]));
     let (result, lines) = run_step(&gh, &one(), false);
     let error = result.expect_err("other marker");
     assert_eq!(error.to_string(), "project 3 has the marker of roadmap");
@@ -103,8 +103,8 @@ fn a_project_with_the_marker_of_another_key_is_refused() {
 #[test]
 fn a_missing_project_is_created_then_marked() {
     let gh = FakeGh::new()
-        .ok("projectsV2", &listing(&[]))
-        .ok("graphql", r#"{"data":{"organization":{"id":"O_1"}}}"#)
+        .ok("graphql", &listing(&[]))
+        .ok("api orgs/acme", r#"{"node_id":"O_1"}"#)
         .ok(
             "graphql",
             r#"{"data":{"createProjectV2":{"projectV2":{"id":"P_7","number":7}}}}"#,

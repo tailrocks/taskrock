@@ -195,9 +195,9 @@ fn create(
 }
 
 pub(super) fn organization_id(run: &Run<'_>) -> Result<String, Error> {
-    let query = "query($o:String!){organization(login:$o){id}}";
-    let data = github::graphql(run.gh, query, &json!({"o": run.owner}))?;
-    data.pointer("/organization/id")
+    let organization = github::get(run.gh, &format!("orgs/{}", run.owner))?;
+    organization
+        .get("node_id")
         .and_then(Value::as_str)
         .map(str::to_owned)
         .ok_or_else(|| Error::Json("the answer has no organization id".to_owned()))

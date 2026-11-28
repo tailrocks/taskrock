@@ -18,7 +18,7 @@ fn empty_org(visibility: Visibility) -> (FakeGh, crate::config::Config) {
     config.routing.visibility = visibility;
     let mut gh = FakeGh::new()
         .ok("issue-fields", "[]")
-        .ok("graphql", r#"{"data":{"organization":{"id":"O_1"}}}"#);
+        .ok("api orgs/acme", r#"{"node_id":"O_1"}"#);
     for _ in 0..8 {
         gh = gh.ok("graphql", r#"{"data":{}}"#);
     }
