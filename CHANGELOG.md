@@ -6,6 +6,7 @@ All notable changes to this project are recorded in this file.
 
 - `check` and `apply` refuse an issue that has no `parent` unless it is an Initiative.
 - `check` and `apply` answer a `parent` or `blocked_by` value that is a bare issue number, like `2878` or `#2878`, with the link to write: `https://github.com/<owner>/<repo>/issues/<number>`.
+- `ready <issue link>` lists the open Task, Bug, Feature and Epic items of the link's milestone that have no parent in a `LOOSE <n>` section and in the `--json` key `loose`, so a manager sees an issue that was filed outside its tree. A loose item is not a candidate and not a problem. A project link or a link with no milestone has none.
 
 ## 0.3.0
 

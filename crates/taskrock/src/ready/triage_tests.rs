@@ -25,6 +25,7 @@ fn triaged(number: u64, kind: &str) -> Item {
         blocking: 0,
         status: Some("Triage".to_owned()),
         parent: None,
+        milestone: None,
         routing: Routing::default(),
     }
 }

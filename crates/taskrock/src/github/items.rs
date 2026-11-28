@@ -36,6 +36,8 @@ pub struct Item {
     /// The name of the Status option, for example `Todo`.
     pub status: Option<String>,
     pub parent: Option<IssueLink>,
+    /// The title of the milestone of the issue.
+    pub milestone: Option<String>,
     pub routing: Routing,
 }
 
@@ -248,6 +250,7 @@ fn parse_item(value: &Value) -> Result<Option<Item>, Error> {
         blocking: required_id(dependencies, "blocking", "blocking")?,
         status: status_of(value)?,
         parent: parent_of(value)?,
+        milestone: milestone_of(content)?,
         routing: routing_of(content),
     }))
 }
@@ -260,6 +263,18 @@ fn kind_of(content: &Value) -> Result<Option<String>, Error> {
             .and_then(Value::as_str)
             .map(str::to_owned)
             .ok_or_else(|| Error::Json("kind".to_owned()))
+            .map(Some),
+    }
+}
+
+fn milestone_of(content: &Value) -> Result<Option<String>, Error> {
+    match content.get("milestone") {
+        None | Some(Value::Null) => Ok(None),
+        Some(milestone) => milestone
+            .get("title")
+            .and_then(Value::as_str)
+            .map(str::to_owned)
+            .ok_or_else(|| Error::Json("milestone".to_owned()))
             .map(Some),
     }
 }
