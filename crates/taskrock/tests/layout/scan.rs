@@ -213,39 +213,24 @@ fn read(parent: &Path) -> io::Result<(Attrs, Vec<Decl>)> {
         .map_or(Ok((inner, scan.found)), |err| Err(invalid(err)))
 }
 
-/// Every `mod` item of a file, in its inline modules, function bodies and blocks too.
-pub(crate) fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
-    Ok(read(parent)?.1)
-}
-
-/// The file opens with a `#![path]` attribute, also one that a `cfg_attr` applies.
-pub(crate) fn has_inner_path(parent: &Path) -> io::Result<bool> {
-    Ok(read(parent)?.0.path)
-}
-
-/// The module tree that `src/lib.rs` and `src/main.rs` reach, and the `mod` items in it.
-pub(crate) struct Tree {
-    pub(crate) files: Vec<PathBuf>,
+/// The `mod` items of the given files, and which of the files open with `#![path]`.
+pub(crate) struct Sources {
+    /// Every `mod` item of every file, in its inline modules, function bodies and blocks too.
     pub(crate) decls: Vec<Decl>,
+    /// The files that open with a `#![path]` attribute, also one that a `cfg_attr` applies.
+    pub(crate) inner_path: Vec<PathBuf>,
 }
 
-pub(crate) fn module_tree(src: &Path) -> io::Result<Tree> {
-    let roots = ["lib.rs", "main.rs"].map(|name| src.join(name));
-    let mut todo: Vec<PathBuf> = roots.into_iter().filter(|root| root.is_file()).collect();
-    let (mut files, mut decls) = (BTreeSet::new(), Vec::new());
-    let mut inners = BTreeMap::new();
-    while let Some(file) = todo.pop() {
-        if files.insert(file.clone()) {
-            let (inner, found) = read(&file)?;
-            todo.extend(
-                found
-                    .iter()
-                    .filter_map(|d| d.file.clone())
-                    .filter(|f| f.is_file()),
-            );
-            decls.extend(found);
-            inners.insert(file, inner);
+/// Reads every file of `files`; the caller decides which files these are.
+pub(crate) fn scan(files: &[PathBuf]) -> io::Result<Sources> {
+    let (mut decls, mut inner_path, mut inners) = (Vec::new(), Vec::new(), BTreeMap::new());
+    for file in files {
+        let (inner, found) = read(file)?;
+        decls.extend(found);
+        if inner.path {
+            inner_path.push(file.clone());
         }
+        inners.insert(file, inner);
     }
     // A file that opens with `#![cfg(test)]` is gated like a `#[cfg(test)]` on its `mod`.
     for decl in &mut decls {
@@ -254,8 +239,22 @@ pub(crate) fn module_tree(src: &Path) -> io::Result<Tree> {
             decl.cfg_attr |= inner.cfg_attr;
         }
     }
-    Ok(Tree {
-        files: files.into_iter().collect(),
-        decls,
-    })
+    Ok(Sources { decls, inner_path })
+}
+
+impl Sources {
+    /// The files that `lib.rs` and `main.rs` of `src` reach by `mod` items. Only a check
+    /// that is about reachability uses this.
+    pub(crate) fn reachable(&self, src: &Path) -> BTreeSet<PathBuf> {
+        let roots = ["lib.rs", "main.rs"].map(|name| src.join(name));
+        let mut todo: Vec<PathBuf> = roots.into_iter().filter(|root| root.is_file()).collect();
+        let mut files = BTreeSet::new();
+        while let Some(file) = todo.pop() {
+            if files.insert(file.clone()) {
+                let below = self.decls.iter().filter(|d| d.parent == file);
+                todo.extend(below.filter_map(|d| d.file.clone()).filter(|f| f.is_file()));
+            }
+        }
+        files
+    }
 }

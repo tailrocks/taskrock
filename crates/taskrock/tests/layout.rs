@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 
 #[path = "layout/scan.rs"]
 mod scan;
-use scan::{Gate, Tree, declarations, file_name, has_inner_path, module_tree};
+use scan::{Decl, Gate, Sources, file_name, scan};
 
 const CRATE: &str = env!("CARGO_MANIFEST_DIR");
 const DOC: &str = "../../docs/structure.md";
@@ -48,9 +48,15 @@ fn sources() -> io::Result<Vec<PathBuf>> {
     Ok(files)
 }
 
-/// The module tree that `lib.rs` and `main.rs` reach, and its `mod` items.
-fn tree() -> io::Result<Tree> {
-    module_tree(&Path::new(CRATE).join("src"))
+/// The `mod` items of EVERY `.rs` file under `src`, reachable from `lib.rs` or not. Every
+/// check about declarations uses this, so a file that nothing declares is read like any other.
+fn all() -> io::Result<Sources> {
+    scan(&sources()?)
+}
+
+/// The files that `lib.rs` and `main.rs` reach. Only a check about reachability uses this.
+fn reachable() -> io::Result<BTreeSet<PathBuf>> {
+    Ok(all()?.reachable(&Path::new(CRATE).join("src")))
 }
 
 fn doc() -> io::Result<String> {
@@ -113,23 +119,19 @@ fn documented(text: &str) -> BTreeSet<Rel> {
 }
 
 /// Every file of test-only code: a module declared under `#[cfg(test)]` or in an
-/// inline module under it, every file of a `tests/` folder in `sources`, reachable or not,
-/// and each module they declare.
-fn test_only_files(tree: &Tree, sources: &[PathBuf]) -> BTreeSet<PathBuf> {
+/// inline module under it, every file of a `tests/` folder in `sources`, and each module
+/// they declare. The declarations are those of every file, reachable or not.
+fn test_only_files(decls: &[Decl], sources: &[PathBuf]) -> BTreeSet<PathBuf> {
     let mut only: BTreeSet<PathBuf> = sources
         .iter()
         .filter(|f| tests_depth(f) > 0)
         .cloned()
         .collect();
-    let gated = tree.decls.iter().filter(|d| d.is_cfg_test() || d.nested);
+    let gated = decls.iter().filter(|d| d.is_cfg_test() || d.nested);
     only.extend(gated.filter_map(|d| d.file.clone()));
     loop {
         let before = only.len();
-        let below: Vec<_> = tree
-            .decls
-            .iter()
-            .filter(|d| only.contains(&d.parent))
-            .collect();
+        let below: Vec<_> = decls.iter().filter(|d| only.contains(&d.parent)).collect();
         only.extend(below.into_iter().filter_map(|d| d.file.clone()));
         if only.len() == before {
             return only;
@@ -176,7 +178,7 @@ fn every_listed_test_file_exists() -> io::Result<()> {
 #[test]
 fn test_only_modules_use_an_allowed_layout() -> io::Result<()> {
     let mut problems = Vec::new();
-    for decl in tree()?.decls {
+    for decl in all()?.decls {
         let Some(file) = &decl.file else { continue };
         if decl.is_cfg_test() && !decl.nested && !is_allowed_layout(file) {
             problems.push(format!(
@@ -194,16 +196,15 @@ fn test_only_modules_use_an_allowed_layout() -> io::Result<()> {
 
 #[test]
 fn descendants_of_test_only_modules_use_an_allowed_layout() -> io::Result<()> {
-    let tree = tree()?;
-    let direct: BTreeSet<&Path> = tree
-        .decls
+    let decls = all()?.decls;
+    let direct: BTreeSet<&Path> = decls
         .iter()
         .filter(|d| d.is_cfg_test() && !d.nested)
         .filter_map(|d| d.file.as_deref())
         .collect();
     let sources = sources()?;
     let mut problems = Vec::new();
-    for file in test_only_files(&tree, &sources) {
+    for file in test_only_files(&decls, &sources) {
         if sources.contains(&file) && !direct.contains(file.as_path()) && !is_allowed_layout(&file)
         {
             problems.push(format!(
@@ -220,7 +221,7 @@ fn descendants_of_test_only_modules_use_an_allowed_layout() -> io::Result<()> {
 
 #[test]
 fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
-    let reached = tree()?.files;
+    let reached = reachable()?;
     let mut problems = Vec::new();
     for path in sources()? {
         if must_be_declared(&path) && !reached.contains(&path) {
@@ -239,22 +240,21 @@ fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
 
 #[test]
 fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
+    let all = all()?;
     let mut problems = Vec::new();
-    for file in sources()? {
-        if has_inner_path(&file)? {
-            problems.push(format!(
-                "{} has a file-level #![path] attribute: remove it",
-                rel(&file)
-            ));
-        }
-        for decl in declarations(&file)?.iter().filter(|decl| decl.path) {
-            problems.push(format!(
-                "{} declares `mod {}` with a #[path] attribute: name the module after \
-                 its file and remove the attribute",
-                rel(&decl.parent),
-                decl.name
-            ));
-        }
+    for file in &all.inner_path {
+        problems.push(format!(
+            "{} has a file-level #![path] attribute: remove it",
+            rel(file)
+        ));
+    }
+    for decl in all.decls.iter().filter(|decl| decl.path) {
+        problems.push(format!(
+            "{} declares `mod {}` with a #[path] attribute: name the module after \
+             its file and remove the attribute",
+            rel(&decl.parent),
+            decl.name
+        ));
     }
     fail(&problems);
     Ok(())
@@ -262,10 +262,10 @@ fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
 
 #[test]
 fn test_modules_keep_cfg_test() -> io::Result<()> {
-    let tree = tree()?;
-    let only = test_only_files(&tree, &sources()?);
+    let decls = all()?.decls;
+    let only = test_only_files(&decls, &sources()?);
     let mut problems = Vec::new();
-    for decl in &tree.decls {
+    for decl in &decls {
         if decl.cfg_attr {
             problems.push(format!(
                 "{} declares `mod {}` with a cfg_attr attribute that applies a cfg, which \
