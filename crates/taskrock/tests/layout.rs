@@ -5,11 +5,9 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
-#[path = "layout/lex.rs"]
-mod lex;
 #[path = "layout/scan.rs"]
 mod scan;
-use scan::{Gate, Tree, file_name, module_tree};
+use scan::{Gate, Tree, declarations, file_name, module_tree};
 
 const CRATE: &str = env!("CARGO_MANIFEST_DIR");
 const DOC: &str = "../../docs/structure.md";
@@ -243,8 +241,8 @@ fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
 #[test]
 fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
     let mut problems = Vec::new();
-    for decl in tree()?.decls {
-        if decl.path {
+    for file in sources()? {
+        for decl in declarations(&file)?.iter().filter(|decl| decl.path) {
             problems.push(format!(
                 "{} declares `mod {}` with a #[path] attribute: name the module after \
                  its file and remove the attribute",
@@ -265,8 +263,8 @@ fn test_modules_keep_cfg_test() -> io::Result<()> {
     for decl in &tree.decls {
         if decl.cfg_attr {
             problems.push(format!(
-                "{} declares `mod {}` with a cfg_attr attribute, which can hide a cfg \
-                 from this check: remove it and use a plain #[cfg(test)]",
+                "{} declares `mod {}` with a cfg_attr attribute that applies a cfg, which \
+                 can hide it from this check: remove it and use a plain #[cfg(test)]",
                 rel(&decl.parent),
                 decl.name
             ));

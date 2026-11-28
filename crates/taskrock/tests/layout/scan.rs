@@ -1,22 +1,19 @@
-//! A scan of the module declarations of a Rust file, from its code and not from its lines.
+//! A scan of the module declarations of a Rust file, read with `syn`: attributes, inline
+//! modules and raw identifiers come from the parser, and a macro body is an opaque token
+//! stream that holds no module item.
 
+use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use super::lex::{Tok, group_end, lex};
+use syn::ext::IdentExt;
+use syn::punctuated::Punctuated;
+use syn::{Attribute, Item, ItemMod, Meta, Token};
 
 pub(crate) fn file_name(path: &Path) -> &str {
     path.file_name().and_then(|n| n.to_str()).unwrap_or("")
-}
-
-fn attribute_text(toks: &[Tok]) -> String {
-    let part = |tok: &Tok| match tok {
-        Tok::Word(word) => word.clone(),
-        Tok::Sym(sym) => sym.to_string(),
-    };
-    toks.iter().map(part).collect()
 }
 
 /// One `mod name;` or `mod name { … }` of a file, and where the file of the module is.
@@ -27,9 +24,9 @@ pub(crate) struct Decl {
     pub(crate) gate: Gate,
     /// The declaration sits in an inline module under `#[cfg(test)]`.
     pub(crate) nested: bool,
-    /// The declaration has a `#[path]` attribute.
+    /// The declaration has a `#[path]` attribute, also one that a `cfg_attr` applies.
     pub(crate) path: bool,
-    /// The declaration has a `cfg_attr` attribute, which can hide a `cfg` from the gate.
+    /// A `cfg_attr` attribute applies a `cfg` attribute, which hides it from the gate.
     pub(crate) cfg_attr: bool,
     pub(crate) name: String,
 }
@@ -55,6 +52,17 @@ impl Gate {
             _ => Self::None,
         }
     }
+
+    /// The gate of the predicate of one `cfg(…)`.
+    fn of(predicate: &Meta) -> syn::Result<Self> {
+        Ok(if is_test(predicate) {
+            Self::Test
+        } else if mentions_test(predicate)? {
+            Self::Other
+        } else {
+            Self::None
+        })
+    }
 }
 
 impl Decl {
@@ -64,7 +72,28 @@ impl Decl {
     }
 }
 
-/// The attributes seen since the last item, which the next `mod` takes.
+/// The name of an attribute or predicate without a path and without the raw marker.
+fn name(meta: &Meta) -> Option<String> {
+    meta.path().get_ident().map(|id| id.unraw().to_string())
+}
+
+fn is_test(meta: &Meta) -> bool {
+    matches!(meta, Meta::Path(_)) && name(meta).is_some_and(|n| n == "test")
+}
+
+/// The predicate is, or contains, the word `test`: `all(test)`, `not(test)`, …
+fn mentions_test(predicate: &Meta) -> syn::Result<bool> {
+    match predicate {
+        Meta::List(list) => {
+            let inner = list.parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)?;
+            let mentions: syn::Result<Vec<bool>> = inner.iter().map(mentions_test).collect();
+            Ok(mentions?.contains(&true))
+        }
+        other => Ok(is_test(other)),
+    }
+}
+
+/// The attributes of a module that the checks read.
 #[derive(Clone, Copy, Default)]
 struct Attrs {
     gate: Gate,
@@ -72,26 +101,42 @@ struct Attrs {
     cfg_attr: bool,
 }
 
-/// The attribute `#[cfg(test)]`, a `cfg(…)` that mentions `test` in another form, and
-/// a `path` attribute, also under `cfg_attr`.
-fn read_attrs(toks: &[Tok]) -> Attrs {
-    let code = attribute_text(toks);
-    let mentions_test = toks.contains(&Tok::Word("test".to_owned()));
-    let gate = match code.as_str() {
-        "cfg(test)" => Gate::Test,
-        _ if code.starts_with("cfg(") && mentions_test => Gate::Other,
-        _ => Gate::None,
-    };
-    let cfg_attr = code.starts_with("cfg_attr(");
-    Attrs {
-        gate,
-        path: code.starts_with("path=") || (cfg_attr && code.contains(",path=")),
-        cfg_attr,
+impl Attrs {
+    /// Every attribute of an item, outer and inner, in a `cfg_attr` or not.
+    fn of(attrs: &[Attribute]) -> syn::Result<Self> {
+        let mut read = Self::default();
+        for attr in attrs {
+            read.add(&attr.meta, false)?;
+        }
+        Ok(read)
+    }
+
+    /// One attribute. The attributes that a `cfg_attr` applies are `conditional`: they are
+    /// inspected, a nested `cfg` is refused, and `path` counts as `path`.
+    fn add(&mut self, meta: &Meta, conditional: bool) -> syn::Result<()> {
+        match (name(meta).as_deref(), conditional) {
+            (Some("path"), _) => self.path = true,
+            (Some("cfg"), true) => self.cfg_attr = true,
+            (Some("cfg"), false) => {
+                let predicate = meta.require_list()?.parse_args::<Meta>()?;
+                self.gate = self.gate.merge(Gate::of(&predicate)?);
+            }
+            (Some("cfg_attr"), _) => {
+                let args = meta
+                    .require_list()?
+                    .parse_args_with(Punctuated::<Meta, Token![,]>::parse_terminated)?;
+                for nested in args.iter().skip(1) {
+                    self.add(nested, true)?;
+                }
+            }
+            _ => {}
+        }
+        Ok(())
     }
 }
 
 /// The file of the module `name` that `parent` declares, in the inline modules `inline`.
-fn module_file(parent: &Path, inline: &[&str], name: &str) -> PathBuf {
+fn module_file(parent: &Path, inline: &[String], name: &str) -> PathBuf {
     let dir = parent.parent().unwrap_or(parent);
     let mut path = match file_name(parent).trim_end_matches(".rs") {
         "lib" | "main" | "mod" => dir.to_path_buf(),
@@ -101,122 +146,72 @@ fn module_file(parent: &Path, inline: &[&str], name: &str) -> PathBuf {
     path.join(format!("{name}.rs"))
 }
 
-/// An open `{` of a file: the inline module it opens, or none.
-struct Frame {
-    name: String,
-    test: bool,
-}
-
 /// The state of a scan of one file.
 struct Scan<'a> {
     parent: &'a Path,
-    frames: Vec<Option<Frame>>,
-    attrs: Attrs,
+    /// The names of the inline modules that the scan is in.
+    inline: Vec<String>,
     found: Vec<Decl>,
 }
 
 impl Scan<'_> {
-    /// Record the module `name`, which has a body when `inline`, and open it.
-    fn module(&mut self, name: &str, inline: bool) {
-        let modules: Vec<&str> = self
-            .frames
-            .iter()
-            .flatten()
-            .map(|f| f.name.as_str())
-            .collect();
-        let nested = self.frames.iter().flatten().any(|f| f.test);
+    /// The `mod` items among `items`. A macro invocation is an item with an opaque body.
+    fn items(&mut self, items: &[Item], nested: bool) -> syn::Result<()> {
+        for item in items {
+            if let Item::Mod(module) = item {
+                self.module(module, nested)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn module(&mut self, module: &ItemMod, nested: bool) -> syn::Result<()> {
+        let attrs = Attrs::of(&module.attrs)?;
+        let name = module.ident.unraw().to_string();
+        let body = module.content.as_ref().map(|(_, items)| items);
         self.found.push(Decl {
-            file: (!inline).then(|| module_file(self.parent, &modules, name)),
+            file: body
+                .is_none()
+                .then(|| module_file(self.parent, &self.inline, &name)),
             parent: self.parent.to_path_buf(),
-            gate: self.attrs.gate,
+            gate: attrs.gate,
             nested,
-            path: self.attrs.path,
-            cfg_attr: self.attrs.cfg_attr,
-            name: name.to_owned(),
+            path: attrs.path,
+            cfg_attr: attrs.cfg_attr,
+            name: name.clone(),
         });
-        if inline {
-            let test = self.attrs.gate == Gate::Test;
-            self.frames.push(Some(Frame {
-                name: name.to_owned(),
-                test,
-            }));
+        if let Some(items) = body {
+            self.inline.push(name);
+            self.items(items, nested || attrs.gate == Gate::Test)?;
+            self.inline.pop();
         }
-        self.attrs = Attrs::default();
-    }
-
-    /// The attribute at `i`; the index after it.
-    fn attribute(&mut self, toks: &[Tok], i: usize) -> usize {
-        let inner = toks.get(i + 1) == Some(&Tok::Sym('!'));
-        let open = i + 1 + usize::from(inner);
-        if toks.get(open) != Some(&Tok::Sym('[')) {
-            self.attrs = Attrs::default();
-            return i + 1;
-        }
-        let end = group_end(toks, open);
-        if !inner {
-            let read = read_attrs(&toks[open + 1..end]);
-            self.attrs.gate = self.attrs.gate.merge(read.gate);
-            self.attrs.path |= read.path;
-            self.attrs.cfg_attr |= read.cfg_attr;
-        }
-        end + 1
-    }
-
-    /// The token at `i`; the index of the next one. A macro invocation and the body of
-    /// `macro_rules!` are opaque token trees: no `mod` inside them is a module item.
-    fn step(&mut self, toks: &[Tok], i: usize) -> usize {
-        let open = |at: usize| matches!(toks.get(at), Some(Tok::Sym('(' | '[' | '{')));
-        let reset = |scan: &mut Self, next: usize| {
-            scan.attrs = Attrs::default();
-            next
-        };
-        match (&toks[i], toks.get(i + 1), toks.get(i + 2)) {
-            (Tok::Sym('#'), ..) => self.attribute(toks, i),
-            (Tok::Word(word), Some(Tok::Sym('(')), _) if word == "pub" => {
-                group_end(toks, i + 1) + 1
-            }
-            (Tok::Word(word), ..) if word == "pub" => i + 1,
-            (Tok::Word(word), Some(Tok::Word(name)), Some(Tok::Sym(end @ (';' | '{'))))
-                if word == "mod" =>
-            {
-                self.module(name, *end == '{');
-                i + 3
-            }
-            (Tok::Word(word), Some(Tok::Sym('!')), Some(Tok::Word(_)))
-                if word == "macro_rules" && open(i + 3) =>
-            {
-                reset(self, group_end(toks, i + 3) + 1)
-            }
-            (Tok::Word(_), Some(Tok::Sym('!')), _) if open(i + 2) => {
-                reset(self, group_end(toks, i + 2) + 1)
-            }
-            (Tok::Sym('{'), ..) => {
-                self.frames.push(None);
-                reset(self, i + 1)
-            }
-            (Tok::Sym('}'), ..) => {
-                self.frames.pop();
-                reset(self, i + 1)
-            }
-            _ => reset(self, i + 1),
-        }
+        Ok(())
     }
 }
 
-/// Every `mod` item of a file, read from its code and not from its lines.
-fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
-    let toks = lex(&fs::read_to_string(parent)?);
+/// The inner attributes of a file and every `mod` item of it.
+fn read(parent: &Path) -> io::Result<(Attrs, Vec<Decl>)> {
+    let invalid = |err: syn::Error| {
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("{}: {err}", parent.display()),
+        )
+    };
+    let file = syn::parse_file(&fs::read_to_string(parent)?).map_err(invalid)?;
+    let inner = Attrs::of(&file.attrs).map_err(invalid)?;
     let mut scan = Scan {
         parent,
-        frames: Vec::new(),
-        attrs: Attrs::default(),
+        inline: Vec::new(),
         found: Vec::new(),
     };
-    let mut i = 0;
-    while i < toks.len() {
-        i = scan.step(&toks, i);
-    }
-    Ok(scan.found)
+    scan.items(&file.items, inner.gate == Gate::Test)
+        .map_err(invalid)?;
+    Ok((inner, scan.found))
+}
+
+/// Every `mod` item of a file, in its inline modules too.
+pub(crate) fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
+    Ok(read(parent)?.1)
 }
 
 /// The module tree that `src/lib.rs` and `src/main.rs` reach, and the `mod` items in it.
@@ -229,9 +224,10 @@ pub(crate) fn module_tree(src: &Path) -> io::Result<Tree> {
     let roots = ["lib.rs", "main.rs"].map(|name| src.join(name));
     let mut todo: Vec<PathBuf> = roots.into_iter().filter(|root| root.is_file()).collect();
     let (mut files, mut decls) = (BTreeSet::new(), Vec::new());
+    let mut inners = BTreeMap::new();
     while let Some(file) = todo.pop() {
         if files.insert(file.clone()) {
-            let found = declarations(&file)?;
+            let (inner, found) = read(&file)?;
             todo.extend(
                 found
                     .iter()
@@ -239,6 +235,14 @@ pub(crate) fn module_tree(src: &Path) -> io::Result<Tree> {
                     .filter(|f| f.is_file()),
             );
             decls.extend(found);
+            inners.insert(file, inner);
+        }
+    }
+    // A file that opens with `#![cfg(test)]` is gated like a `#[cfg(test)]` on its `mod`.
+    for decl in &mut decls {
+        if let Some(inner) = decl.file.as_ref().and_then(|file| inners.get(file)) {
+            decl.gate = decl.gate.merge(inner.gate);
+            decl.cfg_attr |= inner.cfg_attr;
         }
     }
     Ok(Tree {
