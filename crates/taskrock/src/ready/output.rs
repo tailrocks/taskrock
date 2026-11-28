@@ -2,6 +2,7 @@
 
 use crate::error::Error;
 use crate::fields::{ROUTING, Routing, draft_key};
+use crate::github::items::Item;
 
 use super::Report;
 use crate::stack::Stack;
@@ -48,13 +49,29 @@ pub(super) fn text_of(report: &Report<'_>) -> String {
         lines.push(format!("{}  {}", item.link.url(), item.title));
     }
     lines.push(format!("TRIAGE {}", report.triage.len()));
-    for item in &report.triage {
-        let kind = item.kind.as_deref().unwrap_or("?");
-        lines.push(format!("{}  {} ({kind})", item.link.url(), item.title));
+    lines.extend(report.triage.iter().map(|item| typed_line(item)));
+    if !report.loose.is_empty() {
+        lines.push(format!("LOOSE {}", report.loose.len()));
+        lines.extend(report.loose.iter().map(|item| typed_line(item)));
     }
     lines.push(format!("PROBLEMS {}", report.problems.len()));
     lines.extend(report.problems.iter().cloned());
     lines.join("\n")
+}
+
+/// `<url>  <title> (<type>)`, the line of a Triage or a loose item.
+fn typed_line(item: &Item) -> String {
+    let kind = item.kind.as_deref().unwrap_or("?");
+    format!("{}  {} ({kind})", item.link.url(), item.title)
+}
+
+fn typed_json(item: &Item) -> serde_json::Value {
+    serde_json::json!({
+        "number": item.link.number,
+        "title": item.title,
+        "url": item.link.url(),
+        "type": item.kind,
+    })
 }
 
 fn json_field(routing: &Routing, field: &str) -> serde_json::Value {
@@ -104,22 +121,13 @@ pub(super) fn json_of(report: &Report<'_>) -> Result<String, Error> {
             "title": item.title,
         }));
     }
-    let triage: Vec<serde_json::Value> = report
-        .triage
-        .iter()
-        .map(|item| {
-            serde_json::json!({
-                "number": item.link.number,
-                "title": item.title,
-                "url": item.link.url(),
-                "type": item.kind,
-            })
-        })
-        .collect();
+    let triage: Vec<_> = report.triage.iter().map(|item| typed_json(item)).collect();
+    let loose: Vec<_> = report.loose.iter().map(|item| typed_json(item)).collect();
     let out = serde_json::json!({
         "ready": ready,
         "waiting_on_owner": waiting,
         "triage": triage,
+        "loose": loose,
         "in_progress": report.in_progress,
         "blocked": report.blocked,
         "problems": report.problems,

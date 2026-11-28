@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## Unreleased
+
+- `ready <issue link>` lists the open Task, Bug, Feature and Epic items of the link's milestone that have no parent in a `LOOSE <n>` section and in the `--json` key `loose`, so a manager sees an issue that was filed outside its tree. A loose item is not a candidate and not a problem. A project link or a link with no milestone has none.
+
 ## 0.3.0
 
 - `ready --stacked` also lists a Todo task whose open blockers form one stack: each is In Progress with an open pull request from `feat/issue-<blocker>`. The text line `stacked on:` and the `--json` key `stacked` (`base`, `blocker`, `pull_request`) name the branch to start from. Every ready entry of `--json` has the key, `null` for a task that is not stacked.

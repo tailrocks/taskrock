@@ -31,6 +31,7 @@ fn blocked_task(number: u64) -> Item {
         blocking: 0,
         status: Some("Todo".to_owned()),
         parent: None,
+        milestone: None,
         routing: Routing::default(),
     }
 }

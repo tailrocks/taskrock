@@ -47,6 +47,7 @@ fn item(kind: &str) -> Item {
         blocking: 0,
         status: Some("Todo".to_owned()),
         parent: None,
+        milestone: None,
         routing,
     }
 }
