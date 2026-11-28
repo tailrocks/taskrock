@@ -18,7 +18,7 @@ fn threads_defer_replies_to_and_resolves_each_deferrable_thread() {
         human,
         done,
     ];
-    let gh = reads(threads)
+    let gh = reads(&threads)
         .ok("pulls/5/comments/1/replies", "{}")
         .ok("pulls/5/comments/3/replies", "{}")
         .ok("graphql", &resolved())
@@ -49,7 +49,7 @@ fn threads_rerun_with_the_marker_only_resolves() {
         &[P3, &format!("{REPLY}\n\n<!-- taskrock:A -->")],
         false,
     );
-    let gh = reads(vec![replied])
+    let gh = reads(&[replied])
         .ok("graphql", &resolved())
         .ok("pulls/5", &super::pull("open", HEAD));
     assert_eq!(
@@ -65,19 +65,19 @@ fn threads_a_moved_head_or_a_closed_pull_refuses_before_any_write() {
         super::pull("open", &"f".repeat(40)),
         super::pull("closed", HEAD),
     ] {
-        let gh = reads(vec![bot("A", 1, P3)]).ok("pulls/5", &fresh);
+        let gh = reads(&[bot("A", 1, P3)]).ok("pulls/5", &fresh);
         let error = run(&gh, &link(), &Action::Defer, false).expect_err("refused");
         assert!(
             matches!(&error, Error::Refused(m) if m == "the pull request changed; run the command again")
         );
         assert_eq!(error.exit_code(), 3);
-        assert!(writes(&gh).is_empty());
+        assert_eq!(writes(&gh), Vec::<String>::new());
     }
 }
 
 #[test]
 fn threads_a_failed_resolve_stops_the_run() {
-    let gh = reads(vec![bot("A", 1, P3), bot("B", 2, P3)])
+    let gh = reads(&[bot("A", 1, P3), bot("B", 2, P3)])
         .ok("pulls/5/comments/1/replies", "{}")
         .fail("graphql", "gh: Could not resolve")
         .ok("pulls/5", &super::pull("open", HEAD));

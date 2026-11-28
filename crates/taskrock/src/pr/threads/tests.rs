@@ -60,7 +60,7 @@ pub(super) fn pull(state: &str, sha: &str) -> String {
 }
 
 /// The reads of one snapshot of the pull request, with `threads` as its review threads.
-pub(super) fn reads(threads: Vec<Value>) -> FakeGh {
+pub(super) fn reads(threads: &[Value]) -> FakeGh {
     let graph = json!({"data": {"repository": {"mergeQueue": null, "pullRequest": {
         "mergeQueueEntry": null,
         "reviewThreads": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": threads}}}}});
