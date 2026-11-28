@@ -46,7 +46,8 @@ fn snapshot_a_403_on_the_rules_means_no_required_checks() {
 #[test]
 fn snapshot_check_runs_over_one_page_are_a_problem() {
     let mut case = Case::recorded(2963);
-    case.checks = r#"{"total_count":101,"check_runs":[{"name":"a","status":"queued"}]}"#.to_owned();
+    case.checks =
+        r#"{"total_count":101,"check_runs":[{"id":1,"name":"a","status":"queued"}]}"#.to_owned();
     let snapshot = snapshot(&case);
     assert_eq!(snapshot.checks.len(), 1);
     assert!(!snapshot.checks[0].completed && snapshot.problems[0].contains("101 check runs"));

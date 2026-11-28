@@ -3,6 +3,8 @@
 use super::case_tests::{Case, page, queued};
 use super::read;
 use super::rest::verdict;
+use crate::pr::status;
+use serde_json::json;
 
 const SHA: &str = "0123456789abcdef0123456789abcdef01234567";
 
@@ -90,4 +92,53 @@ fn snapshot_an_error_on_a_later_page_keeps_the_earlier_pages() {
 fn snapshot_the_head_of_a_verdict_is_lowercase() {
     let found = verdict(&format!("VERDICT: PASS head={}", SHA.to_uppercase()), "t");
     assert_eq!(found.expect("a verdict").head, SHA);
+}
+
+/// The names and conclusions of the checks and the finding codes that `status` gives, when the
+/// head has the check runs `runs`: `(id, name, conclusion)`, in the order GitHub lists them.
+fn judged_runs(runs: &[(u64, &str, &str)]) -> (Vec<(String, String)>, Vec<&'static str>) {
+    let mut case = Case::recorded(2963);
+    let runs: Vec<_> = runs
+        .iter()
+        .map(|(id, name, conclusion)| json!({"id": id, "name": name, "status": "completed", "conclusion": conclusion}))
+        .collect();
+    case.checks = json!({"total_count": runs.len(), "check_runs": runs}).to_string();
+    case.status = r#"{"total_count":0,"statuses":[]}"#.to_owned();
+    let gh = case.gh().fail("taskrock.toml", "gh: Not Found (HTTP 404)");
+    let (snapshot, judged) = status::verdict(&gh, &case.link()).expect("the pull is judged");
+    let checks = snapshot.checks.into_iter();
+    let checks = checks.map(|c| (c.name, c.conclusion.unwrap_or_default()));
+    let codes = judged.findings.iter().map(|f| f.code.as_str());
+    (checks.collect(), codes.collect())
+}
+
+#[test]
+fn snapshot_keeps_only_the_newest_run_of_a_check_name() {
+    let pair = |old: &'static str, new: &'static str, newest_first: bool| {
+        let mut runs = vec![
+            (10, "Required", old),
+            (20, "Other", "success"),
+            (30, "Required", new),
+        ];
+        if newest_first {
+            runs.reverse();
+        }
+        judged_runs(&runs)
+    };
+    for newest_first in [false, true] {
+        let (checks, codes) = pair("failure", "success", newest_first);
+        assert_eq!(checks.len(), 2, "{checks:?}");
+        assert!(checks.contains(&("Required".to_owned(), "success".to_owned())));
+        assert!(!codes.contains(&"check_failed"), "{codes:?}");
+        let (checks, codes) = pair("success", "failure", newest_first);
+        assert!(checks.contains(&("Required".to_owned(), "failure".to_owned())));
+        assert!(codes.contains(&"check_failed"), "{codes:?}");
+    }
+    // A name keeps the place of its first appearance.
+    let (checks, _) = judged_runs(&[
+        (30, "Required", "success"),
+        (20, "Other", "success"),
+        (10, "Required", "failure"),
+    ]);
+    assert_eq!(checks[0].0, "Required");
 }

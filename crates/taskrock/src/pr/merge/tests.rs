@@ -91,7 +91,7 @@ impl Scene {
 
     fn check_runs(&self) -> String {
         let runs = if self.check_started {
-            json!([{"name": "Required", "status": "completed", "conclusion": "success"}])
+            json!([{"id": 1, "name": "Required", "status": "completed", "conclusion": "success"}])
         } else {
             json!([])
         };

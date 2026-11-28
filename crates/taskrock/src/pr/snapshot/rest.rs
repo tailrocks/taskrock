@@ -75,6 +75,7 @@ struct Runs {
 
 #[derive(Deserialize)]
 struct Run {
+    id: u64,
     name: String,
     status: String,
     conclusion: Option<String>,
@@ -207,15 +208,23 @@ pub(super) fn check_runs(
             runs.total_count
         ));
     }
-    Ok(runs
-        .check_runs
-        .into_iter()
-        .map(|run| CheckFact {
+    // A second workflow run on the head, such as the one a `ready_for_review` event starts, is a
+    // second check suite, so a name can come back more than once. Only its newest run, the one
+    // with the highest id, counts, as in `gh pr checks`. The name keeps its first place.
+    let mut facts: Vec<(u64, CheckFact)> = Vec::new();
+    for run in runs.check_runs {
+        let fact = CheckFact {
             completed: run.status == "completed",
             name: run.name,
             conclusion: run.conclusion,
-        })
-        .collect())
+        };
+        match facts.iter_mut().find(|(_, seen)| seen.name == fact.name) {
+            Some(slot) if slot.0 < run.id => *slot = (run.id, fact),
+            Some(_) => {}
+            None => facts.push((run.id, fact)),
+        }
+    }
+    Ok(facts.into_iter().map(|(_, fact)| fact).collect())
 }
 
 /// Read 3: the combined commit status of the head commit.
