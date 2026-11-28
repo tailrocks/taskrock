@@ -9,15 +9,7 @@ mod review;
 mod rules;
 
 #[cfg(test)]
-mod blockers_tests;
-#[cfg(test)]
-mod fixtures_tests;
-#[cfg(test)]
-mod order_tests;
-#[cfg(test)]
 mod tests;
-#[cfg(test)]
-mod waits_tests;
 
 /// Whether a finding stops the merge or only waits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -83,11 +75,16 @@ pub fn evaluate(snapshot: &PullSnapshot, config: &Config, link: &PullLink) -> Ve
         )],
         PullState::Open => open(snapshot, config, link),
     };
-    findings.sort_by_key(|finding| finding.code);
-    let state = match findings.first().map(|finding| finding.code.kind()) {
-        Some(Kind::Blocker) => State::Blocked,
-        Some(Kind::Wait) => State::Waiting,
-        None => State::Ready,
+    findings.sort_by_key(|finding| (finding.code.kind() == Kind::Wait, finding.code));
+    let blocked = findings
+        .iter()
+        .any(|finding| finding.code.kind() == Kind::Blocker);
+    let state = if blocked {
+        State::Blocked
+    } else if findings.is_empty() {
+        State::Ready
+    } else {
+        State::Waiting
     };
     let next = findings.first().map_or_else(
         || format!("taskrock pr merge {}", link.url()),

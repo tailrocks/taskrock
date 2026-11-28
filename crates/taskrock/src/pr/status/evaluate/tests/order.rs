@@ -1,7 +1,6 @@
 //! The order of the findings, the state they give and the rounds.
 
-use super::State;
-use super::tests::{HEAD, codes, judge, ready, verdict};
+use super::{HEAD, State, codes, judge, ready, verdict};
 use crate::pr::snapshot::QueueEntry;
 
 #[test]

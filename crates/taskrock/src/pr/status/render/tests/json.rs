@@ -2,8 +2,8 @@
 
 use serde_json::Value;
 
-use super::json;
-use super::tests::recorded;
+use super::recorded;
+use crate::pr::status::render::json;
 
 fn sorted_keys(value: &Value) -> Vec<&str> {
     let mut keys: Vec<&str> = value

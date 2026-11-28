@@ -9,8 +9,6 @@ use crate::pr::severity;
 use crate::pr::snapshot::PullSnapshot;
 
 #[cfg(test)]
-mod json_tests;
-#[cfg(test)]
 mod tests;
 
 /// The most items that a line of text lists.

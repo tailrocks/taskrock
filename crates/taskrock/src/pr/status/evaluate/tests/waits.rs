@@ -1,6 +1,6 @@
 //! One test per wait code, and the Codex rules.
 
-use super::tests::{HEAD, check, codes, judge, ready};
+use super::{HEAD, check, codes, judge, ready};
 use crate::pr::snapshot::{CodexFact, QueueEntry};
 
 fn codex(code_sha: &str, code: &str, security_sha: &str, security: &str) -> CodexFact {
@@ -90,4 +90,11 @@ fn evaluate_queued_when_the_pull_request_is_in_the_queue() {
         position: Some(1),
     });
     assert_eq!(codes(&judge(&snapshot)), ["queued"]);
+}
+
+#[test]
+fn evaluate_bot_review_pending_while_the_code_review_runs() {
+    let mut snapshot = ready();
+    snapshot.codex = Some(codex(HEAD, "running", HEAD, "completed"));
+    assert_eq!(codes(&judge(&snapshot)), ["bot_review_pending"]);
 }

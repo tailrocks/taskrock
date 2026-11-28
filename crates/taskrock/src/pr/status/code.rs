@@ -2,6 +2,9 @@
 
 use super::evaluate::Kind;
 
+#[cfg(test)]
+mod tests;
+
 /// One reason, in rank order: the blockers first, then the waits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Code {

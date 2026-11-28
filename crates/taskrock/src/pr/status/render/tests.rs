@@ -7,7 +7,9 @@ use crate::pr::snapshot::case_tests::Case;
 use crate::pr::snapshot::{PullSnapshot, read};
 use crate::pr::status::evaluate::{State, Verdict, evaluate};
 
-pub(super) fn recorded(number: u64) -> (PullLink, PullSnapshot, Verdict) {
+mod json;
+
+fn recorded(number: u64) -> (PullLink, PullSnapshot, Verdict) {
     let case = Case::recorded(number);
     let link = case.link();
     let snapshot = read(&case.gh(), &link).expect("the pull is read");
