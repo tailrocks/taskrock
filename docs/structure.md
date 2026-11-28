@@ -79,12 +79,12 @@ There are three kinds of tests.
   - `src/draft/check/title_tests.rs`
   - `src/github/items/project_tests.rs`
   - `src/link/pull_tests.rs`
+  - `src/pr/snapshot/case_tests.rs`
+  - `src/pr/snapshot/facts_tests.rs`
   - `src/pr/status/evaluate/blockers_tests.rs`
   - `src/pr/status/evaluate/fixtures_tests.rs`
   - `src/pr/status/evaluate/order_tests.rs`
   - `src/pr/status/evaluate/waits_tests.rs`
-  - `src/pr/snapshot/case_tests.rs`
-  - `src/pr/snapshot/facts_tests.rs`
   - `src/ready/loose_tests.rs`
   - `src/ready/problems_tests.rs`
   - `src/ready/stacked_tests.rs`
