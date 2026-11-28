@@ -134,12 +134,32 @@ pub(crate) struct Decl {
     pub(crate) attr: bool,
     /// The declaration sits in an inline module under `#[cfg(test)]`.
     pub(crate) nested: bool,
+    /// The declaration, or an inline module around it, has a `#[path]` attribute.
+    pub(crate) path: bool,
+    pub(crate) name: String,
+}
+
+/// The attributes seen since the last item, which the next `mod` takes.
+#[derive(Clone, Copy, Default)]
+struct Attrs {
+    test: bool,
+    path: bool,
 }
 
 /// An open `{` of a file: the inline module it opens, or none.
 struct Frame {
     name: String,
-    test: bool,
+    attrs: Attrs,
+}
+
+/// The attribute text of `#[cfg(test)]`, and whether it is a `path` attribute,
+/// also under `cfg_attr`.
+fn read_attrs(text: &str) -> Attrs {
+    let cfg_attr = text.starts_with("cfg_attr(");
+    Attrs {
+        test: text == "cfg(test)",
+        path: text.starts_with("path=") || (cfg_attr && text.contains(",path=")),
+    }
 }
 
 /// The file of the module `name` that `parent` declares, in the inline modules `inline`.
@@ -157,19 +177,22 @@ fn module_file(parent: &Path, inline: &[&str], name: &str) -> PathBuf {
 fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
     let toks = lex(&fs::read_to_string(parent)?);
     let (mut found, mut frames) = (Vec::new(), Vec::<Option<Frame>>::new());
-    let (mut test_attr, mut i) = (false, 0);
+    let (mut attrs, mut i) = (Attrs::default(), 0);
     while i < toks.len() {
         match (&toks[i], toks.get(i + 1), toks.get(i + 2)) {
             (Tok::Sym('#'), next, _) => {
                 let open = i + 1 + usize::from(next == Some(&Tok::Sym('!')));
                 if toks.get(open) != Some(&Tok::Sym('[')) {
-                    test_attr = false;
+                    attrs = Attrs::default();
                     i += 1;
                     continue;
                 }
                 let end = group_end(&toks, open);
-                test_attr |= next != Some(&Tok::Sym('!'))
-                    && attribute_text(&toks[open + 1..end]) == "cfg(test)";
+                if next != Some(&Tok::Sym('!')) {
+                    let read = read_attrs(&attribute_text(&toks[open + 1..end]));
+                    attrs.test |= read.test;
+                    attrs.path |= read.path;
+                }
                 i = end + 1;
             }
             (Tok::Word(word), Some(Tok::Sym('(')), _) if word == "pub" => {
@@ -185,30 +208,32 @@ fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
                     found.push(Decl {
                         file: module_file(parent, &inline, name),
                         parent: parent.to_path_buf(),
-                        attr: test_attr,
-                        nested: frames.iter().flatten().any(|f| f.test),
+                        attr: attrs.test,
+                        nested: frames.iter().flatten().any(|f| f.attrs.test),
+                        path: attrs.path || frames.iter().flatten().any(|f| f.attrs.path),
+                        name: name.clone(),
                     });
                 } else {
                     frames.push(Some(Frame {
                         name: name.clone(),
-                        test: test_attr,
+                        attrs,
                     }));
                 }
-                test_attr = false;
+                attrs = Attrs::default();
                 i += 3;
             }
             (Tok::Sym('{'), _, _) => {
                 frames.push(None);
-                test_attr = false;
+                attrs = Attrs::default();
                 i += 1;
             }
             (Tok::Sym('}'), _, _) => {
                 frames.pop();
-                test_attr = false;
+                attrs = Attrs::default();
                 i += 1;
             }
             _ => {
-                test_attr = false;
+                attrs = Attrs::default();
                 i += 1;
             }
         }

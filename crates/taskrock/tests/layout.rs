@@ -203,3 +203,62 @@ fn descendants_of_test_only_modules_use_an_allowed_layout() -> io::Result<()> {
     fail(&problems);
     Ok(())
 }
+
+#[test]
+fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
+    let files = sources()?;
+    let declared: BTreeSet<PathBuf> = all_declarations(&files)?
+        .into_iter()
+        .map(|d| d.file)
+        .collect();
+    let mut problems = Vec::new();
+    for path in files {
+        if is_listed_kind(&path) && !declared.contains(&path) {
+            let name = file_name(&path).trim_end_matches(".rs");
+            problems.push(format!(
+                "{} is not declared by its parent module: add `#[cfg(test)] mod {name};` \
+                 to the module above it, or delete the file",
+                rel(&path)
+            ));
+        }
+    }
+    fail(&problems);
+    Ok(())
+}
+
+#[test]
+fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
+    let mut problems = Vec::new();
+    for decl in all_declarations(&sources()?)? {
+        if decl.path {
+            problems.push(format!(
+                "{} declares `mod {}` with a #[path] attribute: name the module after \
+                 its file and remove the attribute",
+                rel(&decl.parent),
+                decl.name
+            ));
+        }
+    }
+    fail(&problems);
+    Ok(())
+}
+
+#[test]
+fn test_modules_keep_cfg_test() -> io::Result<()> {
+    let files = sources()?;
+    let decls = all_declarations(&files)?;
+    let only = test_only_files(&decls, &files);
+    let mut problems = Vec::new();
+    for decl in &decls {
+        let is_test_name = decl.name == "tests" || decl.name.ends_with("_tests");
+        if is_test_name && !decl.attr && !decl.nested && !only.contains(&decl.parent) {
+            problems.push(format!(
+                "{} declares `mod {};` without #[cfg(test)]: put `#[cfg(test)]` on the line above it",
+                rel(&decl.parent),
+                decl.name
+            ));
+        }
+    }
+    fail(&problems);
+    Ok(())
+}
