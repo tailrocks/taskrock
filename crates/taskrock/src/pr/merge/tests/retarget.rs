@@ -200,3 +200,40 @@ fn merge_keeps_the_merged_outcome_when_the_children_cannot_be_listed() {
         "could not list the pull requests based on feat/issue-5: Bad Gateway (HTTP 502)"
     );
 }
+
+#[test]
+fn merge_json_names_the_child_that_could_not_be_retargeted() {
+    let gh = Scene::ready()
+        .gh()
+        .ok(
+            "pulls?base=feat/issue-5&state=open",
+            r#"[[{"number":7},{"number":8}]]"#,
+        )
+        .ok("pulls/5/merge", r#"{"sha":"abc1234"}"#)
+        .fail("pulls/7", "gh: Unprocessable Entity (HTTP 422)")
+        .ok("pulls/8", "{}");
+    let report = serde_json::to_value(run(&gh).expect("the merge landed").report).expect("JSON");
+    assert_eq!(report["outcome"], "merged");
+    assert_eq!(report["retargeted"], json!([8]));
+    assert_eq!(
+        report["retarget_failures"],
+        json!([{"number": 7, "error": "Unprocessable Entity (HTTP 422)"}])
+    );
+    assert_eq!(report["retarget_error"], json!(null));
+}
+
+#[test]
+fn merge_json_carries_the_error_of_the_listing_of_the_children() {
+    let gh = Scene::ready()
+        .gh()
+        .fail(
+            "pulls?base=feat/issue-5&state=open",
+            "gh: Bad Gateway (HTTP 502)",
+        )
+        .ok("pulls/5/merge", r#"{"sha":"abc1234"}"#);
+    let report = serde_json::to_value(run(&gh).expect("the merge landed").report).expect("JSON");
+    assert_eq!(report["outcome"], "merged");
+    assert_eq!(report["retargeted"], json!([]));
+    assert_eq!(report["retarget_failures"], json!([]));
+    assert_eq!(report["retarget_error"], "Bad Gateway (HTTP 502)");
+}

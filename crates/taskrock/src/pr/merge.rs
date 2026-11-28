@@ -43,6 +43,13 @@ struct Report {
     /// the outcomes `merged` and `already_merged`. It is empty for `queued`, `refused` and `not_ready`: a queued pull
     /// request retargets its children when `pr merge` runs again on it after it merged.
     retargeted: Vec<u64>,
+    /// The children that GitHub would not retarget after the merge landed. Always present,
+    /// empty when none failed. The exit code stays 0: the merge landed, and a rerun of `pr
+    /// merge` retargets what is left.
+    retarget_failures: Vec<write::RetargetFailure>,
+    /// The error of the listing of the children, or null. When it is set, the run could not
+    /// tell which pull requests were based on the head branch.
+    retarget_error: Option<String>,
 }
 
 /// The report, the lines of the text output, the refusal of GitHub, and the exit code.
@@ -50,7 +57,8 @@ struct Done {
     report: Report,
     lines: Vec<String>,
     refusal: Option<String>,
-    /// The retargets that failed after the merge landed. They do not undo the merge.
+    /// The lines of the retargets that failed after the merge landed, for stderr with
+    /// `--json`. They do not undo the merge.
     failures: Vec<String>,
     code: u8,
 }
@@ -66,6 +74,8 @@ impl Done {
                 head: head.to_owned(),
                 merge_commit: None,
                 retargeted: Vec::new(),
+                retarget_failures: Vec::new(),
+                retarget_error: None,
             },
             lines: Vec::new(),
             refusal: None,
@@ -88,15 +98,35 @@ impl Done {
         if snapshot.cross_repository {
             return self;
         }
-        let write::Retargeted { moved, failures } = write::retarget(gh, link, snapshot);
+        let write::Retargeted {
+            moved,
+            failures,
+            list_error,
+        } = write::retarget(gh, link, snapshot);
         self.lines.extend(
             moved
                 .iter()
                 .map(|number| format!("retargeted #{number} to {}", snapshot.base_ref)),
         );
-        self.lines.extend(failures.iter().cloned());
-        self.failures = failures;
+        self.failures = failures
+            .iter()
+            .map(|failure| {
+                format!(
+                    "could not retarget #{} to {}: {}",
+                    failure.number, snapshot.base_ref, failure.error
+                )
+            })
+            .chain(list_error.iter().map(|error| {
+                format!(
+                    "could not list the pull requests based on {}: {error}",
+                    snapshot.head_ref
+                )
+            }))
+            .collect();
+        self.lines.extend(self.failures.iter().cloned());
         self.report.retargeted = moved;
+        self.report.retarget_failures = failures;
+        self.report.retarget_error = list_error;
         self
     }
 }

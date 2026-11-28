@@ -73,7 +73,8 @@ fn merge_json_report_has_the_documented_keys() {
     assert_eq!(
         report,
         json!({"schema": 1, "repo": "tailrocks/taskrock", "number": 5, "outcome": "merged",
-            "head": HEAD, "merge_commit": "abc1234", "retargeted": [7]})
+            "head": HEAD, "merge_commit": "abc1234", "retargeted": [7],
+            "retarget_failures": [], "retarget_error": null})
     );
 }
 
