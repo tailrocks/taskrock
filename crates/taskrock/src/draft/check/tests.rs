@@ -7,8 +7,13 @@ pub(super) const BODY: &str = "## Outcome\n\nO.\n\n## Decisions already made\n\n
 const PLAN: &str =
     "id = \"p\"\nrepo = \"o/n\"\nproject = \"https://github.com/orgs/o/projects/7\"\n";
 pub(super) fn issue(key: &str, extra: &str) -> DraftIssue {
+    let parent = if extra.contains("parent") {
+        ""
+    } else {
+        "parent = \"https://github.com/tailrocks/holla/issues/1\"\n"
+    };
     let text = format!(
-        "+++\nkey = \"{key}\"\ntitle = \"{key}\"\ntype = \"Task\"\nagent = \"a\"\nruntime = \"b\"\nmodel = \"c\"\neffort = \"d\"\nreview_agent = \"e\"\nreview_runtime = \"f\"\nreview_model = \"g\"\nreview_effort = \"h\"\n{extra}\n+++\n{BODY}"
+        "+++\nkey = \"{key}\"\ntitle = \"{key}\"\ntype = \"Task\"\n{parent}agent = \"a\"\nruntime = \"b\"\nmodel = \"c\"\neffort = \"d\"\nreview_agent = \"e\"\nreview_runtime = \"f\"\nreview_model = \"g\"\nreview_effort = \"h\"\n{extra}\n+++\n{BODY}"
     );
     parse_issue(&format!("{key}.md"), &text, "tailrocks/holla").expect("the test issue parses")
 }

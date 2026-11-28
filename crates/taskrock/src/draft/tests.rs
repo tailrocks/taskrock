@@ -20,7 +20,7 @@ fn fails_with<T>(result: Result<T, Error>) -> (String, String) {
 }
 
 #[test]
-fn read_good_returns_three_issues_in_file_order() {
+fn read_good_returns_four_issues_in_file_order() {
     let folder = Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures/draft-good");
     let draft = read(&folder).expect("draft-good reads");
     let plan = &draft.plan;
@@ -30,13 +30,14 @@ fn read_good_returns_three_issues_in_file_order() {
     assert_eq!(plan.project.number, 7);
     assert_eq!(plan.milestones.len(), 1);
     let keys = draft.issues.iter().map(|issue| issue.key.as_str());
-    assert!(keys.eq(["E1", "T01", "T02"]));
+    assert!(keys.eq(["E1", "I1", "T01", "T02"]));
     let files = draft.issues.iter().map(|issue| issue.file.as_str());
-    assert!(files.eq(["E1.md", "T01.md", "T02.md"]));
-    assert_eq!(draft.issues[0].parent, None);
-    assert_eq!(draft.issues[1].parent.as_deref(), Some("E1"));
-    assert_eq!(draft.issues[2].blocked_by, ["T01"]);
-    for issue in &draft.issues[1..] {
+    assert!(files.eq(["E1.md", "I1.md", "T01.md", "T02.md"]));
+    assert_eq!(draft.issues[0].parent.as_deref(), Some("I1"));
+    assert_eq!(draft.issues[1].parent, None);
+    assert_eq!(draft.issues[2].parent.as_deref(), Some("E1"));
+    assert_eq!(draft.issues[3].blocked_by, ["T01"]);
+    for issue in &draft.issues[2..] {
         assert!(
             issue.routing.missing().is_empty(),
             "{} misses routing",
@@ -44,10 +45,10 @@ fn read_good_returns_three_issues_in_file_order() {
         );
     }
     assert_eq!(
-        draft.issues[1].routing.get("Agent"),
+        draft.issues[2].routing.get("Agent"),
         Some("tailrocks-systems-engineer")
     );
-    assert!(draft.issues[2].body.contains("## Out of scope"));
+    assert!(draft.issues[3].body.contains("## Out of scope"));
 }
 
 #[test]

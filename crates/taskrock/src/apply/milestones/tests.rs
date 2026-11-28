@@ -28,9 +28,10 @@ fn missing_milestone_is_created_once() {
     assert_eq!(
         lines,
         [
-            "created #11 E1 CSV export",
-            "created #12 T01 Add CSV rendering to the report command",
-            "created #13 T02 Add `--format csv` to the report command",
+            "created #11 I1 CSV export everywhere",
+            "created #12 E1 CSV export",
+            "created #13 T01 Add CSV rendering to the report command",
+            "created #14 T02 Add `--format csv` to the report command",
         ]
     );
     let milestone_posts: Vec<_> = gh
@@ -50,7 +51,7 @@ fn missing_milestone_is_created_once() {
         sent,
         json!({"title": "M1 Export", "description": "CSV export works for the summary report."})
     );
-    for body in post_bodies(&gh).into_iter().skip(1) {
+    for body in post_bodies(&gh).into_iter().skip(2) {
         assert_eq!(body["milestone"], json!(4), "tasks reuse the milestone");
     }
 }

@@ -35,8 +35,8 @@ fn linked(gh: &FakeGh, dry_run: bool) -> Vec<String> {
 #[test]
 fn existing_blocker_is_not_sent_again() {
     let gh = all_existing().ok(
-        "issues/23/dependencies/blocked_by?per_page",
-        r#"[[{"id":202}]]"#,
+        "issues/24/dependencies/blocked_by?per_page",
+        r#"[[{"id":203}]]"#,
     );
     let lines = linked(&gh, false);
     assert!(lines.is_empty(), "nothing is linked: {lines:?}");
@@ -49,14 +49,14 @@ fn existing_blocker_is_not_sent_again() {
 #[test]
 fn missing_blocker_is_sent_with_blocker_id() {
     let gh = fresh()
-        .ok("issues/13/dependencies/blocked_by?per_page", "[[]]")
+        .ok("issues/14/dependencies/blocked_by?per_page", "[[]]")
         .ok(
-            "POST repos/tailrocks/holla/issues/13/dependencies/blocked_by",
+            "POST repos/tailrocks/holla/issues/14/dependencies/blocked_by",
             "{}",
         );
     let lines = linked(&gh, false);
-    assert_eq!(lines, ["blocked #13 by #12"]);
-    assert_eq!(blocker_posts(&gh), [json!({"issue_id": 112})]);
+    assert_eq!(lines, ["blocked #14 by #13"]);
+    assert_eq!(blocker_posts(&gh), [json!({"issue_id": 113})]);
 }
 
 #[test]

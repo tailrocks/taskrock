@@ -40,7 +40,7 @@ fn a_bad_config_prints_each_problem_and_exits_with_one() -> std::io::Result<()> 
 #[test]
 fn a_draft_folder_is_still_checked_as_a_draft() -> std::io::Result<()> {
     let (stdout, _, code) = check("fixtures/draft-good")?;
-    assert_eq!(stdout.trim(), "OK 3 issues");
+    assert_eq!(stdout.trim(), "OK 4 issues");
     assert_eq!(code, Some(0));
     Ok(())
 }

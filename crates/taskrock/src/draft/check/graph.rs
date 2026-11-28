@@ -34,11 +34,18 @@ pub(super) fn kinds(draft: &Draft, config: &Config, out: &mut Vec<Finding>) {
 pub(super) fn parents(draft: &Draft, out: &mut Vec<Finding>) {
     let known = keys(draft);
     for issue in &draft.issues {
-        if let Some(parent) = &issue.parent
-            && !known.contains(parent.as_str())
-            && links::parse(parent).is_none()
-        {
-            out.push(at(issue, not_found("parent", parent)));
+        let Some(parent) = &issue.parent else {
+            if issue.kind != "Initiative" {
+                let message = format!(
+                    "{} has no parent. Only an Initiative has none: set parent to a key of this draft or to the link of the parent issue",
+                    issue.key
+                );
+                out.push(at(issue, message));
+            }
+            continue;
+        };
+        if !known.contains(parent.as_str()) && links::parse(parent).is_none() {
+            out.push(at(issue, not_found("parent", parent, &issue.repo)));
         }
     }
 }
@@ -48,16 +55,21 @@ pub(super) fn blockers(draft: &Draft, out: &mut Vec<Finding>) {
     for issue in &draft.issues {
         for blocker in &issue.blocked_by {
             if !known.contains(blocker.as_str()) && links::parse(blocker).is_none() {
-                out.push(at(issue, not_found("blocker", blocker)));
+                out.push(at(issue, not_found("blocker", blocker, &issue.repo)));
             }
         }
     }
 }
 
 /// The message for a `parent` or `blocked_by` value that is neither a key of
-/// the draft nor an issue link.
-fn not_found(word: &str, value: &str) -> String {
-    if links::is_link(value) || value.starts_with("http://") {
+/// the draft nor an issue link. `repo` is the repository of the issue.
+fn not_found(word: &str, value: &str, repo: &str) -> String {
+    let digits = value.strip_prefix('#').unwrap_or(value);
+    if !digits.is_empty() && digits.bytes().all(|byte| byte.is_ascii_digit()) {
+        format!(
+            "{word} {value} is an issue number, not a key: write the issue link https://github.com/{repo}/issues/{digits}"
+        )
+    } else if links::is_link(value) || value.starts_with("http://") {
         format!(
             "{word} {value} is not an issue link like https://github.com/<owner>/<repo>/issues/<number>"
         )
