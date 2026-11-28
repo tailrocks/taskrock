@@ -11,6 +11,7 @@ All notable changes to this project are recorded in this file.
 - `apply` stops before any `POST` when a link `parent` has no room for the new issues that name it: GitHub allows 100 sub-issues per parent. The message is `<link> has <n> sub-issues and GitHub allows 100: file under a child Epic of it`.
 - `ready <issue link>` lists the open Task, Bug, Feature and Epic items of the link's milestone that have no parent in a `LOOSE <n>` section and in the `--json` key `loose`, so a manager sees an issue that was filed outside its tree. A loose item is not a candidate and not a problem. A project link or a link with no milestone has none.
 - Tests remove the folders they create: a unit test no longer leaves `taskrock-*` folders in TMPDIR (#163).
+- `pr`: a preview command group, `pr status`, `pr threads` and `pr merge`. The exit codes 10 and 20 are defined, and no command returns them yet. Each subcommand prints `taskrock pr <name> is not built yet` and exits 1. They are built in 0.5.0.
 
 ## 0.3.0
 
