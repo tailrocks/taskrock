@@ -2,13 +2,16 @@
 
 All notable changes to this project are recorded in this file.
 
-## Unreleased
+## 0.4.0
 
+- Breaking: check refuses an issue that is not an Initiative and has no parent.
 - `check` and `apply` refuse an issue that has no `parent` unless it is an Initiative.
 - `check` and `apply` answer a `parent` or `blocked_by` value that is a bare issue number, like `2878` or `#2878`, with the link to write: `https://github.com/<owner>/<repo>/issues/<number>`.
 - `apply` gives an issue filed under a link `parent` the milestone of that parent when the issue and `plan.toml` name none. The milestone must exist in the issue's repository: `apply` never creates it and stops before any `POST` when it is missing. A dry run says `would set milestone <title> on <key>, from its parent <link>`.
 - `apply` stops before any `POST` when a link `parent` has no room for the new issues that name it: GitHub allows 100 sub-issues per parent. The message is `<link> has <n> sub-issues and GitHub allows 100: file under a child Epic of it`.
 - `ready <issue link>` lists the open Task, Bug, Feature and Epic items of the link's milestone that have no parent in a `LOOSE <n>` section and in the `--json` key `loose`, so a manager sees an issue that was filed outside its tree. A loose item is not a candidate and not a problem. A project link or a link with no milestone has none.
+- Tests remove the folders they create: a unit test no longer leaves `taskrock-*` folders in TMPDIR (#163).
+- `pr`: a preview command group, `pr status`, `pr threads` and `pr merge`. The exit codes 10 and 20 are defined, and no command returns them yet. Each subcommand prints `taskrock pr <name> is not built yet` and exits 1. They are built in 0.5.0.
 
 ## 0.3.0
 
