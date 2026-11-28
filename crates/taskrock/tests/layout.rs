@@ -242,7 +242,7 @@ fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
 fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
     let all = all()?;
     let mut problems = Vec::new();
-    for file in &all.inner_path {
+    for (file, _) in all.inner.iter().filter(|(_, attrs)| attrs.path) {
         problems.push(format!(
             "{} has a file-level #![path] attribute: remove it",
             rel(file)
@@ -262,9 +262,26 @@ fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
 
 #[test]
 fn test_modules_keep_cfg_test() -> io::Result<()> {
-    let decls = all()?.decls;
+    let all = all()?;
+    let decls = all.decls;
     let only = test_only_files(&decls, &sources()?);
     let mut problems = Vec::new();
+    for (file, attrs) in &all.inner {
+        if attrs.cfg_attr {
+            problems.push(format!(
+                "{} has a file-level cfg_attr attribute that applies a cfg, which can hide \
+                 it from this check: remove it and use a plain #![cfg(test)]",
+                rel(file)
+            ));
+        }
+        if attrs.gate == Gate::Other {
+            problems.push(format!(
+                "{} has a file-level cfg that mentions test: write exactly #![cfg(test)], \
+                 or take test out of the predicate",
+                rel(file)
+            ));
+        }
+    }
     for decl in &decls {
         if decl.cfg_attr {
             problems.push(format!(

@@ -95,12 +95,12 @@ fn mentions_test(predicate: &Meta) -> syn::Result<bool> {
     }
 }
 
-/// The attributes of a module that the checks read.
+/// The attributes of a module or of a file that the checks read.
 #[derive(Clone, Copy, Default)]
-struct Attrs {
-    gate: Gate,
-    path: bool,
-    cfg_attr: bool,
+pub(crate) struct Attrs {
+    pub(crate) gate: Gate,
+    pub(crate) path: bool,
+    pub(crate) cfg_attr: bool,
 }
 
 impl Attrs {
@@ -213,33 +213,32 @@ fn read(parent: &Path) -> io::Result<(Attrs, Vec<Decl>)> {
         .map_or(Ok((inner, scan.found)), |err| Err(invalid(err)))
 }
 
-/// The `mod` items of the given files, and which of the files open with `#![path]`.
+/// The `mod` items of the given files, and the inner attributes of each file.
 pub(crate) struct Sources {
     /// Every `mod` item of every file, in its inline modules, function bodies and blocks too.
     pub(crate) decls: Vec<Decl>,
-    /// The files that open with a `#![path]` attribute, also one that a `cfg_attr` applies.
-    pub(crate) inner_path: Vec<PathBuf>,
+    /// The inner attributes (`#![…]`) of each file, also those that a `cfg_attr` applies. A
+    /// file is checked here once, whether or not a `mod` item points at it.
+    pub(crate) inner: Vec<(PathBuf, Attrs)>,
 }
 
 /// Reads every file of `files`; the caller decides which files these are.
 pub(crate) fn scan(files: &[PathBuf]) -> io::Result<Sources> {
-    let (mut decls, mut inner_path, mut inners) = (Vec::new(), Vec::new(), BTreeMap::new());
+    let (mut decls, mut inner) = (Vec::new(), Vec::new());
     for file in files {
-        let (inner, found) = read(file)?;
+        let (attrs, found) = read(file)?;
         decls.extend(found);
-        if inner.path {
-            inner_path.push(file.clone());
-        }
-        inners.insert(file, inner);
+        inner.push((file.clone(), attrs));
     }
-    // A file that opens with `#![cfg(test)]` is gated like a `#[cfg(test)]` on its `mod`.
+    // A file that opens with exactly `#![cfg(test)]` is gated like a `#[cfg(test)]` on its
+    // `mod`. Any other form is refused once, per file, from `inner`.
+    let tests: BTreeMap<_, _> = inner.iter().map(|(file, a)| (file, a.gate)).collect();
     for decl in &mut decls {
-        if let Some(inner) = decl.file.as_ref().and_then(|file| inners.get(file)) {
-            decl.gate = decl.gate.merge(inner.gate);
-            decl.cfg_attr |= inner.cfg_attr;
+        if decl.file.as_ref().and_then(|file| tests.get(file)) == Some(&Gate::Test) {
+            decl.gate = decl.gate.merge(Gate::Test);
         }
     }
-    Ok(Sources { decls, inner_path })
+    Ok(Sources { decls, inner })
 }
 
 impl Sources {
