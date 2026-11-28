@@ -79,3 +79,12 @@ pub(crate) fn page(threads: usize, next: Option<&str>, comments: u64) -> String 
         "reviewThreads": {"pageInfo": info, "nodes": vec![node; threads]}}}}})
     .to_string()
 }
+
+/// `page` with a merge queue and the pull request queued at position 2.
+pub(super) fn queued(page: &str) -> String {
+    let mut answer: serde_json::Value = serde_json::from_str(page).expect("a page is JSON");
+    let repository = &mut answer["data"]["repository"];
+    repository["mergeQueue"] = json!({"id": "MQ"});
+    repository["pullRequest"]["mergeQueueEntry"] = json!({"state": "QUEUED", "position": 2});
+    answer.to_string()
+}
