@@ -34,6 +34,7 @@ pub(super) fn item(number: u64) -> Item {
         blocking: 0,
         status: Some("Todo".to_owned()),
         parent: None,
+        milestone: None,
         routing,
     }
 }

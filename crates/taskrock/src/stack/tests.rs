@@ -28,6 +28,7 @@ fn item(number: u64, status: &str) -> Item {
         blocking: 0,
         status: Some(status.to_owned()),
         parent: None,
+        milestone: None,
         routing: crate::fields::Routing::default(),
     }
 }
