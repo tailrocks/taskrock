@@ -2,6 +2,10 @@
 
 All notable changes to this project are recorded in this file.
 
+## 0.5.2
+
+- `pr status` reads a verdict only from a pull request review whose body has a line that starts with `Reviewer:` and whose last non-blank line is `VERDICT: PASS head=<sha>` or `VERDICT: FAIL head=<sha>`. A `VERDICT` line in an issue comment no longer counts, because every agent posts as one account and a builder's comment could pass the gate. The Codex state comment is still read.
+
 ## 0.5.1
 
 - `pr status` counts only the newest run of each check name on the head. A failed run that a later run of the same check replaced no longer blocks the pull request.

@@ -37,7 +37,7 @@ pub(super) fn verdicts(snapshot: &PullSnapshot, config: &Config, out: &mut Vec<F
                 Code::VerdictMissing,
                 format!("There is no verdict for {head}.{older}"),
                 format!(
-                    "reviewer: review {head} and post VERDICT: PASS|FAIL head={}",
+                    "reviewer: review {head} and post a pull request review with a `Reviewer:` line and the last line VERDICT: PASS|FAIL head={}",
                     snapshot.head_sha
                 ),
             ));

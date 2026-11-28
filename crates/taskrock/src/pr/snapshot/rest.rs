@@ -14,19 +14,14 @@ const PAGE: u64 = 100;
 /// The bot that posts the state of its review as a hidden comment.
 const CODEX_BOT: &str = "chatgpt-codex-connector[bot]";
 const CODEX_MARKER: &str = "<!-- codex-review-state:v1 ";
+/// The start of the line that names the reviewer in the review of the manager.
+const REVIEWER: &str = "Reviewer:";
 
 /// What the branch rules of the base branch say.
 #[derive(Debug, Default)]
 pub(super) struct Rules {
     pub required_checks: Vec<String>,
     pub merge_queue: bool,
-}
-
-/// What the issue comments say.
-#[derive(Debug, Default)]
-pub(super) struct Comments {
-    pub verdicts: Vec<VerdictFact>,
-    pub codex: Option<CodexFact>,
 }
 
 #[derive(Deserialize)]
@@ -116,7 +111,6 @@ struct Required {
 struct Note {
     body: Option<String>,
     submitted_at: Option<String>,
-    created_at: Option<String>,
     user: Option<User>,
 }
 
@@ -294,18 +288,23 @@ pub(super) fn rules(gh: &dyn Gh, link: &PullLink, base: &str) -> Result<Rules, E
     Ok(found)
 }
 
-/// Read 5: the verdicts in the reviews.
+/// Read 5: the verdicts in the reviews. The only source of a verdict: every agent posts as one
+/// account, so an issue comment could not be told from a reviewer's word.
 pub(super) fn reviews(gh: &dyn Gh, link: &PullLink) -> Result<Vec<VerdictFact>, Error> {
     let path = format!("{}/reviews?per_page={PAGE}", link.api_path());
-    Ok(verdicts(&decode_all::<Note>(get_all(gh, &path)?)?))
+    let notes = decode_all::<Note>(get_all(gh, &path)?)?;
+    Ok(notes
+        .iter()
+        .filter_map(|note| verdict(note.body.as_deref()?, note.submitted_at.as_deref()?))
+        .collect())
 }
 
-/// Read 6: the verdicts and the Codex state in the issue comments.
+/// Read 6: the Codex state in the issue comments.
 pub(super) fn comments(
     gh: &dyn Gh,
     link: &PullLink,
     problems: &mut Vec<String>,
-) -> Result<Comments, Error> {
+) -> Result<Option<CodexFact>, Error> {
     let path = format!(
         "{}/issues/{}/comments?per_page={PAGE}",
         link.repo_path(),
@@ -326,10 +325,7 @@ pub(super) fn comments(
             None => {}
         }
     }
-    Ok(Comments {
-        verdicts: verdicts(&notes),
-        codex,
-    })
+    Ok(codex)
 }
 
 /// The Codex state in a comment body: `None` when it has no state.
@@ -346,23 +342,11 @@ fn codex_state(body: &str) -> Option<Result<CodexFact, Error>> {
     }))
 }
 
-fn verdicts(notes: &[Note]) -> Vec<VerdictFact> {
-    notes
-        .iter()
-        .filter_map(|note| {
-            let at = note
-                .submitted_at
-                .as_deref()
-                .or(note.created_at.as_deref())?;
-            verdict(note.body.as_deref()?, at)
-        })
-        .collect()
-}
-
-/// The verdict of a body whose last non-blank line is
-/// `VERDICT: PASS head=<40 hex>` or `VERDICT: FAIL head=<40 hex>`. The head is
+/// The verdict of a review body that has a line starting with `Reviewer:` and whose last
+/// non-blank line is `VERDICT: PASS head=<40 hex>` or `VERDICT: FAIL head=<40 hex>`. The head is
 /// lowercased, so that it equals a SHA of GitHub.
 pub(super) fn verdict(body: &str, at: &str) -> Option<VerdictFact> {
+    body.lines().find(|line| line.starts_with(REVIEWER))?;
     let line = body.lines().map(str::trim).rfind(|line| !line.is_empty())?;
     let (word, head) = line.strip_prefix("VERDICT: ")?.split_once(" head=")?;
     let pass = match word {

@@ -38,7 +38,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T23:24:50Z",
       "commit_id": "7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3",
-      "body": "as listed. For item 9, a frozen-clock seam plus exclusive create with a retry on AlreadyExists.\n- Triage the 16 Codex threads in one pass.\n\nVERDICT: FAIL head=7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3.\nas listed. For item 9, a frozen-clock seam plus exclusive create with a retry on AlreadyExists.\n- Triage the 16 Codex threads in one pass.\n\nVERDICT: FAIL head=7967cdf2e7e0feaa42c5c8b8c0740f495b05abd3\n"
     },
     {
       "id": 6081966587,
@@ -238,7 +238,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T01:24:23Z",
       "commit_id": "6659707a5275eea389d5cad99898ab8a0ff807e2",
-      "body": "Tests: implement P1-P8 exactly as approved, plus tests for items 1, 2, 3, 4 and 6 (red under single-site mutations; plans in the PR body).\n\nVERDICT: FAIL head=6659707a5275eea389d5cad99898ab8a0ff807e2\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 6659707a5275eea389d5cad99898ab8a0ff807e2.\nTests: implement P1-P8 exactly as approved, plus tests for items 1, 2, 3, 4 and 6 (red under single-site mutations; plans in the PR body).\n\nVERDICT: FAIL head=6659707a5275eea389d5cad99898ab8a0ff807e2\n"
     },
     {
       "id": 6082817795,
@@ -418,7 +418,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T04:08:46Z",
       "commit_id": "5dcf18a24e742f8e78f028e279bf28e0130ee882",
-      "body": "p and exits.\n- Flake: find the root cause of the rust_runner_orb_calls hang under load and fix it (no retry or longer timeout as the fix).\n\nVERDICT: FAIL head=5dcf18a24e742f8e78f028e279bf28e0130ee882\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 5dcf18a24e742f8e78f028e279bf28e0130ee882.\np and exits.\n- Flake: find the root cause of the rust_runner_orb_calls hang under load and fix it (no retry or longer timeout as the fix).\n\nVERDICT: FAIL head=5dcf18a24e742f8e78f028e279bf28e0130ee882\n"
     },
     {
       "id": 6084681255,
@@ -498,7 +498,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T08:39:06Z",
       "commit_id": "d09329430987ab285819073ca8cf3460667d9f28",
-      "body": "Note in #2984 that fault.rs' 500..=599 arm is dead for workflow_run errors (api_status already maps ≥500 to Uncertain), or remove the arm.\n\nVERDICT: FAIL head=d09329430987ab285819073ca8cf3460667d9f28\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: d09329430987ab285819073ca8cf3460667d9f28.\nNote in #2984 that fault.rs' 500..=599 arm is dead for workflow_run errors (api_status already maps ≥500 to Uncertain), or remove the arm.\n\nVERDICT: FAIL head=d09329430987ab285819073ca8cf3460667d9f28\n"
     },
     {
       "id": 6086140728,
@@ -628,7 +628,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T12:36:55Z",
       "commit_id": "54a2910976163d65f8a2e68fdbbcc5339a99b449",
-      "body": "ial-mode SIGTERM now exits 0; note it on #2884 for the service unit.\n\nTESTS: CHANGES_REQUIRED head=54a2910976163d65f8a2e68fdbbcc5339a99b449\nVERDICT: FAIL head=54a2910976163d65f8a2e68fdbbcc5339a99b449\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 54a2910976163d65f8a2e68fdbbcc5339a99b449.\nial-mode SIGTERM now exits 0; note it on #2884 for the service unit.\n\nTESTS: CHANGES_REQUIRED head=54a2910976163d65f8a2e68fdbbcc5339a99b449\nVERDICT: FAIL head=54a2910976163d65f8a2e68fdbbcc5339a99b449\n"
     },
     {
       "id": 6090068990,
@@ -1060,7 +1060,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T19:33:47Z",
       "commit_id": "cbfa9b1c295f2e986d465007df2273df3508ba5f",
-      "body": "nd: its base #2958 is in fix round 21. Restack onto main after #2958 merges.\n\nTESTS: APPROVED head=cbfa9b1c295f2e986d465007df2273df3508ba5f\nVERDICT: FAIL head=cbfa9b1c295f2e986d465007df2273df3508ba5f\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: cbfa9b1c295f2e986d465007df2273df3508ba5f.\nnd: its base #2958 is in fix round 21. Restack onto main after #2958 merges.\n\nTESTS: APPROVED head=cbfa9b1c295f2e986d465007df2273df3508ba5f\nVERDICT: FAIL head=cbfa9b1c295f2e986d465007df2273df3508ba5f\n"
     },
     {
       "id": 6093080736,
@@ -1100,7 +1100,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T22:06:37Z",
       "commit_id": "328c05ba1b4d02cbe2cfc18c81edeae6567ef137",
-      "body": " after #2958 merges, plus a green pull_request CI run on the restacked head.\n\nTESTS: APPROVED head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\nVERDICT: PASS head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 328c05ba1b4d02cbe2cfc18c81edeae6567ef137.\n after #2958 merges, plus a green pull_request CI run on the restacked head.\n\nTESTS: APPROVED head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\nVERDICT: PASS head=328c05ba1b4d02cbe2cfc18c81edeae6567ef137\n"
     }
   ]
 ]

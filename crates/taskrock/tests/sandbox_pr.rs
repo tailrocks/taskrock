@@ -79,7 +79,7 @@ fn open_and_review(gh: &RealGh, branch: &str, head: &str) -> Result<u64, Error> 
         gh,
         "POST",
         &format!("{REPO}/pulls/{number}/reviews"),
-        &json!({"event": "COMMENT", "body": format!("VERDICT: PASS head={head}")}),
+        &json!({"event": "COMMENT", "body": format!("Reviewer: sandbox\nVERDICT: PASS head={head}")}),
     )?;
     Ok(number)
 }

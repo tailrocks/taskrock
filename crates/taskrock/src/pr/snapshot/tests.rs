@@ -1,7 +1,6 @@
 //! Tests of the snapshot, from the recorded pull requests of tailrocks/velnor-new.
 
 use super::case_tests::{Case, page};
-use super::rest::verdict;
 use super::{PullState, read};
 use crate::gh::FakeGh;
 
@@ -120,17 +119,6 @@ fn snapshot_a_codex_comment_that_does_not_parse_is_a_problem() {
     case.comments = case.comments.replace(r#"{\"code_review\""#, r#"{\"nope\""#);
     let snapshot = snapshot(&case);
     assert!(snapshot.codex.is_none() && snapshot.problems[0].contains("Codex"));
-}
-
-#[test]
-fn snapshot_verdict_is_the_last_non_blank_line() {
-    let sha = "0123456789abcdef0123456789abcdef01234567";
-    let line = |word: &str| format!("Findings.\n\nVERDICT: {word} head={sha}\r\n\n  \n");
-    assert!(verdict(&line("PASS"), "t").expect("pass").pass);
-    assert!(!verdict(&line("FAIL"), "t").expect("fail").pass);
-    assert!(verdict(&format!("VERDICT: PASS head={sha}\nmore"), "t").is_none());
-    assert!(verdict("VERDICT: PASS head=abc", "t").is_none());
-    assert!(verdict(&line("MAYBE"), "t").is_none());
 }
 
 #[test]

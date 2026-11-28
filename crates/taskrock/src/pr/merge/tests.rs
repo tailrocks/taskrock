@@ -69,7 +69,7 @@ impl Scene {
     }
 
     fn reviews(&self) -> String {
-        let body = format!("VERDICT: PASS head={HEAD}");
+        let body = format!("Reviewer: reviewer\nVERDICT: PASS head={HEAD}");
         let notes = json!([{"body": body, "submitted_at": "2026-11-28T10:00:00Z", "user": {"login": "reviewer"}}]);
         if self.passed {
             json!([notes])
