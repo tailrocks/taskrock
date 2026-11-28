@@ -78,3 +78,12 @@ fn a_key_that_is_all_digits_is_still_accepted() {
     let found = lines(vec![epic("2878"), issue("T", "parent = \"2878\"")]);
     assert!(found.is_empty(), "{found:?}");
 }
+
+#[test]
+fn an_empty_parent_is_not_called_an_issue_number() {
+    for parent in ["", "#"] {
+        let found = lines(vec![issue("T", &format!("parent = \"{parent}\""))]);
+        assert_eq!(found.len(), 1, "{parent:?}: {found:?}");
+        assert!(!found[0].contains("is an issue number"), "{found:?}");
+    }
+}

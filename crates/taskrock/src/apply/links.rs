@@ -14,6 +14,8 @@ use crate::link::IssueLink;
 #[cfg(test)]
 mod flow_tests;
 #[cfg(test)]
+mod milestone_room_tests;
+#[cfg(test)]
 mod milestone_tests;
 #[cfg(test)]
 mod order_tests;
