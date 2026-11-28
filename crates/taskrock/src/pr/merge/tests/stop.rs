@@ -152,3 +152,17 @@ fn merge_does_not_call_a_server_error_a_refusal() {
         .fail("pulls/5/merge", "gh: Server Error (HTTP 500)");
     assert!(matches!(run(&gh), Err(Error::Gh { .. })));
 }
+
+#[test]
+fn merge_waits_while_no_check_has_started_and_writes_nothing() {
+    let gh = Scene {
+        check_started: false,
+        ..Scene::ready()
+    }
+    .gh();
+    let done = run(&gh).expect("not ready");
+    assert_eq!(done.code, 10);
+    assert_eq!(done.report.outcome, super::super::Outcome::NotReady);
+    assert!(done.lines[0].contains("checks_pending"), "{:?}", done.lines);
+    nothing(&gh);
+}

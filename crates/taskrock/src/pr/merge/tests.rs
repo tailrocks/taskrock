@@ -36,6 +36,8 @@ pub(super) struct Scene {
     pub kind: Kind,
     pub passed: bool,
     pub codex_head: Option<&'static str>,
+    /// A check run on the head. Without one, CI has not started.
+    pub check_started: bool,
 }
 
 impl Scene {
@@ -45,6 +47,7 @@ impl Scene {
             kind: Kind::Open,
             passed: true,
             codex_head: None,
+            check_started: true,
         }
     }
 
@@ -86,6 +89,15 @@ impl Scene {
         json!([self.codex_head.map(note).into_iter().collect::<Vec<_>>()]).to_string()
     }
 
+    fn check_runs(&self) -> String {
+        let runs = if self.check_started {
+            json!([{"name": "Required", "status": "completed", "conclusion": "success"}])
+        } else {
+            json!([])
+        };
+        json!({"total_count": runs.as_array().map_or(0, Vec::len), "check_runs": runs}).to_string()
+    }
+
     /// Every read of one snapshot, then no reply for any write.
     pub(super) fn gh(&self) -> FakeGh {
         let queue = self.queue.then(|| json!({"id": "MQ"}));
@@ -96,7 +108,7 @@ impl Scene {
             .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)")
             .ok("pulls/5/reviews", &self.reviews())
             .ok("issues/5/comments", &self.comments())
-            .ok("check-runs", r#"{"total_count":0,"check_runs":[]}"#)
+            .ok("check-runs", &self.check_runs())
             .ok("/status", r#"{"total_count":0,"statuses":[]}"#)
             .ok("rules/branches", "[[]]")
             .ok("pulls/5", &self.pull())

@@ -65,8 +65,17 @@ pub(super) fn mergeability(snapshot: &PullSnapshot, out: &mut Vec<Finding>) {
     }
 }
 
-/// The required checks, or every check when no check is required.
+/// The required checks, or every check when no required check can be read. With none
+/// readable and no check on the head, CI has not started: a wait.
 pub(super) fn checks(snapshot: &PullSnapshot, out: &mut Vec<Finding>) {
+    if snapshot.required_checks.is_empty() && snapshot.checks.is_empty() {
+        out.push(Finding::new(
+            Code::ChecksPending,
+            "No check has started on the head yet.",
+            "wait for the checks to start",
+        ));
+        return;
+    }
     let listed: Vec<&str> = if snapshot.required_checks.is_empty() {
         snapshot
             .checks
