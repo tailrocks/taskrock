@@ -5,11 +5,21 @@ use std::str::FromStr;
 use crate::error::Error;
 
 #[cfg(test)]
+mod pull_tests;
+#[cfg(test)]
 mod tests;
 
 /// One issue on GitHub.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct IssueLink {
+    pub owner: String,
+    pub repo: String,
+    pub number: u64,
+}
+
+/// One pull request on GitHub.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct PullLink {
     pub owner: String,
     pub repo: String,
     pub number: u64,
@@ -73,6 +83,20 @@ impl FromStr for IssueLink {
     }
 }
 
+impl FromStr for PullLink {
+    type Err = Error;
+
+    /// Parse one of the two pull request forms.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::Link`] when the text is not a pull request link.
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let text = s.trim();
+        parse_pull(text).ok_or_else(|| Error::Link(format!("not a pull request link: {text}")))
+    }
+}
+
 impl IssueLink {
     /// `https://github.com/{owner}/{repo}/issues/{number}`
     #[must_use]
@@ -99,6 +123,29 @@ impl IssueLink {
     #[must_use]
     pub fn branch(&self) -> String {
         format!("feat/issue-{}", self.number)
+    }
+}
+
+impl PullLink {
+    /// `https://github.com/{owner}/{repo}/pull/{number}`
+    #[must_use]
+    pub fn url(&self) -> String {
+        format!(
+            "https://github.com/{}/{}/pull/{}",
+            self.owner, self.repo, self.number
+        )
+    }
+
+    /// `repos/{owner}/{repo}/pulls/{number}`
+    #[must_use]
+    pub fn api_path(&self) -> String {
+        format!("repos/{}/{}/pulls/{}", self.owner, self.repo, self.number)
+    }
+
+    /// `repos/{owner}/{repo}`
+    #[must_use]
+    pub fn repo_path(&self) -> String {
+        format!("repos/{}/{}", self.owner, self.repo)
     }
 }
 
@@ -148,16 +195,49 @@ fn parse_slashed_issue(rest: &str) -> Option<IssueLink> {
 }
 
 fn parse_short_issue(text: &str) -> Option<IssueLink> {
-    let (slug, number) = text.split_once('#')?;
-    let (owner, repo) = slug.split_once('/')?;
-    let owner = parse_name(owner)?.to_owned();
-    let repo = parse_name(repo)?.to_owned();
-    let number = parse_number(cut_tail(number))?;
+    let (owner, repo, number) = parse_short(text)?;
     Some(IssueLink {
         owner,
         repo,
         number,
     })
+}
+
+fn parse_pull(text: &str) -> Option<PullLink> {
+    let (owner, repo, number) = match text.strip_prefix("https://github.com/") {
+        Some(rest) => parse_slashed_pull(rest)?,
+        None => parse_short(text)?,
+    };
+    Some(PullLink {
+        owner,
+        repo,
+        number,
+    })
+}
+
+fn parse_slashed_pull(rest: &str) -> Option<(String, String, u64)> {
+    let mut parts = cut_tail(rest).split('/');
+    let owner = parse_name(parts.next()?)?.to_owned();
+    let repo = parse_name(parts.next()?)?.to_owned();
+    if parts.next()? != "pull" {
+        return None;
+    }
+    let number = parse_number(parts.next()?)?;
+    match parts.next() {
+        None | Some("files" | "commits" | "checks") if parts.next().is_none() => {
+            Some((owner, repo, number))
+        }
+        _ => None,
+    }
+}
+
+fn parse_short(text: &str) -> Option<(String, String, u64)> {
+    let (slug, number) = text.split_once('#')?;
+    let (owner, repo) = slug.split_once('/')?;
+    let owner = parse_name(owner)?.to_owned();
+    let repo = parse_name(repo)?.to_owned();
+    let number = parse_number(cut_tail(number))?;
+    Some((owner, repo, number))
 }
 
 fn parse_project(text: &str) -> Option<ProjectLink> {

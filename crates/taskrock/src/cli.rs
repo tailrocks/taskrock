@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 
-use clap::{Parser, Subcommand};
+use clap::{ArgGroup, Parser, Subcommand};
 
 /// Plan and run agent work on GitHub Issues and Projects.
 #[derive(Debug, Parser)]
@@ -99,5 +99,49 @@ pub enum Command {
         /// Allow changes to the frozen sections of a task in progress.
         #[arg(long)]
         replan: bool,
+    },
+    /// Work with pull requests.
+    Pr {
+        #[command(subcommand)]
+        command: PrCommand,
+    },
+}
+
+/// The commands of `taskrock pr`.
+#[derive(Debug, Subcommand)]
+pub enum PrCommand {
+    /// Print the state of a pull request.
+    Status {
+        /// The link of the pull request.
+        link: String,
+        /// Print JSON.
+        #[arg(long)]
+        json: bool,
+    },
+    /// List the review threads of a pull request, and defer or resolve them.
+    #[command(group(ArgGroup::new("action").required(true).args(["defer", "resolve"])))]
+    Threads {
+        /// The link of the pull request.
+        link: String,
+        /// Print JSON.
+        #[arg(long)]
+        json: bool,
+        /// Defer the open threads.
+        #[arg(long, conflicts_with = "resolve")]
+        defer: bool,
+        /// Resolve the thread with this id.
+        #[arg(long, requires = "reason")]
+        resolve: Option<String>,
+        /// Why the thread is resolved.
+        #[arg(long, requires = "resolve")]
+        reason: Option<String>,
+    },
+    /// Merge a pull request.
+    Merge {
+        /// The link of the pull request.
+        link: String,
+        /// Print JSON.
+        #[arg(long)]
+        json: bool,
     },
 }
