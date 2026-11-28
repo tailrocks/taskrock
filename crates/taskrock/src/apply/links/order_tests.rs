@@ -1,10 +1,9 @@
 //! Tests of the order of the reads and writes of `apply`: nothing is created before the draft is known to apply.
 
-use std::path::PathBuf;
-
 use crate::apply::create_issues;
 use crate::error::Error;
 use crate::gh::FakeGh;
+use crate::scratch::Scratch;
 
 use super::super::tests::{FIELDS, MISSING, created, dry_options, has_call, not_found, options};
 use super::tests::FIVE;
@@ -30,12 +29,13 @@ pub(super) fn task(key: &str, front: &str) -> String {
 }
 
 /// A draft folder in the temporary directory with `plan` and these `(file, text)` issues.
-pub(super) fn draft(name: &str, plan: &str, issues: &[(&str, String)]) -> PathBuf {
-    let folder = std::env::temp_dir().join(format!("taskrock-{name}-{}", std::process::id()));
-    std::fs::create_dir_all(&folder).expect("folder is made");
-    std::fs::write(folder.join("plan.toml"), format!("{PLAN}{plan}")).expect("plan is written");
+pub(super) fn draft(name: &str, plan: &str, issues: &[(&str, String)]) -> Scratch {
+    let folder = Scratch::new(name).expect("folder is made");
+    folder
+        .write("plan.toml", &format!("{PLAN}{plan}"))
+        .expect("plan is written");
     for (file, text) in issues {
-        std::fs::write(folder.join(file), text).expect("issue is written");
+        folder.write(file, text).expect("issue is written");
     }
     folder
 }
@@ -62,7 +62,7 @@ fn unknown_link_stops_before_any_milestone_post() {
     let own = "milestone = \"M2\"\nparent = \"https://github.com/tailrocks/holla/issues/5\"";
     let folder = draft("link-first", M2, &[("L1.md", task("L1", own))]);
     let gh = not_found(gh(&["[[]]"]), 1).fail("holla/issues/5", MISSING);
-    let Err(Error::Apply(message)) = create_issues(&gh, &folder, &options()) else {
+    let Err(Error::Apply(message)) = create_issues(&gh, folder.path(), &options()) else {
         panic!("expected Error::Apply");
     };
     assert_eq!(
@@ -85,7 +85,7 @@ fn plan_milestone_is_checked_in_every_repo_before_any_create() {
         .fail("other/issues/1", MISSING)
         .fail("other/issues/2", MISSING)
         .fail("other/issues/3", MISSING);
-    let Err(Error::Project(message)) = create_issues(&gh, &folder, &options()) else {
+    let Err(Error::Project(message)) = create_issues(&gh, folder.path(), &options()) else {
         panic!("expected Error::Project");
     };
     assert_eq!(
@@ -107,7 +107,8 @@ fn dry_run_and_real_run_agree_on_a_plan_milestone_that_apply_creates() {
     ];
     let folder = draft("agree", &plan, &issues);
     let dry = not_found(parented(gh(&["[[]]"])), 1);
-    let (_, _, lines) = create_issues(&dry, &folder, &dry_options()).expect("dry run succeeds");
+    let (_, _, lines) =
+        create_issues(&dry, folder.path(), &dry_options()).expect("dry run succeeds");
     assert!(
         lines.contains(&"would set milestone M2 on B1".to_owned()),
         "{lines:?}"
@@ -122,6 +123,6 @@ fn dry_run_and_real_run_agree_on_a_plan_milestone_that_apply_creates() {
         ),
         11,
     );
-    create_issues(&real, &folder, &options()).expect("real run succeeds");
+    create_issues(&real, folder.path(), &options()).expect("real run succeeds");
     assert!(has_call(&real, "POST repos/tailrocks/holla/milestones"));
 }

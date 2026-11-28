@@ -18,6 +18,7 @@ The plan for this repository is on GitHub: the issues of `tailrocks/taskrock` an
 - Unit tests live in `src/<module>/tests.rs`, declared in the module with `#[cfg(test)] mod tests;`. Integration tests live in `crates/taskrock/tests/`, which holds only `.rs` files. JSON test data lives in `crates/taskrock/fixtures/`.
 - Every GitHub request goes through the `Gh` trait. Use the REST API. Do not use the search API: its results lag behind writes.
 - Add a dependency only when the task names it. Add it with `cargo add`, and commit `Cargo.lock`.
+- A test that needs a folder uses `taskrock::scratch::Scratch`, which removes the folder on drop. Never call `std::env::temp_dir()` in a test.
 
 ## Checks
 

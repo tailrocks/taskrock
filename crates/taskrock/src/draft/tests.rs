@@ -7,6 +7,7 @@ use super::{
     parse::{parse_issue, parse_plan, read},
 };
 use crate::error::Error;
+use crate::scratch::Scratch;
 
 const PLAN: &str = "id = \"holla-csv\"\nrepo = \"tailrocks/holla\"\nproject = \"https://github.com/orgs/tailrocks/projects/7\"\n";
 const ISSUE: &str =
@@ -53,10 +54,9 @@ fn read_good_returns_four_issues_in_file_order() {
 
 #[test]
 fn missing_plan_reports_the_file() {
-    let dir = std::env::temp_dir().join("taskrock-test-without-plan");
-    std::fs::create_dir_all(&dir).expect("the temp dir exists");
+    let dir = Scratch::new("without-plan").expect("the temp dir exists");
     let expected = ("plan.toml".to_owned(), "plan.toml is missing".to_owned());
-    assert_eq!(fails_with(read(&dir)), expected);
+    assert_eq!(fails_with(read(dir.path())), expected);
 }
 
 #[test]

@@ -15,6 +15,7 @@ pub mod handoff;
 pub mod link;
 pub mod projects;
 pub mod ready;
+pub mod scratch;
 pub mod setup;
 pub mod stack;
 pub mod template;

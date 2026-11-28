@@ -1,6 +1,6 @@
 //! Apply a draft twice: the second run creates nothing.
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use serde_json::{Value, json};
@@ -11,16 +11,13 @@ use taskrock::gh::RealGh;
 use taskrock::github::items::project_items;
 use taskrock::github::{get, send};
 use taskrock::link::ProjectLink;
+use taskrock::scratch::Scratch;
 
 const REPO: &str = "tailrocks/taskrock-sandbox";
 
 /// The tests share one repository and GitHub lists new issues late, so they
 /// take this lock and create their issues one after another.
 static SANDBOX: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
-fn folder(stamp: u64) -> PathBuf {
-    std::env::temp_dir().join(format!("taskrock-apply-{stamp}"))
-}
 
 fn write_file(folder: &Path, name: &str, text: &str) -> Result<(), Error> {
     std::fs::write(folder.join(name), text).map_err(|error| Error::Draft {
@@ -95,10 +92,10 @@ fn second_apply_creates_nothing() {
         .duration_since(UNIX_EPOCH)
         .expect("time")
         .as_secs();
-    let folder = folder(stamp);
+    let folder = Scratch::new("apply").expect("the draft folder is made");
     let id = format!("apply-{stamp}");
     write_draft(
-        &folder,
+        folder.path(),
         &id,
         stamp,
         &[
@@ -116,8 +113,9 @@ fn second_apply_creates_nothing() {
         pause: Duration::from_secs(1),
         poll: Duration::from_secs(5),
     };
-    let (_, first, first_lines) = create_issues(&gh, &folder, &options).expect("first apply");
-    let (_, second, second_lines) = create_issues(&gh, &folder, &options).expect("second apply");
+    let (_, first, first_lines) = create_issues(&gh, folder.path(), &options).expect("first apply");
+    let (_, second, second_lines) =
+        create_issues(&gh, folder.path(), &options).expect("second apply");
     assert_eq!(first_lines.len(), 4, "four issues are created");
     assert!(
         first_lines.iter().all(|line| line.starts_with("created ")),
@@ -148,7 +146,6 @@ fn second_apply_creates_nothing() {
         .map(|key| first.get(key).expect("key is mapped").link.number)
         .collect();
     close(&gh, &numbers).expect("issues are closed");
-    std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }
 
 /// The numbers of the issues the first run created, in creation order.
@@ -169,10 +166,10 @@ fn second_apply_links_nothing_twice() {
         .duration_since(UNIX_EPOCH)
         .expect("time")
         .as_secs();
-    let folder = std::env::temp_dir().join(format!("taskrock-apply-blockers-{stamp}"));
+    let folder = Scratch::new("apply-blockers").expect("the draft folder is made");
     let id = format!("apply-blockers-{stamp}");
     write_draft(
-        &folder,
+        folder.path(),
         &id,
         stamp,
         &[
@@ -195,8 +192,8 @@ fn second_apply_links_nothing_twice() {
         pause: Duration::from_secs(1),
         poll: Duration::from_secs(5),
     };
-    let first = run(&gh, &folder, &options).expect("first apply");
-    let second = run(&gh, &folder, &options).expect("second apply");
+    let first = run(&gh, folder.path(), &options).expect("first apply");
+    let second = run(&gh, folder.path(), &options).expect("second apply");
     for (name, text) in [("first", &first), ("second", &second)] {
         assert_eq!(
             text.lines().last(),
@@ -229,7 +226,6 @@ fn second_apply_links_nothing_twice() {
         );
     }
     close(&gh, &numbers).expect("issues are closed");
-    std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }
 
 /// Writes a draft of one Task and one Bug under the epic. The Bug has the four
@@ -259,14 +255,15 @@ fn apply_puts_a_bug_in_triage_and_a_task_in_todo() {
         .duration_since(UNIX_EPOCH)
         .expect("time")
         .as_secs();
-    let folder = std::env::temp_dir().join(format!("taskrock-apply-triage-{stamp}"));
-    write_triage_draft(&folder, &format!("apply-triage-{stamp}"), stamp).expect("draft is written");
+    let folder = Scratch::new("apply-triage").expect("the draft folder is made");
+    write_triage_draft(folder.path(), &format!("apply-triage-{stamp}"), stamp)
+        .expect("draft is written");
     let options = Options {
         dry_run: false,
         pause: Duration::from_secs(1),
         poll: Duration::from_secs(5),
     };
-    let text = run(&gh, &folder, &options).expect("apply");
+    let text = run(&gh, folder.path(), &options).expect("apply");
     let numbers = created_numbers(&text);
     assert_eq!(numbers.len(), 4, "four issues are created: {text}");
     let project = ProjectLink {
@@ -287,5 +284,4 @@ fn apply_puts_a_bug_in_triage_and_a_task_in_todo() {
     );
     assert_eq!(status("Task").as_deref(), Some("Todo"), "the Task is Todo");
     close(&gh, &numbers).expect("issues are closed");
-    std::fs::remove_dir_all(&folder).expect("the draft folder is removed");
 }
