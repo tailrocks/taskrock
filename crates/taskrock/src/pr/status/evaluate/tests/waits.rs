@@ -166,3 +166,18 @@ fn evaluate_readable_required_checks_keep_their_rule_when_other_checks_exist() {
     assert_eq!(codes(&verdict), ["checks_pending"]);
     assert_eq!(verdict.findings[0].items, ["Required"]);
 }
+
+#[test]
+fn evaluate_checks_pending_while_the_only_check_runs_and_no_required_check_is_readable() {
+    let mut snapshot = ready();
+    snapshot.required_checks.clear();
+    snapshot.checks = vec![crate::pr::snapshot::CheckFact {
+        name: "Build".into(),
+        completed: false,
+        conclusion: None,
+    }];
+    let verdict = judge(&snapshot);
+    assert_eq!(codes(&verdict), ["checks_pending"]);
+    assert_eq!(verdict.state, State::Waiting);
+    assert_eq!(verdict.findings[0].items, ["Build"]);
+}
