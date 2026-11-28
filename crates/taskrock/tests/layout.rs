@@ -263,6 +263,14 @@ fn test_modules_keep_cfg_test() -> io::Result<()> {
     let only = test_only_files(&tree);
     let mut problems = Vec::new();
     for decl in &tree.decls {
+        if decl.cfg_attr {
+            problems.push(format!(
+                "{} declares `mod {}` with a cfg_attr attribute, which can hide a cfg \
+                 from this check: remove it and use a plain #[cfg(test)]",
+                rel(&decl.parent),
+                decl.name
+            ));
+        }
         if decl.gate == Gate::Other {
             problems.push(format!(
                 "{} declares `mod {}` under a cfg that mentions test: write exactly \

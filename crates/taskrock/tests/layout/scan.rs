@@ -29,6 +29,8 @@ pub(crate) struct Decl {
     pub(crate) nested: bool,
     /// The declaration has a `#[path]` attribute.
     pub(crate) path: bool,
+    /// The declaration has a `cfg_attr` attribute, which can hide a `cfg` from the gate.
+    pub(crate) cfg_attr: bool,
     pub(crate) name: String,
 }
 
@@ -67,6 +69,7 @@ impl Decl {
 struct Attrs {
     gate: Gate,
     path: bool,
+    cfg_attr: bool,
 }
 
 /// The attribute `#[cfg(test)]`, a `cfg(…)` that mentions `test` in another form, and
@@ -83,6 +86,7 @@ fn read_attrs(toks: &[Tok]) -> Attrs {
     Attrs {
         gate,
         path: code.starts_with("path=") || (cfg_attr && code.contains(",path=")),
+        cfg_attr,
     }
 }
 
@@ -127,6 +131,7 @@ impl Scan<'_> {
             gate: self.attrs.gate,
             nested,
             path: self.attrs.path,
+            cfg_attr: self.attrs.cfg_attr,
             name: name.to_owned(),
         });
         if inline {
@@ -152,6 +157,7 @@ impl Scan<'_> {
             let read = read_attrs(&toks[open + 1..end]);
             self.attrs.gate = self.attrs.gate.merge(read.gate);
             self.attrs.path |= read.path;
+            self.attrs.cfg_attr |= read.cfg_attr;
         }
         end + 1
     }
