@@ -13,6 +13,7 @@ pub mod gh;
 pub mod github;
 pub mod handoff;
 pub mod link;
+pub mod pr;
 pub mod projects;
 pub mod ready;
 pub mod setup;
@@ -28,7 +29,7 @@ use crate::gh::Gh;
 /// # Errors
 ///
 /// Returns the error of the command that runs.
-pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
+pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<u8, error::Error> {
     match &cli.command {
         cli::Command::Check {
             path,
@@ -37,7 +38,7 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
         } => {
             let text = check(path, *coverage, config.as_deref())?;
             println!("{text}");
-            Ok(())
+            Ok(0)
         }
         cli::Command::Apply { draft, dry_run } => {
             let options = apply::Options {
@@ -47,7 +48,7 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
             };
             let text = apply::run(gh, draft, &options)?;
             println!("{text}");
-            Ok(())
+            Ok(0)
         }
         cli::Command::Ready {
             link,
@@ -56,7 +57,7 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
         } => {
             let text = ready::run(gh, link, *json, *stacked)?;
             println!("{text}");
-            Ok(())
+            Ok(0)
         }
         cli::Command::Claim { link, stacked } => {
             let text = if *stacked {
@@ -65,14 +66,14 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
                 claim::claim(gh, link)?
             };
             println!("{text}");
-            Ok(())
+            Ok(0)
         }
         cli::Command::Release { link, note } => {
             if let Some(note) = note {
                 println!("{}", handoff::post(gh, link, note)?);
             }
             println!("{}", claim::release(gh, link)?);
-            Ok(())
+            Ok(0)
         }
         cli::Command::Setup {
             owner,
@@ -87,7 +88,7 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
                 yes: *yes,
             };
             println!("{}", setup::run(gh, &options)?);
-            Ok(())
+            Ok(0)
         }
         cli::Command::Template {
             kind,
@@ -98,12 +99,13 @@ pub fn run(cli: &cli::Cli, gh: &dyn Gh) -> Result<(), error::Error> {
                 "{}",
                 template::run(gh, kind, owner.as_deref(), config.as_deref())?
             );
-            Ok(())
+            Ok(0)
         }
         cli::Command::Edit { link, file, replan } => {
             println!("{}", edit::run(gh, link, file, *replan)?);
-            Ok(())
+            Ok(0)
         }
+        cli::Command::Pr { command } => pr::run(gh, command),
     }
 }
 
