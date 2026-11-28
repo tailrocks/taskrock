@@ -152,7 +152,7 @@ The [README](../README.md) does not yet list the three `pr` commands. The skills
 
 ### The pull request gate
 
-**Chosen.** `taskrock pr status`, `taskrock pr threads` and `taskrock pr merge`. The verdict is a `VERDICT: PASS|FAIL head=<sha>` text. A round is one reviewed head. Findings of P0, P1 and P2 block, from bots and from taskrock reviewers. A bot P0 to P2 thread blocks until the reviewer rules on it. P3 bot threads are resolved with a reply. Codex reviews a ready pull request on every push and skips drafts, so a builder works in draft and marks the pull request ready once per round. No follow-up issues for review findings.
+**Chosen.** `taskrock pr status`, `taskrock pr threads` and `taskrock pr merge`. The verdict is a `VERDICT: PASS|FAIL head=<sha>` text. A round is one reviewed head. The required checks of the base branch decide when they can be read; when none can be read, the pull request waits (`checks_pending`) until at least one check run or commit status has completed on the head, so a pull request whose CI has not started is never ready. Findings of P0, P1 and P2 block, from bots and from taskrock reviewers. A bot P0 to P2 thread blocks until the reviewer rules on it. P3 bot threads are resolved with a reply. Codex reviews a ready pull request on every push and skips drafts, so a builder works in draft and marks the pull request ready once per round. No follow-up issues for review findings.
 
 **Rejected.** GitHub approvals (one shared login). Counting only FAIL verdicts. Merging known medium findings. Turning Codex automatic reviews off. Follow-up issues per finding. A `pr refresh` command and force-push rebases. Refreshing a pull request that is only behind.
 

@@ -1,6 +1,6 @@
 //! One test per wait code, and the Codex rules.
 
-use super::{HEAD, check, codes, judge, ready};
+use super::{HEAD, State, check, codes, judge, ready};
 use crate::pr::snapshot::{CodexFact, QueueEntry};
 
 fn codex(code_sha: &str, code: &str, security_sha: &str, security: &str) -> CodexFact {
@@ -97,4 +97,35 @@ fn evaluate_bot_review_pending_while_the_code_review_runs() {
     let mut snapshot = ready();
     snapshot.codex = Some(codex(HEAD, "running", HEAD, "completed"));
     assert_eq!(codes(&judge(&snapshot)), ["bot_review_pending"]);
+}
+
+#[test]
+fn evaluate_checks_pending_when_no_required_check_is_readable_and_none_has_started() {
+    let mut snapshot = ready();
+    snapshot.required_checks.clear();
+    snapshot.checks.clear();
+    let verdict = judge(&snapshot);
+    assert_eq!(codes(&verdict), ["checks_pending"]);
+    assert_eq!(
+        verdict.findings[0].detail,
+        "No check has started on the head yet."
+    );
+    assert_eq!(verdict.state, State::Waiting);
+}
+
+#[test]
+fn evaluate_one_completed_check_is_enough_when_no_required_check_is_readable() {
+    let mut snapshot = ready();
+    snapshot.required_checks.clear();
+    snapshot.checks = vec![check("Any", Some("success"))];
+    assert_eq!(judge(&snapshot).findings, []);
+}
+
+#[test]
+fn evaluate_readable_required_checks_keep_their_rule_when_other_checks_exist() {
+    let mut snapshot = ready();
+    snapshot.checks = vec![check("Extra", Some("success"))];
+    let verdict = judge(&snapshot);
+    assert_eq!(codes(&verdict), ["checks_pending"]);
+    assert_eq!(verdict.findings[0].items, ["Required"]);
 }
