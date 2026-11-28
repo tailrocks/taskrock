@@ -17,9 +17,6 @@ mod views;
 mod workflows;
 
 #[cfg(test)]
-mod testing;
-
-#[cfg(test)]
 mod tests;
 
 /// The options of `taskrock setup`.

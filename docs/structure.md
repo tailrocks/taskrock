@@ -88,6 +88,7 @@ There are three kinds of tests.
   - `src/ready/triage_tests.rs`
 - Unit tests can also sit in a `tests/` folder next to the `tests.rs` of their module. Both layouts are allowed. The `tests.rs` file declares each file of that folder with `mod <name>;`. The parent module declares that `tests.rs` file with `#[cfg(test)] mod tests;`, or with `#[cfg(test)] pub(super) mod tests;` when the tests of sibling modules import from it. These files use the `tests/` folder layout:
   - `src/apply/status/tests/rerun.rs`
+  - `src/edit/tests/support.rs`
   - `src/pr/merge/tests/land.rs`
   - `src/pr/merge/tests/stop.rs`
   - `src/pr/status/evaluate/tests/blockers.rs`
@@ -105,10 +106,11 @@ There are three kinds of tests.
   - `src/setup/project_fields/tests/columns.rs`
   - `src/setup/projects/tests/fixes.rs`
   - `src/setup/tests/complete.rs`
+  - `src/setup/tests/testing.rs`
   - `src/setup/views/tests/create.rs`
   - `src/setup/views/tests/fix.rs`
   - `src/setup/workflows/tests/support.rs`
-- Integration tests sit in `crates/taskrock/tests/`. `cli.rs` runs the built binary with `--version`, with `--help` and with no argument. Its three `#[ignore = "talks to GitHub"]` tests run `pr status` and `pr threads` with `--json` on the merged pull request 153. `ready.rs` runs `ready::run` against the fixtures through `FakeGh`. `check_config.rs` runs `taskrock check` on a config file.
+- Integration tests sit in `crates/taskrock/tests/`. `cli.rs` runs the built binary with `--version`, with `--help` and with no argument. Its three `#[ignore = "talks to GitHub"]` tests run `pr status` and `pr threads` with `--json` on the merged pull request 153. `ready.rs` runs `ready::run` against the fixtures through `FakeGh`. `check_config.rs` runs `taskrock check` on a config file. `layout.rs` checks the unit-test layout of this section: each test file under `src` is named in the lists above, each listed file exists, and each module declared under `#[cfg(test)]` is a `tests.rs`, a `*_tests.rs` or a file in a `tests/` folder.
 - Live tests are the files whose names start with `sandbox_`. They call GitHub. Each test has the attribute `#[ignore = "talks to GitHub"]`, so a normal test run skips it. The live tests of apply and claim write to `tailrocks/taskrock-sandbox`. The live test of setup, `sandbox_setup.rs`, runs `taskrock setup` twice on the sandbox project and expects no change the second time. The live test of `pr merge`, `sandbox_pr.rs`, opens a pull request on a new branch `sandbox/pr-<unix seconds>`, posts a PASS verdict for its head, runs `taskrock pr merge` until it no longer exits 10, expects `pr status` to print `MERGED`, and deletes the branch.
 
 The folder `crates/taskrock/fixtures/` holds the JSON answers of GitHub for the project tests, `project_fields.json` and `project_items.json`. It also holds five draft folders. `draft-good` is read by the draft and check tests. `draft-triage` has a Task and a Bug, for the tests of the statuses that `apply` sets. `draft-portfolio` has an Initiative and a `portfolio` key in its `plan.toml`, for the tests of the portfolio step. `draft-links` has one Task whose `parent` and `blocked_by` are links to issues that already exist and a `milestone` in its `plan.toml`, for the tests of those keys. `draft-bad` holds files that break the rules. No test reads it by name. The config fixtures are `config-good.toml`, a complete config that passes `check`, `config-bad.toml`, which breaks three rules, and `config-sandbox.toml`, the config that the live test of setup applies to the sandbox project. The folder `fixtures/pr/` holds answers of GitHub recorded with `gh api` from pull requests of tailrocks/velnor-new, for the tests of `pr::snapshot`: `pull-`, `checks-`, `status-`, `reviews-`, `comments-` and `threads-` files for the pull requests 2932, 2963, 3033 and 3084 (3084 was in the merge queue), and `rules-main.json`. Each file keeps the shape of the answer. It drops the fields that the snapshot does not read and cuts the long text of a body to its first or last characters, so that a verdict line survives.

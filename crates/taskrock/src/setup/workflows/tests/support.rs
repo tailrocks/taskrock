@@ -6,7 +6,7 @@ use super::super::{NAMES, workflows};
 use crate::config::Workflows;
 use crate::error::Error;
 use crate::gh::FakeGh;
-use crate::setup::testing::{project, step};
+use crate::setup::tests::testing::{project, step};
 
 /// The answer with these workflows (name, enabled) and these views (name,
 /// layout, group-by field names).

@@ -8,6 +8,7 @@ use super::{Action, Change, Options, fields, run};
 use crate::config::ProjectKind::{Delivery, Portfolio};
 
 mod complete;
+pub(super) mod testing;
 use crate::config;
 use crate::error::Error;
 use crate::gh::FakeGh;
