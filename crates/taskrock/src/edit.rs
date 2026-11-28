@@ -40,7 +40,7 @@ const AGENT_LINE: &str = "_Written by an agent._";
 /// (before any network call), [`Error::Project`] when the issue is not an
 /// item of its project, [`Error::Refused`] when the type is not in the
 /// config, the body breaks the format or a frozen section changes without
-/// `replan`, and [`Error::Gh`], [`Error::Json`] or [`Error::Config`] when
+/// `replan`, and [`Error::Gh`], [`Error::GraphQl`], [`Error::Json`] or [`Error::Config`] when
 /// GitHub fails or answers badly.
 pub fn run(gh: &dyn Gh, link: &str, file: &Path, replan: bool) -> Result<String, Error> {
     let issue = link.parse::<IssueLink>()?;

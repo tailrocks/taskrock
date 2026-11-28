@@ -120,3 +120,17 @@ fn graphql_keeps_a_failure_that_is_not_an_answer_as_a_gh_error() {
         );
     }
 }
+
+#[test]
+fn graphql_reads_a_message_that_mentions_http_on_a_later_line_as_an_answer() {
+    let body =
+        r#"{"errors":[{"message":"Field 'a' is wrong"},{"message":"Retry after HTTP 502"}]}"#;
+    let stderr = "gh: Field 'a' is wrong\nRetry after HTTP 502";
+    let gh = FakeGh::new().fail_with_output("api graphql", stderr, body);
+    let error = graphql(&gh, "query", &json!({})).expect_err("failed gh");
+    let want = "Field 'a' is wrong; Retry after HTTP 502";
+    assert!(
+        matches!(&error, Error::GraphQl { message } if message == want),
+        "{error}"
+    );
+}

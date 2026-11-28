@@ -203,7 +203,8 @@ pub fn report<'a>(
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
+/// Returns [`Error::Gh`] when `gh` fails, [`Error::GraphQl`] when GitHub answers with `errors`,
+/// [`Error::Json`] when the answer is
 /// not JSON, [`Error::Link`] when the link is not understood, [`Error::Project`]
 /// when a field or the project is missing, [`Error::Refused`] when the link is
 /// a portfolio project.

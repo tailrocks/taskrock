@@ -89,7 +89,8 @@ pub fn project_items(gh: &dyn Gh, project: &ProjectLink) -> Result<Vec<Item>, Er
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
+/// Returns [`Error::Gh`] when `gh` fails, [`Error::GraphQl`] when GitHub answers with `errors`,
+/// [`Error::Json`] when the answer is
 /// not JSON, [`Error::Project`] when the issue is in no delivery project or in
 /// more than one. A project with no marker is a delivery project.
 pub fn project_of(gh: &dyn Gh, issue: &IssueLink) -> Result<ProjectLink, Error> {
