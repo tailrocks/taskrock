@@ -113,10 +113,10 @@ fn documented(text: &str) -> BTreeSet<Rel> {
 }
 
 /// Every file of test-only code: a module declared under `#[cfg(test)]` or in an
-/// inline module under it, a file of a `tests/` folder, and each module they declare.
-fn test_only_files(tree: &Tree) -> BTreeSet<PathBuf> {
-    let mut only: BTreeSet<PathBuf> = tree
-        .files
+/// inline module under it, every file of a `tests/` folder in `sources`, reachable or not,
+/// and each module they declare.
+fn test_only_files(tree: &Tree, sources: &[PathBuf]) -> BTreeSet<PathBuf> {
+    let mut only: BTreeSet<PathBuf> = sources
         .iter()
         .filter(|f| tests_depth(f) > 0)
         .cloned()
@@ -201,11 +201,10 @@ fn descendants_of_test_only_modules_use_an_allowed_layout() -> io::Result<()> {
         .filter(|d| d.is_cfg_test() && !d.nested)
         .filter_map(|d| d.file.as_deref())
         .collect();
+    let sources = sources()?;
     let mut problems = Vec::new();
-    for file in test_only_files(&tree) {
-        if tree.files.contains(&file)
-            && !direct.contains(file.as_path())
-            && !is_allowed_layout(&file)
+    for file in test_only_files(&tree, &sources) {
+        if sources.contains(&file) && !direct.contains(file.as_path()) && !is_allowed_layout(&file)
         {
             problems.push(format!(
                 "{} is part of a test-only module, but it is not a tests.rs or a *_tests.rs \
@@ -258,7 +257,7 @@ fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
 #[test]
 fn test_modules_keep_cfg_test() -> io::Result<()> {
     let tree = tree()?;
-    let only = test_only_files(&tree);
+    let only = test_only_files(&tree, &sources()?);
     let mut problems = Vec::new();
     for decl in &tree.decls {
         if decl.cfg_attr {

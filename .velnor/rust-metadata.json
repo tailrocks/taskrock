@@ -45,7 +45,8 @@
               "manifest": null,
               "features": [
                 "full",
-                "parsing"
+                "parsing",
+                "visit"
               ]
             }
           ],
@@ -197,7 +198,7 @@
   },
   "manifests": {
     "Cargo.toml": "50d6af5d499eef3ad2d317a6e639c469ed3e0221ca74fce42d6f748d061f6cb6",
-    "crates/taskrock/Cargo.toml": "9e18f9e330a39c110da566f6d0594e922cd359b91915ff7a2b3688a86d115ff4"
+    "crates/taskrock/Cargo.toml": "fc59339aa097deeba606ed8451534e5ae00c7091275417b410fe464a5cd8c17f"
   },
   "layout": "a6a35111bbdbfa0328f43f36c11d2d32087638a60d21b6947794b1697b1f2e53"
 }

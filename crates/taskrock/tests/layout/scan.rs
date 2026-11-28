@@ -1,6 +1,7 @@
 //! A scan of the module declarations of a Rust file, read with `syn`: attributes, inline
-//! modules and raw identifiers come from the parser, and a macro body is an opaque token
-//! stream that holds no module item.
+//! modules and raw identifiers come from the parser, `syn::visit` reaches every `mod` item
+//! (also in a function body, an `impl` block or a `const` block), and a macro body is an
+//! opaque token stream that holds no module item.
 
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -10,7 +11,8 @@ use std::path::{Path, PathBuf};
 
 use syn::ext::IdentExt;
 use syn::punctuated::Punctuated;
-use syn::{Attribute, Item, ItemMod, Meta, Token};
+use syn::visit::{self, Visit};
+use syn::{Attribute, ItemMod, Meta, Token};
 
 pub(crate) fn file_name(path: &Path) -> &str {
     path.file_name().and_then(|n| n.to_str()).unwrap_or("")
@@ -146,46 +148,46 @@ fn module_file(parent: &Path, inline: &[String], name: &str) -> PathBuf {
     path.join(format!("{name}.rs"))
 }
 
-/// The state of a scan of one file.
+/// The state of a scan of one file. It visits every `mod` item, wherever it sits: at the top
+/// level, in an inline module, in a function body, in an `impl` block or in a `const` block.
+/// A block does not change the folder of the file of a module that it declares.
 struct Scan<'a> {
     parent: &'a Path,
     /// The names of the inline modules that the scan is in.
     inline: Vec<String>,
+    /// The scan is in an inline module under `#[cfg(test)]`.
+    nested: bool,
     found: Vec<Decl>,
+    /// The first attribute that did not parse.
+    error: Option<syn::Error>,
 }
 
-impl Scan<'_> {
-    /// The `mod` items among `items`. A macro invocation is an item with an opaque body.
-    fn items(&mut self, items: &[Item], nested: bool) -> syn::Result<()> {
-        for item in items {
-            if let Item::Mod(module) = item {
-                self.module(module, nested)?;
+impl<'ast> Visit<'ast> for Scan<'_> {
+    fn visit_item_mod(&mut self, module: &'ast ItemMod) {
+        let attrs = match Attrs::of(&module.attrs) {
+            Ok(attrs) => attrs,
+            Err(err) => {
+                self.error.get_or_insert(err);
+                return;
             }
-        }
-        Ok(())
-    }
-
-    fn module(&mut self, module: &ItemMod, nested: bool) -> syn::Result<()> {
-        let attrs = Attrs::of(&module.attrs)?;
+        };
         let name = module.ident.unraw().to_string();
-        let body = module.content.as_ref().map(|(_, items)| items);
+        let inline = module.content.is_some();
         self.found.push(Decl {
-            file: body
-                .is_none()
-                .then(|| module_file(self.parent, &self.inline, &name)),
+            file: (!inline).then(|| module_file(self.parent, &self.inline, &name)),
             parent: self.parent.to_path_buf(),
             gate: attrs.gate,
-            nested,
+            nested: self.nested,
             path: attrs.path,
             cfg_attr: attrs.cfg_attr,
             name: name.clone(),
         });
-        if let Some(items) = body {
-            self.inline.push(name);
-            self.items(items, nested || attrs.gate == Gate::Test)?;
-            self.inline.pop();
-        }
-        Ok(())
+        let was_nested = self.nested;
+        self.nested |= attrs.gate == Gate::Test;
+        self.inline.push(name);
+        visit::visit_item_mod(self, module);
+        self.inline.pop();
+        self.nested = was_nested;
     }
 }
 
@@ -202,14 +204,16 @@ fn read(parent: &Path) -> io::Result<(Attrs, Vec<Decl>)> {
     let mut scan = Scan {
         parent,
         inline: Vec::new(),
+        nested: inner.gate == Gate::Test,
         found: Vec::new(),
+        error: None,
     };
-    scan.items(&file.items, inner.gate == Gate::Test)
-        .map_err(invalid)?;
-    Ok((inner, scan.found))
+    scan.visit_file(&file);
+    scan.error
+        .map_or(Ok((inner, scan.found)), |err| Err(invalid(err)))
 }
 
-/// Every `mod` item of a file, in its inline modules too.
+/// Every `mod` item of a file, in its inline modules, function bodies and blocks too.
 pub(crate) fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
     Ok(read(parent)?.1)
 }
