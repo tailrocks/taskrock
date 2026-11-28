@@ -66,7 +66,8 @@ pub fn with_marker(readme: &str, marker: &Marker) -> String {
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
+/// Returns [`Error::Gh`] when `gh` fails, [`Error::GraphQl`] when GitHub answers with `errors`,
+/// [`Error::Json`] when the answer is
 /// not JSON or a part is missing.
 pub fn list(gh: &dyn Gh, owner: &str) -> Result<Vec<OrgProject>, Error> {
     let query = "query($o:String!){organization(login:$o){projectsV2(first:100){nodes{id number title readme public closed}}}}";
@@ -89,7 +90,8 @@ pub fn list(gh: &dyn Gh, owner: &str) -> Result<Vec<OrgProject>, Error> {
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
+/// Returns [`Error::Gh`] when `gh` fails, [`Error::GraphQl`] when GitHub answers with `errors`,
+/// [`Error::Json`] when the answer is
 /// not JSON, [`Error::Project`] when the project does not exist.
 pub fn kind_of(gh: &dyn Gh, project: &ProjectLink) -> Result<ProjectKind, Error> {
     let query = "query($o:String!,$n:Int!){organization(login:$o){projectV2(number:$n){readme}}}";

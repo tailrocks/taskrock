@@ -36,7 +36,7 @@ mod refuse_tests;
 /// Returns [`Error::Link`] when `link` is not an issue link, [`Error::Project`]
 /// when the issue is not an item of its project, [`Error::Refused`] when the
 /// issue cannot be taken or its body breaks the build sections of its type,
-/// and [`Error::Gh`] or [`Error::Json`] when GitHub fails or answers badly.
+/// and [`Error::Gh`], [`Error::GraphQl`] or [`Error::Json`] when GitHub fails or answers badly.
 pub fn claim(gh: &dyn Gh, link: &str) -> Result<String, Error> {
     let issue = link.parse::<IssueLink>()?;
     let project = project_of(gh, &issue)?;
@@ -186,7 +186,7 @@ fn delete_branch(gh: &dyn Gh, issue: &IssueLink) {
 ///
 /// Returns [`Error::Link`] when `link` is not an issue link, [`Error::Project`]
 /// when the issue is not an item of its project, [`Error::Refused`] when the
-/// issue is closed, and [`Error::Gh`] or [`Error::Json`] when GitHub fails or
+/// issue is closed, and [`Error::Gh`], [`Error::GraphQl`] or [`Error::Json`] when GitHub fails or
 /// answers badly.
 pub fn release(gh: &dyn Gh, link: &str) -> Result<String, Error> {
     let now = SystemTime::now()

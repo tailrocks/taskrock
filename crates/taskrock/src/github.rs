@@ -80,14 +80,20 @@ pub fn graphql(
 }
 
 /// The real `gh` exits 1 when a 200 answer has `errors`: it prints the answer on standard
-/// output and the first message after `gh: ` on standard error, with no `(HTTP <status>)`.
-/// Any answer with an HTTP error status, and any failure before an answer, is not that.
+/// output and every message on standard error, one per line, the first after `gh: `. The
+/// first line has no `(HTTP <status>)`. Any answer with an HTTP error status, and any failure
+/// before an answer, is not that.
 fn answered(error: Error) -> Error {
     if let Error::Gh { stderr, stdout, .. } = &error {
         let message = serde_json::from_str(stdout)
             .ok()
             .and_then(|answer| error_messages(&answer))
-            .filter(|_| !stderr.contains("HTTP "));
+            .filter(|_| {
+                !stderr
+                    .lines()
+                    .next()
+                    .is_some_and(|line| line.contains("(HTTP "))
+            });
         if let Some(message) = message {
             return Error::GraphQl { message };
         }

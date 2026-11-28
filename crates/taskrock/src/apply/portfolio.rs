@@ -57,7 +57,7 @@ pub(super) fn find_portfolio(
 /// # Errors
 ///
 /// Returns [`Error::Project`] when the portfolio project is missing,
-/// [`Error::Json`] when an Initiative has no issue on GitHub, [`Error::Gh`]
+/// [`Error::Json`] when an Initiative has no issue on GitHub, [`Error::Gh`], [`Error::GraphQl`]
 /// when `gh` fails, or the error of [`project_items`].
 pub(super) fn add_to_portfolio(
     gh: &dyn Gh,
