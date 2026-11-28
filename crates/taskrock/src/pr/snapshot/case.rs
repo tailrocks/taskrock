@@ -8,8 +8,8 @@ use crate::gh::FakeGh;
 use crate::link::PullLink;
 
 /// The replies of one pull request of tailrocks/velnor-new, in the order of `read`.
-pub(super) struct Case {
-    pub(super) number: u64,
+pub(crate) struct Case {
+    pub(crate) number: u64,
     pub pull: String,
     pub checks: String,
     pub status: String,
@@ -27,7 +27,7 @@ fn fixture(part: &str, name: &str) -> String {
 
 impl Case {
     /// The fixtures of pull request `number`, with the rules of `main`.
-    pub(super) fn recorded(number: u64) -> Self {
+    pub(crate) fn recorded(number: u64) -> Self {
         let n = number.to_string();
         Self {
             number,
@@ -40,7 +40,7 @@ impl Case {
         }
     }
 
-    pub(super) fn link(&self) -> PullLink {
+    pub(crate) fn link(&self) -> PullLink {
         PullLink {
             owner: "tailrocks".into(),
             repo: "velnor-new".into(),
@@ -49,7 +49,7 @@ impl Case {
     }
 
     /// A `FakeGh` with these replies. A longer path comes before a shorter one.
-    pub(super) fn gh(&self) -> FakeGh {
+    pub(crate) fn gh(&self) -> FakeGh {
         let n = self.number;
         let gh = FakeGh::new()
             .ok(
@@ -72,7 +72,7 @@ impl Case {
 }
 
 /// One page of the GraphQL answer with `threads` resolved threads.
-pub(super) fn page(threads: usize, next: Option<&str>, comments: u64) -> String {
+pub(crate) fn page(threads: usize, next: Option<&str>, comments: u64) -> String {
     let node = json!({"id": "T", "isResolved": true, "comments": {"totalCount": comments, "nodes": [
         {"databaseId": 7, "url": "u", "body": "b", "author": {"login": "bot", "__typename": "Bot"}}]}});
     let info = json!({"hasNextPage": next.is_some(), "endCursor": next});
