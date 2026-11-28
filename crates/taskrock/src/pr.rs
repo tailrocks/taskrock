@@ -5,7 +5,9 @@ use crate::error::Error;
 use crate::gh::Gh;
 use crate::link::PullLink;
 
+pub mod classify;
 pub mod merge;
+pub mod severity;
 pub mod snapshot;
 pub mod status;
 pub mod threads;

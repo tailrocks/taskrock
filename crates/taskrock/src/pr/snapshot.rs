@@ -9,7 +9,7 @@ mod graph;
 mod rest;
 
 #[cfg(test)]
-mod case_tests;
+pub(crate) mod case_tests;
 #[cfg(test)]
 mod facts_tests;
 #[cfg(test)]

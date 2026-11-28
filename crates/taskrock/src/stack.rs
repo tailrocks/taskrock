@@ -152,7 +152,7 @@ fn chain(gh: &dyn Gh, candidate: &Candidate) -> Result<Vec<u64>, Error> {
     Ok(numbers)
 }
 
-fn issue_number(branch: &str) -> Option<u64> {
+pub(crate) fn issue_number(branch: &str) -> Option<u64> {
     let digits = branch.strip_prefix("feat/issue-")?;
     if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
         return None;

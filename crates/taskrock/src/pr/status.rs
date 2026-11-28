@@ -4,6 +4,9 @@ use crate::error::Error;
 use crate::gh::Gh;
 use crate::link::PullLink;
 
+pub mod code;
+pub mod evaluate;
+
 /// Run `taskrock pr status`.
 ///
 /// # Errors
