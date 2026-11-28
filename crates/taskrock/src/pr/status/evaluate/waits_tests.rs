@@ -1,6 +1,6 @@
 //! One test per wait code, and the Codex rules.
 
-use super::{HEAD, check, codes, judge, ready};
+use super::tests::{HEAD, check, codes, judge, ready};
 use crate::pr::snapshot::{CodexFact, QueueEntry};
 
 fn codex(code_sha: &str, code: &str, security_sha: &str, security: &str) -> CodexFact {

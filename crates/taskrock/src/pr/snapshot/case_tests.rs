@@ -13,6 +13,7 @@ pub(crate) struct Case {
     pub pull: String,
     pub checks: String,
     pub status: String,
+    pub reviews: String,
     pub rules: Result<String, String>,
     pub comments: String,
     pub graphs: Vec<String>,
@@ -34,6 +35,7 @@ impl Case {
             pull: fixture("pull", &n),
             checks: fixture("checks", &n),
             status: fixture("status", &n),
+            reviews: fixture("reviews", &n),
             rules: Ok(fixture("rules", "main")),
             comments: fixture("comments", &n),
             graphs: vec![fixture("threads", &n)],
@@ -52,10 +54,7 @@ impl Case {
     pub(crate) fn gh(&self) -> FakeGh {
         let n = self.number;
         let gh = FakeGh::new()
-            .ok(
-                &format!("pulls/{n}/reviews"),
-                &fixture("reviews", &n.to_string()),
-            )
+            .ok(&format!("pulls/{n}/reviews"), &self.reviews)
             .ok(&format!("issues/{n}/comments"), &self.comments)
             .ok("check-runs", &self.checks)
             .ok("/status", &self.status);

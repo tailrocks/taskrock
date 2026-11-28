@@ -350,7 +350,8 @@ fn verdicts(notes: &[Note]) -> Vec<VerdictFact> {
 }
 
 /// The verdict of a body whose last non-blank line is
-/// `VERDICT: PASS head=<40 hex>` or `VERDICT: FAIL head=<40 hex>`.
+/// `VERDICT: PASS head=<40 hex>` or `VERDICT: FAIL head=<40 hex>`. The head is
+/// lowercased, so that it equals a SHA of GitHub.
 pub(super) fn verdict(body: &str, at: &str) -> Option<VerdictFact> {
     let line = body.lines().map(str::trim).rfind(|line| !line.is_empty())?;
     let (word, head) = line.strip_prefix("VERDICT: ")?.split_once(" head=")?;
@@ -362,7 +363,7 @@ pub(super) fn verdict(body: &str, at: &str) -> Option<VerdictFact> {
     let sha = head.len() == 40 && head.bytes().all(|byte| byte.is_ascii_hexdigit());
     sha.then(|| VerdictFact {
         pass,
-        head: head.to_owned(),
+        head: head.to_ascii_lowercase(),
         at: at.to_owned(),
     })
 }

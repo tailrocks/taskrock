@@ -1,14 +1,9 @@
-//! Tests of `evaluate`: the states, the order and the rounds. The rules are in `tests/`.
+//! Tests of `evaluate`: the states, the order and the rounds.
 
 use super::{State, Verdict, evaluate};
 use crate::config;
 use crate::link::PullLink;
 use crate::pr::snapshot::{CheckFact, PullSnapshot, PullState, QueueFact, ThreadFact, VerdictFact};
-
-mod blockers;
-mod fixtures;
-mod order;
-mod waits;
 
 pub(super) const HEAD: &str = "1234567890abcdef1234567890abcdef12345678";
 

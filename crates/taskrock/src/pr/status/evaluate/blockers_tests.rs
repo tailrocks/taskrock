@@ -1,6 +1,7 @@
 //! One test per blocker code.
 
-use super::{HEAD, check, codes, judge, ready, thread, verdict};
+use super::evaluate;
+use super::tests::{HEAD, check, codes, judge, link, ready, thread, verdict};
 use crate::config;
 
 const P2: &str = "![P2 Badge](https://img.shields.io/badge/P2-yellow)";
@@ -59,7 +60,7 @@ fn evaluate_rounds_exhausted_at_the_limit_with_no_pass() {
     config.review.max_rounds = 2;
     let mut snapshot = ready();
     snapshot.verdicts = vec![verdict(false, &"a".repeat(40), 1), verdict(false, HEAD, 2)];
-    let found = super::super::evaluate(&snapshot, &config, &super::link());
+    let found = evaluate(&snapshot, &config, &link());
     assert_eq!(codes(&found), ["rounds_exhausted", "verdict_failed"]);
 }
 

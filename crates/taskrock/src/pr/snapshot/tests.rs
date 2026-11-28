@@ -1,6 +1,6 @@
 //! Tests of the snapshot, from the recorded pull requests of tailrocks/velnor-new.
 
-use super::case::{Case, page};
+use super::case_tests::{Case, page};
 use super::rest::verdict;
 use super::{PullState, read};
 use crate::gh::FakeGh;

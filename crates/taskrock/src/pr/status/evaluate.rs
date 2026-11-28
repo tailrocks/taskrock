@@ -9,7 +9,15 @@ mod review;
 mod rules;
 
 #[cfg(test)]
+mod blockers_tests;
+#[cfg(test)]
+mod fixtures_tests;
+#[cfg(test)]
+mod order_tests;
+#[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod waits_tests;
 
 /// Whether a finding stops the merge or only waits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
