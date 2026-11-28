@@ -100,6 +100,9 @@ pub struct PullSnapshot {
     pub codex: Option<CodexFact>,
     /// One sentence for each fact that could not be read in full.
     pub problems: Vec<String>,
+    /// The sentences of `problems` that say the review threads were not read in full. Empty
+    /// when they were: a thread or a marker can hide behind each of them.
+    pub threads_unread: Vec<String>,
 }
 
 /// Read the pull request: six REST reads and one GraphQL query.
@@ -128,7 +131,11 @@ pub fn read(gh: &dyn Gh, link: &PullLink) -> Result<PullSnapshot, Error> {
     snapshot.verdicts.sort_by(|a, b| a.at.cmp(&b.at));
     snapshot.codex = comments.codex;
     let found = graph::read(gh, link, &base, &mut problems);
-    let graph = settle(found, "review threads and the merge queue", &mut problems);
+    let graph = found.unwrap_or_else(|error| {
+        graph::Graph::failed(unreadable("review threads and the merge queue", &error))
+    });
+    problems.extend(graph.unread.iter().cloned());
+    snapshot.threads_unread = graph.unread;
     snapshot.threads = graph.threads;
     snapshot.queue = QueueFact {
         has_queue: graph.has_queue || rules.merge_queue,
@@ -141,7 +148,11 @@ pub fn read(gh: &dyn Gh, link: &PullLink) -> Result<PullSnapshot, Error> {
 /// The value of a read, or its default and one sentence in `problems`.
 fn settle<T: Default>(result: Result<T, Error>, what: &str, problems: &mut Vec<String>) -> T {
     result.unwrap_or_else(|error| {
-        problems.push(format!("The {what} could not be read: {error}."));
+        problems.push(unreadable(what, &error));
         T::default()
     })
+}
+
+fn unreadable(what: &str, error: &Error) -> String {
+    format!("The {what} could not be read: {error}.")
 }

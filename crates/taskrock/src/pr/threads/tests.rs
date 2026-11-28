@@ -8,6 +8,8 @@ use crate::link::PullLink;
 
 mod defer;
 mod resolve;
+mod unread;
+mod write;
 
 pub(super) const HEAD: &str = "0123456789abcdef0123456789abcdef01234567";
 pub(super) const P1: &str = "![P1 Badge](https://img.shields.io/badge/P1-red)\nfix it";
@@ -59,11 +61,16 @@ pub(super) fn pull(state: &str, sha: &str) -> String {
     .to_string()
 }
 
-/// The reads of one snapshot of the pull request, with `threads` as its review threads.
-pub(super) fn reads(threads: &[Value]) -> FakeGh {
-    let graph = json!({"data": {"repository": {"mergeQueue": null, "pullRequest": {
-        "mergeQueueEntry": null,
-        "reviewThreads": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": threads}}}}});
+/// The answer of the GraphQL query: `threads` is a page, and `next` is the cursor of the next one.
+pub(super) fn graph(threads: &[Value], next: Option<&str>) -> String {
+    let info = json!({"hasNextPage": next.is_some(), "endCursor": next});
+    json!({"data": {"repository": {"mergeQueue": null, "pullRequest": {
+        "mergeQueueEntry": null, "reviewThreads": {"pageInfo": info, "nodes": threads}}}}})
+    .to_string()
+}
+
+/// Every read of one snapshot of the pull request but the GraphQL query.
+pub(super) fn base() -> FakeGh {
     FakeGh::new()
         .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)")
         .ok("pulls/5/reviews", "[[]]")
@@ -71,8 +78,12 @@ pub(super) fn reads(threads: &[Value]) -> FakeGh {
         .ok("check-runs", r#"{"total_count":0,"check_runs":[]}"#)
         .ok("/status", r#"{"total_count":0,"statuses":[]}"#)
         .ok("rules/branches", "[[]]")
-        .ok("graphql", &graph.to_string())
         .ok("pulls/5", &pull("open", HEAD))
+}
+
+/// The reads of one snapshot, with `threads` as its review threads.
+pub(super) fn reads(threads: &[Value]) -> FakeGh {
+    base().ok("graphql", &graph(threads, None))
 }
 
 /// The answer of GitHub to `resolveReviewThread`.

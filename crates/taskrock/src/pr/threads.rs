@@ -43,10 +43,29 @@ struct Report {
 /// # Errors
 ///
 /// Returns the errors of [`status::verdict`], [`Error::Refused`] when nothing can be
-/// written for `action` or the pull request changed since it was read, and the error of
-/// the re-read. A failed write is not an error: the report names it.
+/// written for `action`, the review threads were not read in full or the pull request
+/// changed since it was read, and the error of the re-read. A failed write is not an error:
+/// the report names it.
 pub fn run(gh: &dyn Gh, link: &PullLink, action: &Action, json: bool) -> Result<u8, Error> {
+    let (out, code) = execute(gh, link, action, json)?;
+    println!("{out}");
+    Ok(code)
+}
+
+/// What [`run`] prints and its exit code.
+fn execute(
+    gh: &dyn Gh,
+    link: &PullLink,
+    action: &Action,
+    json: bool,
+) -> Result<(String, u8), Error> {
     let (snapshot, _) = status::verdict(gh, link)?;
+    if !snapshot.threads_unread.is_empty() {
+        return Err(Error::Refused(format!(
+            "the review threads were not read in full, so no thread is selected: {}",
+            snapshot.threads_unread.join(" ")
+        )));
+    }
     let targets = select(&snapshot.threads, action)?;
     if !targets.is_empty() {
         unchanged(gh, link, &snapshot)?;
@@ -60,17 +79,20 @@ pub fn run(gh: &dyn Gh, link: &PullLink, action: &Action, json: bool) -> Result<
         match write::settle(gh, link, thread, text) {
             Ok(()) => report.resolved.push(thread.url.clone()),
             Err(error) => {
-                report.failed = Some(error.to_string());
+                report.failed = Some(match error {
+                    Error::NotResolved(_) => error.to_string(),
+                    _ => format!("{}: {error}", thread.url),
+                });
                 break;
             }
         }
     }
-    println!("{}", render(&report, targets.len(), json)?);
-    Ok(if report.failed.is_some() {
+    let code = if report.failed.is_some() {
         EXIT_BLOCKED
     } else {
         EXIT_DONE
-    })
+    };
+    Ok((render(&report, targets.len(), json)?, code))
 }
 
 /// The unresolved threads that `action` settles, each with its reply.

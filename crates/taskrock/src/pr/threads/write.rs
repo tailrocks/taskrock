@@ -50,9 +50,6 @@ fn resolve(gh: &dyn Gh, thread: &ThreadFact) -> Result<(), Error> {
     if resolved == Some(true) {
         Ok(())
     } else {
-        Err(Error::Gh {
-            args: "api graphql resolveReviewThread".to_owned(),
-            stderr: format!("GitHub did not resolve the thread {}", thread.url),
-        })
+        Err(Error::NotResolved(thread.url.clone()))
     }
 }

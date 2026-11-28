@@ -185,6 +185,7 @@ pub(super) fn pull(gh: &dyn Gh, link: &PullLink) -> Result<PullSnapshot, Error> 
         },
         codex: None,
         problems: Vec::new(),
+        threads_unread: Vec::new(),
     })
 }
 
