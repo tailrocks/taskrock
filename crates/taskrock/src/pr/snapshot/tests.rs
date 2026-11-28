@@ -131,3 +131,19 @@ fn snapshot_verdict_is_the_last_non_blank_line() {
     assert!(verdict("VERDICT: PASS head=abc", "t").is_none());
     assert!(verdict(&line("MAYBE"), "t").is_none());
 }
+
+#[test]
+fn snapshot_reads_the_place_in_the_merge_queue() {
+    let snapshot = snapshot(&Case::recorded(3084));
+    assert_eq!(snapshot.state, PullState::Open);
+    assert_eq!(
+        (snapshot.mergeable, snapshot.mergeable_state.as_str()),
+        (Some(true), "clean")
+    );
+    let entry = snapshot.queue.entry.expect("an entry");
+    assert_eq!(
+        (entry.state.as_str(), entry.position),
+        ("AWAITING_CHECKS", Some(1))
+    );
+    assert!(snapshot.queue.has_queue && snapshot.problems.is_empty());
+}

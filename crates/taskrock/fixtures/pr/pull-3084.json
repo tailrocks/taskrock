@@ -1,0 +1,25 @@
+{
+  "number": 3084,
+  "node_id": "PR_kwDOUuMw5M8AAAABSe7MYw",
+  "state": "open",
+  "merged": false,
+  "merge_commit_sha": "cee47639b63f450908ee7b68c8baabcf7500167f",
+  "draft": false,
+  "body": "Part of #2906, Part of #2907\n\n## What\n\nThe pure rules of the host target generations, in `velnor-cache-rules` (no I/O; inputs are plain values; the existing cache rules are untouched). Rules G1 to G12 are in `crates/velnor-cache-rules/RULES.md`.\n\n- `GenKey` (job, root, `compat` of exactly 16 lowercase hex digits; dir `<job>.<root>-<compat>`), `Sha`.\n- `GenScope`: `main/<sha>`, `pr<N>/<run_id>-<att",
+  "mergeable": true,
+  "mergeable_state": "clean",
+  "base": {
+    "ref": "main",
+    "repo": {
+      "full_name": "tailrocks/velnor-new",
+      "default_branch": "main"
+    }
+  },
+  "head": {
+    "ref": "feat/issue-2906-rules",
+    "sha": "86282a9e7b9c6462648b00f1ce43db29bb582755",
+    "repo": {
+      "full_name": "tailrocks/velnor-new"
+    }
+  }
+}

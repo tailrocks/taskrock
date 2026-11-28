@@ -1,0 +1,13 @@
+[
+  [
+    {
+      "id": 7231665956,
+      "user": {
+        "login": "chatgpt-codex-connector[bot]"
+      },
+      "created_at": "2026-11-28T01:26:19Z",
+      "updated_at": "2026-11-28T02:22:25Z",
+      "body": "<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 {\"code_review\":{\"commit_sha\":\"86282a9e7b9c6462648b00f1ce43db29bb582755\",\"has_any_findings\":false,\"has_unresolved_findings\":false,\"status\":\"completed\"},\"security_review\":{\"commit_sha\":\"86282a9e7b9c6462648b00f1ce43db29bb582755\",\"has_any_findings\":null,\"has_unresolved_findings\":null,\"status\":\"completed\"}} -->\n<!-- codex-security-review:v1 {\"blockingSeverityThreshold\":\"P0\",\"headSha\":\"86282a9e7b9c6462648b00f1ce43db29bb582755\",\"mergeGateEnabled\":false,\"pullRequestNumber\":3084,\"repository\":\"tailrocks/velnor-new\",\"status\":\"completed\"} -->\n<details>\n<summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ✅ **Completed** <relative-time datetime=\"2026-11-28T02:19:40.388465Z\">2026-11-28T02:19:40.388465Z</relative-time> | `86282a9` | New commits |\n| 🔒 **Security Review** | ✅ **Completed** <relative-time datetime=\"2026-11-28T02:22:23.901882Z\">2026-11-28T02:22:23.901882Z</relative-time> | `86282a9` | New commits |\n\n\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.\n\n</details>\n\n</details>"
+    }
+  ]
+]

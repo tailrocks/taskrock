@@ -142,6 +142,16 @@
               "requires_features": false
             },
             {
+              "name": "sandbox_snapshot",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_snapshot.rs",
+              "requires_features": false
+            },
+            {
               "name": "sandbox_stacked",
               "kinds": [
                 "test"
@@ -160,5 +170,5 @@
     "Cargo.toml": "2ff6516aeaed890b5730ab8fb3cad93059c95b6ee65ba44b9ebca9429ce11093",
     "crates/taskrock/Cargo.toml": "0590f036f8fd8614db9d4df9a2e6878cc04cb0004f1de61a93e83cda7c5f2e43"
   },
-  "layout": "81224ac8dd108c0e50829a292e8847b8ce3c48d051675348edf5b78c5bdd08f6"
+  "layout": "81b9bc232594f27c04beba1154340714d86087aaf06c682fa4e5d6d180cf9337"
 }

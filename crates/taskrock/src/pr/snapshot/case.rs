@@ -52,7 +52,10 @@ impl Case {
     pub(super) fn gh(&self) -> FakeGh {
         let n = self.number;
         let gh = FakeGh::new()
-            .ok(&format!("pulls/{n}/reviews"), &fixture("reviews", "2932"))
+            .ok(
+                &format!("pulls/{n}/reviews"),
+                &fixture("reviews", &n.to_string()),
+            )
             .ok(&format!("issues/{n}/comments"), &self.comments)
             .ok("check-runs", &self.checks)
             .ok("/status", &self.status);

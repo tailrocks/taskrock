@@ -1,0 +1,355 @@
+{
+  "total_count": 50,
+  "check_runs": [
+    {
+      "id": 140841886139,
+      "name": "Remove the ci:run label",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140841886043,
+      "name": "((github.event_name != 'pull_request' || (startsWith(github.ref, 'refs/pull/') && github.event.pull_request.state != 'closed')) && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) && needs.required.result == 'success' && needs.rust-plan.result == 'success' && needs.rust-plan.outputs.skip_push != 'true' && github.event.pull_request.draft != true && (github.event.action != 'labeled' || github.event.label.name == 'ci:run' || github.event.label.name == 'ci:auto') && (github.event.action != 'edited' || github.event.changes.base != null) && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && (contains(github.event.pull_request.labels.*.name, 'ci:run') || contains(github.event.pull_request.labels.*.name, 'ci:auto'))))) && format('Speed budget ({0})', (needs.rust-plan.outputs.rust_root_mode == 'all') && 'full' || ((needs.rust-plan.outputs.rust_root_mode == 'som",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140841832320,
+      "name": "Cache maintenance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140841831177,
+      "name": "Cache",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140841830921,
+      "name": "Required",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839556476,
+      "name": "Generator samples",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839556297,
+      "name": "Hosted phase measurement unit tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839556268,
+      "name": "mise binary digest signature tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839556207,
+      "name": "hk config",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839555225,
+      "name": "rust",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839555204,
+      "name": "Generated workflows",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839555153,
+      "name": "Jactionlint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839555143,
+      "name": "policy",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839555140,
+      "name": "Alint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140839471843,
+      "name": "rust-plan",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140834140065,
+      "name": "Remove the ci:run label",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140834139779,
+      "name": "((github.event_name != 'pull_request' || (startsWith(github.ref, 'refs/pull/') && github.event.pull_request.state != 'closed')) && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) && needs.required.result == 'success' && needs.rust-plan.result == 'success' && needs.rust-plan.outputs.skip_push != 'true' && github.event.pull_request.draft != true && (github.event.action != 'labeled' || github.event.label.name == 'ci:run' || github.event.label.name == 'ci:auto') && (github.event.action != 'edited' || github.event.changes.base != null) && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && (contains(github.event.pull_request.labels.*.name, 'ci:run') || contains(github.event.pull_request.labels.*.name, 'ci:auto'))))) && format('Speed budget ({0})', (needs.rust-plan.outputs.rust_root_mode == 'all') && 'full' || ((needs.rust-plan.outputs.rust_root_mode == 'som",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140834081043,
+      "name": "Cache maintenance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140834079667,
+      "name": "Cache",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140834079438,
+      "name": "Required",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831779599,
+      "name": "Secret scanners",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831779410,
+      "name": "Helper gates",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831757926,
+      "name": "hk config",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831757209,
+      "name": "Alint",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831755130,
+      "name": "Generator samples",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831754792,
+      "name": "Generated workflows",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831752746,
+      "name": "mise binary digest signature tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831752208,
+      "name": "rust-plan",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831751403,
+      "name": "policy",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831750301,
+      "name": "((github.event_name != 'pull_request' || (startsWith(github.ref, 'refs/pull/') && github.event.pull_request.state != 'closed')) && (github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) && needs.required.result == 'success' && needs.rust-plan.result == 'success' && needs.rust-plan.outputs.skip_push != 'true' && github.event.pull_request.draft != true && (github.event.action != 'labeled' || github.event.label.name == 'ci:run' || github.event.label.name == 'ci:auto') && (github.event.action != 'edited' || github.event.changes.base != null) && (github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && (contains(github.event.pull_request.labels.*.name, 'ci:run') || contains(github.event.pull_request.labels.*.name, 'ci:auto'))))) && format('Speed budget ({0})', (needs.rust-plan.outputs.rust_root_mode == 'all') && 'full' || ((needs.rust-plan.outputs.rust_root_mode == 'som",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831748315,
+      "name": "Jactionlint",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831745768,
+      "name": "Cache",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831717800,
+      "name": "Remove the ci:run label",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831717749,
+      "name": "Cache maintenance",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831717747,
+      "name": "(github.event.action != 'labeled' || github.event.label.name == 'ci:run' || github.event.label.name == 'ci:auto') && (github.event.action != 'edited' || github.event.changes.base != null) && 'Required' || 'Required (ignored event)'",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831717273,
+      "name": "rust",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831716950,
+      "name": "Hosted phase measurement unit tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831651990,
+      "name": "hk config",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831651571,
+      "name": "Hosted phase measurement unit tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831651357,
+      "name": "mise binary digest signature tests",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831651247,
+      "name": "Generator samples",
+      "status": "completed",
+      "conclusion": "skipped",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831650113,
+      "name": "Alint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831650006,
+      "name": "rust",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831649990,
+      "name": "Generated workflows",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831649975,
+      "name": "Jactionlint",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831649960,
+      "name": "policy",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831557949,
+      "name": "Helper gates",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831557735,
+      "name": "Secret scanners",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831557624,
+      "name": "rust-plan",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    },
+    {
+      "id": 140831548516,
+      "name": "DCO",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "86282a9e7b9c6462648b00f1ce43db29bb582755"
+    }
+  ]
+}

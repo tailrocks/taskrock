@@ -1,0 +1,50 @@
+{
+  "data": {
+    "repository": {
+      "mergeQueue": {
+        "id": "MQ_kwDOUuMw5M4ABYVJ"
+      },
+      "pullRequest": {
+        "mergeQueueEntry": {
+          "state": "AWAITING_CHECKS",
+          "position": 1
+        },
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMS0yOFQwMTozMDowN1rOvPrGNg=="
+          },
+          "nodes": [
+            {
+              "id": "PRRT_kwDOUuMw5M68-sY2",
+              "isResolved": true,
+              "comments": {
+                "totalCount": 2,
+                "nodes": [
+                  {
+                    "databaseId": 4724873069,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/3084#discussion_r4724873069",
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate the",
+                    "author": {
+                      "login": "chatgpt-codex-connector",
+                      "__typename": "Bot"
+                    }
+                  },
+                  {
+                    "databaseId": 4725032788,
+                    "url": "https://github.com/tailrocks/velnor-new/pull/3084#discussion_r4725032788",
+                    "body": "Fixed in https://github.com/tailrocks/velnor-new/commit/86282a9e7b9c6462648b00f1ce43db29bb582755: `G",
+                    "author": {
+                      "login": "donbeave",
+                      "__typename": "User"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
