@@ -85,6 +85,7 @@ There are three kinds of tests.
   - `src/pr/status/evaluate/fixtures_tests.rs`
   - `src/pr/status/evaluate/order_tests.rs`
   - `src/pr/status/evaluate/waits_tests.rs`
+  - `src/pr/status/render/json_tests.rs`
   - `src/ready/loose_tests.rs`
   - `src/ready/problems_tests.rs`
   - `src/ready/stacked_tests.rs`
