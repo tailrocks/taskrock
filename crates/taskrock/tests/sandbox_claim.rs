@@ -109,6 +109,7 @@ fn race(gh: &RealGh, url: &str) -> Vec<Result<String, Error>> {
                     Err(Error::Gh {
                         args: "claim".to_owned(),
                         stderr: "a worker stopped".to_owned(),
+                        stdout: String::new(),
                     })
                 })
             })

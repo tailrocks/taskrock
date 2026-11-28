@@ -84,3 +84,18 @@ fn project_of_rejects_two_delivery_projects() {
     );
     assert_eq!(message(&nodes), want);
 }
+
+#[test]
+fn project_of_sends_the_repository_query_with_a_numeric_number() {
+    let gh = answer(&[node(3, None)]);
+    project_of(&gh, &issue()).expect("project");
+    let calls = gh.calls();
+    assert_eq!(calls.len(), 1);
+    assert_eq!(calls[0].0, "api graphql --input -");
+    let sent: serde_json::Value =
+        serde_json::from_str(calls[0].1.as_deref().expect("input")).expect("json");
+    let query = sent["query"].as_str().expect("query");
+    assert!(query.contains("repository(owner:$o,name:$r){issue(number:$n)"));
+    let want = serde_json::json!({"o": "tailrocks", "r": "taskrock", "n": 12});
+    assert_eq!(sent["variables"], want);
+}

@@ -57,9 +57,10 @@ pub fn send(
 ///
 /// # Errors
 ///
-/// Returns [`Error::Gh`] when `gh` fails (its messages joined by `; `) or the answer has a non-empty
-/// `errors` array (the messages joined by `; `), [`Error::Json`] when the
-/// output is not JSON.
+/// Returns [`Error::GraphQl`] when GitHub answered with a non-empty `errors` array
+/// (the messages joined by `; `), [`Error::Gh`] when `gh` failed for any other reason
+/// (no answer, an HTTP error status, bad credentials), [`Error::Json`] when the output is
+/// not JSON.
 pub fn graphql(
     gh: &dyn Gh,
     query: &str,
@@ -68,47 +69,48 @@ pub fn graphql(
     let input = serde_json::json!({"query": query, "variables": variables}).to_string();
     let stdout = gh
         .run(&["api", "graphql", "--input", "-"], Some(&input))
-        .map_err(graphql_failure)?;
+        .map_err(answered)?;
     let mut answer = parse(&stdout)?;
-    let errors = answer
-        .get("errors")
-        .and_then(serde_json::Value::as_array)
-        .filter(|errors| !errors.is_empty());
-    if let Some(errors) = errors {
-        let messages: Vec<&str> = errors
-            .iter()
-            .map(|error| {
-                error
-                    .get("message")
-                    .and_then(serde_json::Value::as_str)
-                    .unwrap_or("unknown error")
-            })
-            .collect();
-        return Err(Error::Gh {
-            args: "api graphql".to_owned(),
-            stderr: messages.join("; "),
-        });
+    if let Some(message) = error_messages(&answer) {
+        return Err(Error::GraphQl { message });
     }
     Ok(answer
         .get_mut("data")
         .map_or(serde_json::Value::Null, serde_json::Value::take))
 }
 
-/// The real `gh` exits 1 when the answer has `errors`, prints each message on
-/// its own line of stderr and the first one after `gh: `. This gives the
-/// messages in the same shape as the `errors` array branch of [`graphql`].
-fn graphql_failure(error: Error) -> Error {
-    match error {
-        Error::Gh { stderr, .. } => {
-            let text = stderr.strip_prefix("gh: ").unwrap_or(&stderr);
-            let messages: Vec<&str> = text.lines().filter(|line| !line.is_empty()).collect();
-            Error::Gh {
-                args: "api graphql".to_owned(),
-                stderr: messages.join("; "),
-            }
+/// The real `gh` exits 1 when a 200 answer has `errors`: it prints the answer on standard
+/// output and the first message after `gh: ` on standard error, with no `(HTTP <status>)`.
+/// Any answer with an HTTP error status, and any failure before an answer, is not that.
+fn answered(error: Error) -> Error {
+    if let Error::Gh { stderr, stdout, .. } = &error {
+        let message = serde_json::from_str(stdout)
+            .ok()
+            .and_then(|answer| error_messages(&answer))
+            .filter(|_| !stderr.contains("HTTP "));
+        if let Some(message) = message {
+            return Error::GraphQl { message };
         }
-        other => other,
     }
+    error
+}
+
+/// The messages of a non-empty `errors` array, joined by `; `.
+fn error_messages(answer: &serde_json::Value) -> Option<String> {
+    let errors = answer
+        .get("errors")
+        .and_then(serde_json::Value::as_array)
+        .filter(|errors| !errors.is_empty())?;
+    let messages: Vec<&str> = errors
+        .iter()
+        .map(|error| {
+            error
+                .get("message")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("unknown error")
+        })
+        .collect();
+    Some(messages.join("; "))
 }
 
 /// True when `error` is `Error::Gh` and its text contains `(HTTP <code>)`.

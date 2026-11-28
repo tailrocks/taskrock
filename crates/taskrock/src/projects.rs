@@ -5,6 +5,7 @@ use serde_json::Value;
 use crate::config::ProjectKind;
 use crate::error::Error;
 use crate::gh::Gh;
+use crate::github;
 use crate::link::ProjectLink;
 
 #[cfg(test)]
@@ -68,12 +69,10 @@ pub fn with_marker(readme: &str, marker: &Marker) -> String {
 /// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
 /// not JSON or a part is missing.
 pub fn list(gh: &dyn Gh, owner: &str) -> Result<Vec<OrgProject>, Error> {
-    let query = "query=query($o:String!){organization(login:$o){projectsV2(first:100){nodes{id number title readme public closed}}}}";
-    let owner = format!("o={owner}");
-    let args = ["api", "graphql", "-f", query, "-f", owner.as_str()];
-    let answer = answer_of(&gh.run(&args, None)?)?;
-    let nodes = answer
-        .pointer("/data/organization/projectsV2/nodes")
+    let query = "query($o:String!){organization(login:$o){projectsV2(first:100){nodes{id number title readme public closed}}}}";
+    let data = github::graphql(gh, query, &serde_json::json!({"o": owner}))?;
+    let nodes = data
+        .pointer("/organization/projectsV2/nodes")
         .and_then(Value::as_array)
         .ok_or_else(|| Error::Json("nodes".to_owned()))?;
     let mut projects = Vec::new();
@@ -93,31 +92,15 @@ pub fn list(gh: &dyn Gh, owner: &str) -> Result<Vec<OrgProject>, Error> {
 /// Returns [`Error::Gh`] when `gh` fails, [`Error::Json`] when the answer is
 /// not JSON, [`Error::Project`] when the project does not exist.
 pub fn kind_of(gh: &dyn Gh, project: &ProjectLink) -> Result<ProjectKind, Error> {
-    let query =
-        "query=query($o:String!,$n:Int!){organization(login:$o){projectV2(number:$n){readme}}}";
-    let owner = format!("o={}", project.owner);
-    let number = format!("n={}", project.number);
-    let args = [
-        "api",
-        "graphql",
-        "-f",
-        query,
-        "-f",
-        owner.as_str(),
-        "-F",
-        number.as_str(),
-    ];
-    let answer = answer_of(&gh.run(&args, None)?)?;
-    let node = answer
-        .pointer("/data/organization/projectV2")
+    let query = "query($o:String!,$n:Int!){organization(login:$o){projectV2(number:$n){readme}}}";
+    let variables = serde_json::json!({"o": project.owner, "n": project.number});
+    let data = github::graphql(gh, query, &variables)?;
+    let node = data
+        .pointer("/organization/projectV2")
         .filter(|node| !node.is_null())
         .ok_or_else(|| Error::Project(format!("no such project: {}", project.url())))?;
     Ok(parse_marker(node["readme"].as_str().unwrap_or_default())
         .map_or(ProjectKind::Delivery, |marker| marker.kind))
-}
-
-fn answer_of(stdout: &str) -> Result<Value, Error> {
-    serde_json::from_str(stdout).map_err(|error| Error::Json(error.to_string()))
 }
 
 fn parse_project(node: &Value) -> Result<OrgProject, Error> {

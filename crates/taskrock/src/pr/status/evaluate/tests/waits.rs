@@ -1,7 +1,15 @@
 //! One test per wait code, and the Codex rules.
 
-use super::{HEAD, State, check, codes, judge, ready};
+use super::{HEAD, State, check, codes, evaluate, judge, link, ready};
+use crate::config::{self, Config};
 use crate::pr::snapshot::{CodexFact, QueueEntry};
+
+/// The default config, with the Codex connector named for the repository of `link()`.
+fn codex_repo(name: &str) -> Config {
+    let mut config = config::default();
+    config.review.codex = vec![name.into()];
+    config
+}
 
 fn codex(code_sha: &str, code: &str, security_sha: &str, security: &str) -> CodexFact {
     CodexFact {
@@ -76,10 +84,39 @@ fn evaluate_a_completed_codex_review_of_the_head_gives_nothing() {
 }
 
 #[test]
-fn evaluate_no_codex_comment_gives_nothing_because_it_is_posted_at_the_start() {
-    let mut snapshot = ready();
-    snapshot.codex = None;
+fn evaluate_no_codex_comment_in_a_listed_repository_is_bot_review_pending() {
+    let snapshot = ready();
+    let verdict = evaluate(&snapshot, &codex_repo("r"), &link());
+    assert_eq!(codes(&verdict), ["bot_review_pending"]);
+    assert_eq!(
+        verdict.next,
+        "wait for the Codex code and security review of 1234567"
+    );
+    let verdict = evaluate(&snapshot, &codex_repo("R"), &link());
+    assert_eq!(codes(&verdict), ["bot_review_pending"]);
+}
+
+#[test]
+fn evaluate_no_codex_comment_in_an_unlisted_repository_gives_nothing() {
+    let snapshot = ready();
     assert_eq!(judge(&snapshot).findings, []);
+    let verdict = evaluate(&snapshot, &codex_repo("other"), &link());
+    assert_eq!(verdict.findings, []);
+}
+
+#[test]
+fn evaluate_no_codex_comment_on_a_draft_gives_only_the_draft() {
+    let mut snapshot = ready();
+    snapshot.draft = true;
+    let verdict = evaluate(&snapshot, &codex_repo("r"), &link());
+    assert_eq!(codes(&verdict), ["draft"]);
+}
+
+#[test]
+fn evaluate_a_completed_codex_review_in_a_listed_repository_gives_nothing() {
+    let mut snapshot = ready();
+    snapshot.codex = Some(codex(HEAD, "completed", HEAD, "completed"));
+    assert_eq!(evaluate(&snapshot, &codex_repo("r"), &link()).findings, []);
 }
 
 #[test]

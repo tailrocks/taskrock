@@ -112,3 +112,13 @@ fn pr_threads_resolve_json_refuses_and_writes_nothing() {
     assert_eq!(output.status.code(), Some(3));
     assert_eq!(output.stdout, b"");
 }
+
+#[test]
+#[ignore = "talks to GitHub"]
+fn pr_merge_json_prints_the_report_as_json() {
+    let output =
+        run_binary(&["pr", "merge", MERGED_PULL, "--json"]).expect("the taskrock binary starts");
+    assert_eq!(output.status.code(), Some(0));
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).expect("stdout is JSON");
+    assert_eq!(report["outcome"], "already_merged");
+}

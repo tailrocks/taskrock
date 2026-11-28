@@ -7,6 +7,8 @@ use super::{Config, Format, Project, ProjectKind};
 use crate::error::Error;
 
 #[cfg(test)]
+mod codex_tests;
+#[cfg(test)]
 mod tests;
 
 /// The issue types every config must have.
@@ -23,6 +25,7 @@ pub fn check(config: &Config) -> Vec<String> {
     if config.review.max_rounds < 1 {
         out.push("review.max_rounds must be at least 1".to_owned());
     }
+    codex_repos(config, &mut out);
     issue_types(config, &mut out);
     format_rules("owner task", &config.owner_task, &mut out);
     projects(config, &mut out);
@@ -85,6 +88,23 @@ fn routing(config: &Config, out: &mut Vec<String>) {
         unknown_runtimes("model", &model.name, &model.runtimes, known, out);
         if model.efforts.is_empty() {
             out.push(format!("model {} has no efforts", model.name));
+        }
+    }
+}
+
+/// The repositories of `review.codex`: bare names of the owner, each listed once.
+/// `evaluate` matches them ignoring ASCII case, so the repeat check does too.
+fn codex_repos(config: &Config, out: &mut Vec<String>) {
+    let keys: Vec<String> = (config.review.codex.iter())
+        .map(|r| r.to_ascii_lowercase())
+        .collect();
+    let mut names = Names::new("review.codex repository");
+    for (repo, key) in config.review.codex.iter().zip(&keys) {
+        out.extend(names.see(key));
+        if repo.is_empty() || repo.contains('/') {
+            out.push(format!(
+                "review.codex repository {repo:?} must be a repository name of the owner, with no /"
+            ));
         }
     }
 }

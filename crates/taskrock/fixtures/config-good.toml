@@ -37,6 +37,7 @@ use      = "Rare as a builder: only a design-heavy or cross-module task, with th
 
 [review]
 max_rounds = 3                     # reviewed heads before the task goes to the owner
+codex      = ["velnor-new"]        # repositories of the owner where the Codex connector reviews
 
 # Issue types and their formats. Initiative, Epic, Task, Bug and Feature are required.
 [[issue_type]]

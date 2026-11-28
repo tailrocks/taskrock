@@ -6,7 +6,7 @@ use crate::config::ProjectKind;
 use crate::error::Error;
 use crate::fields::{ROUTING, Routing};
 use crate::gh::Gh;
-use crate::github::{get_all, send};
+use crate::github::{get_all, graphql, send};
 use crate::link::{IssueLink, ProjectLink};
 use crate::projects::parse_marker;
 
@@ -94,27 +94,10 @@ pub fn project_items(gh: &dyn Gh, project: &ProjectLink) -> Result<Vec<Item>, Er
 /// more than one. A project with no marker is a delivery project.
 pub fn project_of(gh: &dyn Gh, issue: &IssueLink) -> Result<ProjectLink, Error> {
     let query = "query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){issue(number:$n){projectItems(first:10){nodes{project{number readme owner{... on Organization{login}}}}}}}}";
-    let query = format!("query={query}");
-    let owner = format!("o={}", issue.owner);
-    let repo = format!("r={}", issue.repo);
-    let number = format!("n={}", issue.number);
-    let args = [
-        "api",
-        "graphql",
-        "-f",
-        query.as_str(),
-        "-f",
-        owner.as_str(),
-        "-f",
-        repo.as_str(),
-        "-F",
-        number.as_str(),
-    ];
-    let stdout = gh.run(&args, None)?;
-    let answer: Value =
-        serde_json::from_str(&stdout).map_err(|error| Error::Json(error.to_string()))?;
-    let nodes = answer
-        .pointer("/data/repository/issue/projectItems/nodes")
+    let variables = serde_json::json!({"o": issue.owner, "r": issue.repo, "n": issue.number});
+    let data = graphql(gh, query, &variables)?;
+    let nodes = data
+        .pointer("/repository/issue/projectItems/nodes")
         .and_then(Value::as_array)
         .ok_or_else(|| Error::Json("nodes".to_owned()))?;
     let mut delivery = Vec::new();

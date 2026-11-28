@@ -16,6 +16,7 @@ fn default_passes_check() {
     assert_eq!(config.routing.visibility, Visibility::Restricted);
     assert!(config.routing.runtimes.is_empty() && config.projects.is_empty());
     assert_eq!(config.review.max_rounds, 3);
+    assert_eq!(config.review.codex, Vec::<String>::new());
 }
 #[test]
 fn format_finds_a_type_or_the_owner_task() {

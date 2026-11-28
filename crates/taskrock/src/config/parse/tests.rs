@@ -17,6 +17,7 @@ fn the_good_fixture_parses_into_every_part() {
     assert_eq!(config.routing.subagents[1].can, [Ability::Review]);
     assert_eq!(config.routing.models[0].name, "claude-haiku-5-5");
     assert_eq!(config.review.max_rounds, 3);
+    assert_eq!(config.review.codex, ["velnor-new"]);
     assert_eq!(
         config.type_names(),
         ["Initiative", "Epic", "Task", "Bug", "Feature"]
@@ -39,6 +40,29 @@ fn a_small_file_gets_the_defaults() {
     let config = parse(&format!("version = 1\n{project}")).expect("the file parses");
     assert!(config.projects[0].workflows.pr_merged);
 }
+#[test]
+fn config_review_codex_defaults_to_no_repository() {
+    let config = parse("version = 1\n[review]\nmax_rounds = 2\n").expect("the file parses");
+    assert_eq!(config.review.codex, Vec::<String>::new());
+}
+
+#[test]
+fn config_review_codex_alone_keeps_the_default_max_rounds() {
+    let config = parse("version = 1\n[review]\ncodex = [\"a\", \"b\"]\n").expect("parses");
+    assert_eq!(config.review.codex, ["a", "b"]);
+    assert_eq!(config.review.max_rounds, 3);
+}
+
+#[test]
+fn config_review_codex_must_be_a_list_of_names() {
+    for text in [
+        "version = 1\n[review]\ncodex = \"a\"\n",
+        "version = 1\n[review]\ncodex = [1]\n",
+    ] {
+        assert!(matches!(parse(text), Err(Error::Config(_))), "{text}");
+    }
+}
+
 #[test]
 fn an_unknown_key_is_refused() {
     for text in [
