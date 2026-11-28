@@ -27,7 +27,7 @@ pub const EXIT_BLOCKED: u8 = 20;
 /// error of the command that runs.
 pub fn run(gh: &dyn Gh, command: &PrCommand) -> Result<u8, Error> {
     match command {
-        PrCommand::Status { link, .. } => status::run(gh, &link.parse::<PullLink>()?),
+        PrCommand::Status { link, json } => status::run(gh, &link.parse::<PullLink>()?, *json),
         PrCommand::Threads { link, .. } => threads::run(gh, &link.parse::<PullLink>()?),
         PrCommand::Merge { link, .. } => merge::run(gh, &link.parse::<PullLink>()?),
     }
