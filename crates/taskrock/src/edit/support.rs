@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use crate::error::Error;
 use crate::gh::FakeGh;
+use crate::scratch::Scratch;
 
 pub(super) const URL: &str = "https://github.com/o/r/issues/7";
 pub(super) const MARKER: &str = "<!-- taskrock:plan:T1 -->";
@@ -30,12 +31,10 @@ pub(super) fn body(outcome: &str, skip: &str) -> String {
     format!("{text}## Done when\n\n- [ ] `cargo test` passes\n")
 }
 
-pub(super) fn file(name: &str, text: &str) -> PathBuf {
-    let dir = std::env::temp_dir().join(format!("taskrock-edit-{}", std::process::id()));
-    std::fs::create_dir_all(&dir).expect("create the directory");
-    let path = dir.join(name);
-    std::fs::write(&path, text).expect("write the body");
-    path
+pub(super) fn file(name: &str, text: &str) -> (Scratch, PathBuf) {
+    let dir = Scratch::new("edit").expect("create the directory");
+    let path = dir.write(name, text).expect("write the body");
+    (dir, path)
 }
 
 pub(super) fn item(status: &str, agent: &str) -> String {

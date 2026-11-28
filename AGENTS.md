@@ -19,6 +19,7 @@ The plan for this repository is on GitHub: the issues of `tailrocks/taskrock` an
 - Every GitHub request goes through the `Gh` trait. Use the REST API. Do not use the search API: its results lag behind writes.
 - GraphQL is allowed only where REST has no equivalent: the resolved state of review threads, `resolveReviewThread`, and the merge queue (`mergeQueue`, `mergeQueueEntry`, `enqueuePullRequest`). Use `github::graphql` for it.
 - Add a dependency only when the task names it. Add it with `cargo add`, and commit `Cargo.lock`.
+- A test that needs a folder uses `taskrock::scratch::Scratch`, which removes the folder on drop. Never call `std::env::temp_dir()` in a test.
 
 ## Checks
 

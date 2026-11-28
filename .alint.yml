@@ -60,3 +60,14 @@ rules:
       - "{path}"
     level: error
     message: "Each AGENTS.md must have a sibling CLAUDE.md regular file with the @AGENTS.md pointer body"
+
+  # Every temporary folder of a test is a `taskrock::scratch::Scratch`, which
+  # removes itself on drop. A bare `temp_dir()` leaks the folder.
+  - id: temp-dir-only-in-scratch
+    kind: file_content_forbidden
+    paths:
+      include: ["crates/**/*.rs"]
+      exclude: ["crates/taskrock/src/scratch.rs"]
+    pattern: 'temp_dir\s*\('
+    level: error
+    message: "Use taskrock::scratch::Scratch, which removes its folder on drop, not std::env::temp_dir()"

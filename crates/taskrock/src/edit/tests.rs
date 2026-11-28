@@ -10,7 +10,7 @@ use super::support::{AGENT, MARKER, URL, body, fake, file, has, issue, refused};
 fn todo_task_is_edited() {
     let old = format!("{}\n\n{MARKER}", body("a", ""));
     let gh = fake(&issue("Task", "open", &old), "Todo", "");
-    let path = file("todo.md", &body("b", ""));
+    let (_dir, path) = file("todo.md", &body("b", ""));
     assert_eq!(
         run(&gh, URL, &path, false).expect("edit"),
         format!("edited {URL}")
@@ -27,7 +27,7 @@ fn todo_task_is_edited() {
 #[test]
 fn missing_section_is_refused_before_the_write() {
     let gh = fake(&issue("Task", "open", &body("a", "")), "Todo", "");
-    let path = file("missing.md", &body("a", "Steps"));
+    let (_dir, path) = file("missing.md", &body("a", "Steps"));
     let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
     assert_eq!(
         message,
@@ -41,14 +41,15 @@ fn triage_checks_only_the_file_sections() {
     let old = issue("Bug", "open", "x");
     let gh = fake(&old, "Triage", "");
     let text = "## What happens\n\na\n\n## Expected\n\nb\n\n## How to reproduce\n\nc\n\n## Environment\n\nd\n";
-    let gh_ok = run(&gh, URL, &file("triage.md", text), false);
+    let (_dir, path) = file("triage.md", text);
+    let gh_ok = run(&gh, URL, &path, false);
     assert!(gh_ok.is_ok(), "{gh_ok:?}");
 }
 
 #[test]
 fn frozen_change_is_refused() {
     let gh = fake(&issue("Task", "open", &body("a", "")), "In Progress", "");
-    let path = file("frozen.md", &body("b", ""));
+    let (_dir, path) = file("frozen.md", &body("b", ""));
     let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
     assert_eq!(
         message,
@@ -61,14 +62,15 @@ fn frozen_change_is_refused() {
 fn unfrozen_change_in_progress_passes_without_replan() {
     let gh = fake(&issue("Task", "open", &body("a", "")), "In Progress", "");
     let text = body("a", "").replace("## Steps\n\ns", "## Steps\n\nnew");
-    run(&gh, URL, &file("steps.md", &text), false).expect("edit");
+    let (_dir, path) = file("steps.md", &text);
+    run(&gh, URL, &path, false).expect("edit");
     assert!(!has(&gh, "comments"));
 }
 
 #[test]
 fn replan_posts_the_comment() {
     let gh = fake(&issue("Task", "open", &body("a", "")), "In Progress", "");
-    let path = file("replan.md", &body("b", ""));
+    let (_dir, path) = file("replan.md", &body("b", ""));
     run(&gh, URL, &path, true).expect("edit");
     let calls = gh.calls();
     let comment = calls
@@ -87,7 +89,7 @@ fn replan_posts_the_comment() {
 #[test]
 fn closed_issue_is_frozen() {
     let gh = fake(&issue("Task", "closed", &body("a", "")), "Todo", "");
-    let path = file("closed.md", &body("b", ""));
+    let (_dir, path) = file("closed.md", &body("b", ""));
     assert!(refused(run(&gh, URL, &path, false).expect_err("refused")).contains("is frozen"));
 }
 
@@ -95,7 +97,8 @@ fn closed_issue_is_frozen() {
 fn marker_is_kept() {
     let old = format!("{}\n{MARKER}\n", body("a", ""));
     let gh = fake(&issue("Task", "open", &old), "Todo", "");
-    run(&gh, URL, &file("marker.md", &body("a", "")), false).expect("edit");
+    let (_dir, path) = file("marker.md", &body("a", ""));
+    run(&gh, URL, &path, false).expect("edit");
     let calls = gh.calls();
     let sent = calls
         .iter()
@@ -110,7 +113,7 @@ fn marker_is_kept() {
 #[test]
 fn front_matter_is_refused_before_any_call() {
     let gh = FakeGh::new();
-    let path = file("front.md", "+++\nx\n+++\n");
+    let (_dir, path) = file("front.md", "+++\nx\n+++\n");
     let error = run(&gh, URL, &path, false).expect_err("refused");
     assert!(
         matches!(&error, Error::Draft { message, .. } if message == "edit takes a body without front matter")
@@ -122,7 +125,7 @@ fn front_matter_is_refused_before_any_call() {
 fn unknown_or_missing_type_is_refused() {
     for (kind, name) in [("Saga", "Saga"), ("", "none")] {
         let gh = fake(&issue(kind, "open", "x"), "Todo", "");
-        let path = file("kind.md", &body("a", ""));
+        let (_dir, path) = file("kind.md", &body("a", ""));
         let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
         assert_eq!(message, format!("the config has no issue type {name}"));
     }
@@ -132,7 +135,7 @@ fn unknown_or_missing_type_is_refused() {
 fn owner_task_uses_the_owner_format_whatever_the_type() {
     for kind in ["Task", "Saga", ""] {
         let gh = fake(&issue(kind, "open", "x"), "Todo", AGENT);
-        let path = file("owner.md", &body("a", ""));
+        let (_dir, path) = file("owner.md", &body("a", ""));
         let message = refused(run(&gh, URL, &path, false).expect_err("refused"));
         assert!(
             message.contains("## Question is missing"),
