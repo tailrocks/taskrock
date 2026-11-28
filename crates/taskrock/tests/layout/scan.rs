@@ -218,6 +218,11 @@ pub(crate) fn declarations(parent: &Path) -> io::Result<Vec<Decl>> {
     Ok(read(parent)?.1)
 }
 
+/// The file opens with a `#![path]` attribute, also one that a `cfg_attr` applies.
+pub(crate) fn has_inner_path(parent: &Path) -> io::Result<bool> {
+    Ok(read(parent)?.0.path)
+}
+
 /// The module tree that `src/lib.rs` and `src/main.rs` reach, and the `mod` items in it.
 pub(crate) struct Tree {
     pub(crate) files: Vec<PathBuf>,

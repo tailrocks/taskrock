@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 
 #[path = "layout/scan.rs"]
 mod scan;
-use scan::{Gate, Tree, declarations, file_name, module_tree};
+use scan::{Gate, Tree, declarations, file_name, has_inner_path, module_tree};
 
 const CRATE: &str = env!("CARGO_MANIFEST_DIR");
 const DOC: &str = "../../docs/structure.md";
@@ -241,6 +241,12 @@ fn every_test_file_is_declared_by_its_parent() -> io::Result<()> {
 fn no_module_under_src_has_a_path_attribute() -> io::Result<()> {
     let mut problems = Vec::new();
     for file in sources()? {
+        if has_inner_path(&file)? {
+            problems.push(format!(
+                "{} has a file-level #![path] attribute: remove it",
+                rel(&file)
+            ));
+        }
         for decl in declarations(&file)?.iter().filter(|decl| decl.path) {
             problems.push(format!(
                 "{} declares `mod {}` with a #[path] attribute: name the module after \

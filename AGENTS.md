@@ -15,7 +15,7 @@ The plan for this repository is on GitHub: the issues of `tailrocks/taskrock` an
 - No `unwrap`, `expect`, `panic`, `todo` or `unimplemented` outside tests. Return `Result`.
 - A function is at most 80 lines. A Rust file is at most 400 lines. `lib.rs`, `main.rs` and every `tests.rs` are at most 150 lines.
 - Module files are named after the module (`link.rs`, then `link/` for its children). No `mod.rs`.
-- No `#[path]` on a module under `src`.
+- No `#[path]` on a module under `src`, and no `#![path]` at the top of a file there.
 - Unit tests live in `src/<module>/tests.rs`, declared in the module with `#[cfg(test)] mod tests;`. Integration tests live in `crates/taskrock/tests/`, which holds `.rs` files and, for a test binary, a folder of the same name that holds its helper modules, loaded by `#[path]` (`tests/layout/` for `tests/layout.rs`). JSON test data lives in `crates/taskrock/fixtures/`.
 - `tests/layout.rs` checks the unit-test layout against docs/structure.md.
 - Every GitHub request goes through the `Gh` trait. Use the REST API. Do not use the search API: its results lag behind writes.
