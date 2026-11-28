@@ -85,7 +85,7 @@ There are three kinds of tests.
   - `src/ready/problems_tests.rs`
   - `src/ready/stacked_tests.rs`
   - `src/ready/triage_tests.rs`
-  Both layouts are allowed. A module can also keep its tests in a `tests/` folder next to its `tests.rs`. The `tests.rs` file declares each file of that folder with `mod <name>;`. The parent module declares that `tests.rs` file with the attribute `#[cfg(test)]` and `mod tests;`. These files use the `tests/` folder layout:
+- Unit tests can also sit in a `tests/` folder next to the `tests.rs` of their module. Both layouts are allowed. The `tests.rs` file declares each file of that folder with `mod <name>;`. The parent module declares that `tests.rs` file with `#[cfg(test)] mod tests;`, or with `#[cfg(test)] pub(super) mod tests;` when the tests of sibling modules import from it. These files use the `tests/` folder layout:
   - `src/apply/status/tests/rerun.rs`
   - `src/setup/fields/tests/create.rs`
   - `src/setup/fields/tests/update.rs`
