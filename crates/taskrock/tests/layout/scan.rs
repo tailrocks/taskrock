@@ -1,7 +1,7 @@
 //! A scan of the module declarations of a Rust file, read with `syn`: attributes, inline
 //! modules and raw identifiers come from the parser, `syn::visit` reaches every `mod` item
 //! (also in a function body, an `impl` block or a `const` block), and a macro body is an
-//! opaque token stream that holds no module item.
+//! opaque token stream, so the modules that a macro generates are not scanned.
 
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -24,7 +24,7 @@ pub(crate) struct Decl {
     pub(crate) file: Option<PathBuf>,
     pub(crate) parent: PathBuf,
     pub(crate) gate: Gate,
-    /// The declaration sits in an inline module under `#[cfg(test)]`.
+    /// The declaration sits in an inline module under `#[cfg(test)]`, or in a file with an inner `#![cfg(test)]`.
     pub(crate) nested: bool,
     /// The declaration has a `#[path]` attribute, also one that a `cfg_attr` applies.
     pub(crate) path: bool,
