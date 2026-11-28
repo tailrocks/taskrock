@@ -158,7 +158,7 @@ efforts  = ["low", "medium", "high", "xhigh", "max"]
 use      = "The default builder."
 
 [review]
-max_rounds = 3                     # failed reviews before the task goes to the owner
+max_rounds = 3                     # reviewed heads before the task goes to the owner
 
 # Issue types and their formats. Initiative, Epic, Task, Bug and Feature are required.
 [[issue_type]]

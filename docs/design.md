@@ -40,7 +40,7 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 
 ### A small custom tool, and plain `gh` for the rest
 
-**Chosen.** Eight commands: `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template` and `edit`. Each does what `gh` cannot do or does badly.
+**Chosen.** Eleven commands: `check`, `apply`, `ready`, `claim`, `release`, `setup`, `template`, `edit`, `pr status`, `pr threads` and `pr merge`. Each does what `gh` cannot do or does badly.
 
 **Rejected.** No custom command, with every operation in `gh`. A large tool with commands such as `show`, `set`, `tree`, `waiting` and `tidy`. Eight commands are enough, because `gh` does the rest.
 
@@ -149,6 +149,14 @@ The [README](../README.md) lists the eight commands. The skills hold the steps t
 **Rejected.** Merging when the review is only a comment, with no checks and no gate.
 
 **Reason.** A review comment alone does not stop a merge, so the gate requires that the newest verdict is PASS. The gate is written into the goal skill. The verdict must be posted after the last push, and the merge names the head commit it checked. Squash merges match the repositories of the owner, which allow only squash.
+
+### The pull request gate
+
+**Chosen.** `taskrock pr status`, `taskrock pr threads` and `taskrock pr merge`. The verdict is a `VERDICT: PASS|FAIL head=<sha>` text. A round is one reviewed head. Findings of P0, P1 and P2 block, from bots and from taskrock reviewers. A bot P0 to P2 thread blocks until the reviewer rules on it. P3 bot threads are resolved with a reply. Codex reviews a ready pull request on every push and skips drafts, so a builder works in draft and marks the pull request ready once per round. No follow-up issues for review findings.
+
+**Rejected.** GitHub approvals (one shared login). Counting only FAIL verdicts. Merging known medium findings. Turning Codex automatic reviews off. Follow-up issues per finding. A `pr refresh` command and force-push rebases. Refreshing a pull request that is only behind.
+
+**Reason.** A velnor-new pull request reached 14 FAIL verdicts and 19 bot reviews. Every push started a new review. A refresh is a push, and a push is a new round.
 
 ### A builder that finds the task wrong stops
 
