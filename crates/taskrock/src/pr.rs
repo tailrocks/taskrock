@@ -28,7 +28,27 @@ pub const EXIT_BLOCKED: u8 = 20;
 pub fn run(gh: &dyn Gh, command: &PrCommand) -> Result<u8, Error> {
     match command {
         PrCommand::Status { link, json } => status::run(gh, &link.parse::<PullLink>()?, *json),
-        PrCommand::Threads { link, .. } => threads::run(gh, &link.parse::<PullLink>()?),
+        PrCommand::Threads {
+            link,
+            json,
+            defer,
+            resolve,
+            reason,
+        } => {
+            let action = match (defer, resolve, reason) {
+                (true, None, None) => threads::Action::Defer,
+                (false, Some(id), Some(reason)) => threads::Action::Resolve {
+                    id: id.clone(),
+                    reason: reason.clone(),
+                },
+                _ => {
+                    return Err(Error::Refused(
+                        "pass --defer, or --resolve with --reason".to_owned(),
+                    ));
+                }
+            };
+            threads::run(gh, &link.parse::<PullLink>()?, &action, *json)
+        }
         PrCommand::Merge { link, .. } => merge::run(gh, &link.parse::<PullLink>()?),
     }
 }

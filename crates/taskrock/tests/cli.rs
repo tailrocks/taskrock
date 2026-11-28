@@ -35,3 +35,24 @@ fn no_argument_exits_with_wrong_arguments() {
         .expect("the taskrock binary starts");
     assert_eq!(output.status.code(), Some(2));
 }
+
+fn threads_exit_code(args: &[&str]) -> Option<i32> {
+    Command::new(env!("CARGO_BIN_EXE_taskrock"))
+        .args(["pr", "threads", "tailrocks/taskrock#1"])
+        .args(args)
+        .output()
+        .expect("the taskrock binary starts")
+        .status
+        .code()
+}
+
+#[test]
+fn threads_defer_with_a_reason_exits_with_wrong_arguments() {
+    assert_eq!(threads_exit_code(&["--defer", "--reason", "y"]), Some(2));
+}
+
+#[test]
+fn threads_resolve_needs_a_reason_and_a_reason_needs_resolve() {
+    assert_eq!(threads_exit_code(&["--resolve", "X"]), Some(2));
+    assert_eq!(threads_exit_code(&["--reason", "y"]), Some(2));
+}

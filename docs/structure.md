@@ -92,6 +92,8 @@ There are three kinds of tests.
   - `src/pr/status/evaluate/tests/order.rs`
   - `src/pr/status/evaluate/tests/waits.rs`
   - `src/pr/status/render/tests/json.rs`
+  - `src/pr/threads/tests/defer.rs`
+  - `src/pr/threads/tests/resolve.rs`
   - `src/setup/fields/tests/create.rs`
   - `src/setup/fields/tests/update.rs`
   - `src/setup/fields/tests/wanted.rs`
