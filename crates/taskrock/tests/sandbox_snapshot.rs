@@ -15,8 +15,8 @@ fn reads_a_merged_pull_request_of_velnor_new() {
     assert_eq!(snapshot.state, PullState::Merged);
     assert!(snapshot.merge_commit.is_some());
     assert_eq!(snapshot.base_ref, "main");
-    assert!(!snapshot.checks.is_empty());
-    assert!(!snapshot.threads.is_empty());
+    assert_eq!(snapshot.checks.len(), 18);
+    assert_eq!(snapshot.threads.len(), 76);
     assert!(snapshot.queue.has_queue);
     assert!(snapshot.codex.is_some());
     assert!(snapshot.problems.is_empty(), "{:?}", snapshot.problems);
