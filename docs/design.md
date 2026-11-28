@@ -136,7 +136,7 @@ The [README](../README.md) does not yet list the three `pr` commands. The skills
 
 ### The review happens on the pull request, as a review
 
-**Chosen.** The reviewer runs every `Done when` command again itself, then reads the change. The manager posts the result as a review with the event `COMMENT`. Its body has a line that starts with `Reviewer:` and ends with `VERDICT: PASS head=<sha>` or `VERDICT: FAIL head=<sha>`.
+**Chosen.** The reviewer runs every `Done when` command again itself, then reads the change. The manager posts the result as a review with the event `COMMENT`. Its body has a line that starts with `Reviewer:`, and its last non-blank line is `VERDICT: PASS head=<sha>` or `VERDICT: FAIL head=<sha>`.
 
 **Rejected.** An approving review. A separate verifier role. A review as an issue or a sub-issue of the task.
 
