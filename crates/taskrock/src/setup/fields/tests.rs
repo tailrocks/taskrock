@@ -67,7 +67,7 @@ pub(super) fn complete(config: &Config) -> Vec<Value> {
 fn missing_fields_are_created_with_graphql() {
     let mut gh = FakeGh::new()
         .ok("issue-fields", "[]")
-        .ok("graphql", r#"{"data":{"organization":{"id":"O_1"}}}"#);
+        .ok("api orgs/acme", r#"{"node_id":"O_1"}"#);
     for _ in 0..8 {
         gh = gh.ok("graphql", r#"{"data":{}}"#);
     }
@@ -77,6 +77,7 @@ fn missing_fields_are_created_with_graphql() {
     assert_eq!(lines[0], "create field Agent");
     let calls = gh.calls();
     assert_eq!(calls.len(), 10);
+    assert_eq!(calls[1].0, "api orgs/acme");
     let input = calls[2].1.clone().expect("input");
     let sent: Value = serde_json::from_str(&input).expect("json");
     assert!(sent["query"].as_str().expect("query").contains(

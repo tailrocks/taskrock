@@ -40,7 +40,7 @@ fn a_field_of_sizes_called_effort_is_renamed() {
     let gh = FakeGh::new()
         .ok("issue-fields", &reply(&fields))
         .ok("-X PATCH orgs/acme/issue-fields/7", "{}")
-        .ok("graphql", r#"{"data":{"organization":{"id":"O_1"}}}"#)
+        .ok("api orgs/acme", r#"{"node_id":"O_1"}"#)
         .ok("graphql", r#"{"data":{}}"#);
     let (result, lines) = run_step(&gh, &config, false);
     result.expect("step");
