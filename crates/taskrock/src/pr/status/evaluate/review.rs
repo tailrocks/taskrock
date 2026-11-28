@@ -46,7 +46,10 @@ pub(super) fn verdicts(snapshot: &PullSnapshot, config: &Config, out: &mut Vec<F
     let mut heads: Vec<&str> = snapshot.verdicts.iter().map(|v| v.head.as_str()).collect();
     heads.sort_unstable();
     heads.dedup();
-    let passed = newest.is_some_and(|verdict| verdict.pass);
+    let passed = snapshot
+        .verdicts
+        .iter()
+        .any(|verdict| verdict.pass && verdict.head == snapshot.head_sha);
     if heads.len() >= config.review.max_rounds as usize && !passed {
         out.push(Finding::new(
             Code::RoundsExhausted,
@@ -99,17 +102,25 @@ pub(super) fn threads(snapshot: &PullSnapshot, link: &PullLink, out: &mut Vec<Fi
     }
 }
 
-/// Codex has not reviewed the head yet, or is still running. With no Codex
-/// comment there is nothing to wait for: the connector posts it when a review starts.
-pub(super) fn codex(snapshot: &PullSnapshot, out: &mut Vec<Finding>) {
-    let Some(codex) = &snapshot.codex else {
-        return;
-    };
+/// Codex has not reviewed the head yet, or is still running. With no Codex comment there is
+/// nothing to wait for, except on a ready pull request of a repository in `review.codex`: the
+/// connector posts the comment about 14 seconds after the pull request is marked ready.
+pub(super) fn codex(
+    snapshot: &PullSnapshot,
+    config: &Config,
+    link: &PullLink,
+    out: &mut Vec<Finding>,
+) {
     let head = &snapshot.head_sha;
     let done = |sha: &str, status: &str| sha == head && status == "completed";
-    if !(done(&codex.code_sha, &codex.code_status)
-        && done(&codex.security_sha, &codex.security_status))
-    {
+    let pending = if let Some(codex) = &snapshot.codex {
+        !(done(&codex.code_sha, &codex.code_status)
+            && done(&codex.security_sha, &codex.security_status))
+    } else {
+        let listed = (config.review.codex.iter()).any(|repo| repo.eq_ignore_ascii_case(&link.repo));
+        !snapshot.draft && listed
+    };
+    if pending {
         out.push(Finding::new(
             Code::BotReviewPending,
             "The Codex code and security review of the head has not completed.",

@@ -64,6 +64,16 @@ fn evaluate_rounds_exhausted_at_the_limit_with_no_pass() {
 }
 
 #[test]
+fn evaluate_a_pass_then_a_fail_on_one_head_is_not_rounds_exhausted() {
+    let mut config = config::default();
+    config.review.max_rounds = 1;
+    let mut snapshot = ready();
+    snapshot.verdicts = vec![verdict(true, HEAD, 1), verdict(false, HEAD, 2)];
+    let found = evaluate(&snapshot, &config, &link());
+    assert_eq!(codes(&found), ["verdict_failed"]);
+}
+
+#[test]
 fn evaluate_threads_blocking_lists_the_urls_and_skips_resolved() {
     let mut snapshot = ready();
     let mut done = thread("done", true, P2);
@@ -163,4 +173,14 @@ fn evaluate_closes_missing_for_a_task_branch_without_the_line() {
     snapshot.head_ref = "feat/issue-5-more".into();
     snapshot.body.clear();
     assert_eq!(judge(&snapshot).findings, []);
+}
+
+#[test]
+fn evaluate_a_pass_for_another_head_does_not_stop_rounds_exhausted() {
+    let mut config = config::default();
+    config.review.max_rounds = 2;
+    let mut snapshot = ready();
+    snapshot.verdicts = vec![verdict(true, &"a".repeat(40), 1), verdict(false, HEAD, 2)];
+    let found = evaluate(&snapshot, &config, &link());
+    assert_eq!(codes(&found), ["rounds_exhausted", "verdict_failed"]);
 }
