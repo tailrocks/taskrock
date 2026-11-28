@@ -18,7 +18,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T18:31:11Z",
       "commit_id": "9023e55879a1bf15d6d7b7e4921a58a636ed186d",
-      "body": "JSON('\"{\"')` inside `hashFiles(format(...))`, so the generated keys must work. A non-literal argument stays an unsupported-function error.\n\nVERDICT: FAIL head=9023e55879a1bf15d6d7b7e4921a58a636ed186d\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 9023e55879a1bf15d6d7b7e4921a58a636ed186d.\nJSON('\"{\"')` inside `hashFiles(format(...))`, so the generated keys must work. A non-literal argument stays an unsupported-function error.\n\nVERDICT: FAIL head=9023e55879a1bf15d6d7b7e4921a58a636ed186d\n"
     },
     {
       "id": 6079233842,
@@ -28,7 +28,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T18:56:47Z",
       "commit_id": "af52f640461f350a846b3e89bff0b24a76a4082b",
-      "body": "low-symbolic-links is rejected.\n  - Make the chmod-000 tests fail loudly (skip with a message) when run as root rather than pass silently.\n\nVERDICT: FAIL head=af52f640461f350a846b3e89bff0b24a76a4082b\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: af52f640461f350a846b3e89bff0b24a76a4082b.\nlow-symbolic-links is rejected.\n  - Make the chmod-000 tests fail loudly (skip with a message) when run as root rather than pass silently.\n\nVERDICT: FAIL head=af52f640461f350a846b3e89bff0b24a76a4082b\n"
     },
     {
       "id": 6079242530,
@@ -48,7 +48,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T19:13:58Z",
       "commit_id": "5c224368697b195a090c72692007a403543a7632",
-      "body": "): this is the third FAIL on task #2892, which reaches review.max_rounds. These are narrow parity fixes, so one final round is authorized.\n\nVERDICT: FAIL head=5c224368697b195a090c72692007a403543a7632\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 5c224368697b195a090c72692007a403543a7632.\n): this is the third FAIL on task #2892, which reaches review.max_rounds. These are narrow parity fixes, so one final round is authorized.\n\nVERDICT: FAIL head=5c224368697b195a090c72692007a403543a7632\n"
     },
     {
       "id": 6079430406,
@@ -78,7 +78,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T19:28:00Z",
       "commit_id": "931f9f161218d24fa7886e6e8d761d7b62c05f17",
-      "body": "\n- 3: correct the sentence.\n- 4: cite L90 (and L94 for statSync).\n- Q (HOME with . or ..): recorded as a deviation. It predates this diff.\n\nVERDICT: FAIL head=931f9f161218d24fa7886e6e8d761d7b62c05f17\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 931f9f161218d24fa7886e6e8d761d7b62c05f17.\n\n- 3: correct the sentence.\n- 4: cite L90 (and L94 for statSync).\n- Q (HOME with . or ..): recorded as a deviation. It predates this diff.\n\nVERDICT: FAIL head=931f9f161218d24fa7886e6e8d761d7b62c05f17\n"
     },
     {
       "id": 6079647646,
@@ -108,7 +108,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T19:48:40Z",
       "commit_id": "7d06d368d0ae39e09c4456c3f72cde40e0cb38e6",
-      "body": " also covers the workspace path in PatternSet::new. Reword the fifth bullet to match. Add a test for the dotted HOME, red without the fix.\n\nVERDICT: FAIL head=7d06d368d0ae39e09c4456c3f72cde40e0cb38e6\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 7d06d368d0ae39e09c4456c3f72cde40e0cb38e6.\n also covers the workspace path in PatternSet::new. Reword the fifth bullet to match. Add a test for the dotted HOME, red without the fix.\n\nVERDICT: FAIL head=7d06d368d0ae39e09c4456c3f72cde40e0cb38e6\n"
     },
     {
       "id": 6079855141,
@@ -118,7 +118,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T19:56:40Z",
       "commit_id": "c458a708e24d6a9866e84ff283e5a4fbf9884fa2",
-      "body": ". Exact quoted-path parity is not worth another round.\n- Q: a non-UTF-8 HOME or workspace errors with \"path '<lossy>' is not valid UTF-8\".\n\nVERDICT: FAIL head=c458a708e24d6a9866e84ff283e5a4fbf9884fa2\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: c458a708e24d6a9866e84ff283e5a4fbf9884fa2.\n. Exact quoted-path parity is not worth another round.\n- Q: a non-UTF-8 HOME or workspace errors with \"path '<lossy>' is not valid UTF-8\".\n\nVERDICT: FAIL head=c458a708e24d6a9866e84ff283e5a4fbf9884fa2\n"
     },
     {
       "id": 6079891743,
@@ -128,7 +128,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T19:59:45Z",
       "commit_id": "f6e1775a318998048115d92203e77c3193d13549",
-      "body": "OME and workspace, and no comments were added.\n- rumdl is clean, and 56/56 expr_ tests pass.\n\nMerge order: after #2926, rebased onto main.\n\nVERDICT: PASS head=f6e1775a318998048115d92203e77c3193d13549\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: f6e1775a318998048115d92203e77c3193d13549.\nOME and workspace, and no comments were added.\n- rumdl is clean, and 56/56 expr_ tests pass.\n\nMerge order: after #2926, rebased onto main.\n\nVERDICT: PASS head=f6e1775a318998048115d92203e77c3193d13549\n"
     },
     {
       "id": 6079998074,
@@ -708,7 +708,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T23:07:55Z",
       "commit_id": "d97040b4359f8ae5f6fbb8f092f02cef70ce53c6",
-      "body": " synchronous; the step executor must call hashFiles off the async workers (recorded for #2941).\n- Q2: accept the zero-deadline test as is.\n\nVERDICT: FAIL head=d97040b4359f8ae5f6fbb8f092f02cef70ce53c6\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: d97040b4359f8ae5f6fbb8f092f02cef70ce53c6.\n synchronous; the step executor must call hashFiles off the async workers (recorded for #2941).\n- Q2: accept the zero-deadline test as is.\n\nVERDICT: FAIL head=d97040b4359f8ae5f6fbb8f092f02cef70ce53c6\n"
     },
     {
       "id": 6081405896,
@@ -778,7 +778,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-26T23:55:24Z",
       "commit_id": "d0ca784903476de0c140b4999e37991b0d01ba62",
-      "body": "s case-sensitive) and resolve.\n- Test item 1: a bounded-mismatch helper (length plus a 200-character prefix) for long-input error asserts.\n\nVERDICT: FAIL head=d0ca784903476de0c140b4999e37991b0d01ba62\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: d0ca784903476de0c140b4999e37991b0d01ba62.\ns case-sensitive) and resolve.\n- Test item 1: a bounded-mismatch helper (length plus a 200-character prefix) for long-input error asserts.\n\nVERDICT: FAIL head=d0ca784903476de0c140b4999e37991b0d01ba62\n"
     },
     {
       "id": 6081881813,
@@ -818,7 +818,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T00:31:57Z",
       "commit_id": "8d805c4e7adc46e88094b0f436e1a77457c6283b",
-      "body": "Unicode 18 simple uppercase; .NET 8 uses its own ICU and Unicode 15 data for those few letters).\n- Reply on both threads and resolve them.\n\nVERDICT: FAIL head=8d805c4e7adc46e88094b0f436e1a77457c6283b\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 8d805c4e7adc46e88094b0f436e1a77457c6283b.\nUnicode 18 simple uppercase; .NET 8 uses its own ICU and Unicode 15 data for those few letters).\n- Reply on both threads and resolve them.\n\nVERDICT: FAIL head=8d805c4e7adc46e88094b0f436e1a77457c6283b\n"
     },
     {
       "id": 6082146672,
@@ -848,7 +848,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T01:31:42Z",
       "commit_id": "ba8244b56794bbde3378152bbd152a275928a2d1",
-      "body": "ample boundary names.\n- Tests: bound the length-limit test's failure output; add the search-root test (`[!]` → only `!`; `[]]` → nothing).\n\nVERDICT: FAIL head=ba8244b56794bbde3378152bbd152a275928a2d1\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: ba8244b56794bbde3378152bbd152a275928a2d1.\nample boundary names.\n- Tests: bound the length-limit test's failure output; add the search-root test (`[!]` → only `!`; `[]]` → nothing).\n\nVERDICT: FAIL head=ba8244b56794bbde3378152bbd152a275928a2d1\n"
     },
     {
       "id": 6082562399,
@@ -868,7 +868,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T02:20:05Z",
       "commit_id": "338ad67e43e66fec039145a3f360912b9408f7ad",
-      "body": "\n- Test: add the reviewer's `Room::new(\"w[]x[y/z]\", 0)` case, red under X1-X3.\n- Threads: reject both with the cited evidence and resolve.\n\nVERDICT: FAIL head=338ad67e43e66fec039145a3f360912b9408f7ad\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 338ad67e43e66fec039145a3f360912b9408f7ad.\n\n- Test: add the reviewer's `Room::new(\"w[]x[y/z]\", 0)` case, red under X1-X3.\n- Threads: reject both with the cited evidence and resolve.\n\nVERDICT: FAIL head=338ad67e43e66fec039145a3f360912b9408f7ad\n"
     },
     {
       "id": 6082897537,
@@ -908,7 +908,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T03:28:37Z",
       "commit_id": "07fe1e784df71d166a5da90cfbd432e214ea8513",
-      "body": "tory (test reviewer's note).\n- Threads: reject index.rs:32 and hash_files_fs.rs:62 with the cited evidence; fix number.rs:35. Resolve all.\n\nVERDICT: FAIL head=07fe1e784df71d166a5da90cfbd432e214ea8513\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 07fe1e784df71d166a5da90cfbd432e214ea8513.\ntory (test reviewer's note).\n- Threads: reject index.rs:32 and hash_files_fs.rs:62 with the cited evidence; fix number.rs:35. Resolve all.\n\nVERDICT: FAIL head=07fe1e784df71d166a5da90cfbd432e214ea8513\n"
     },
     {
       "id": 6083378477,
@@ -948,7 +948,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T04:57:36Z",
       "commit_id": "4f584118ab35db0c6e59809a98541c45da3177c0",
-      "body": " thresholds.\n- Optional, accepted: bound the longest_missing_parent loop, and take the expected error text from the probe's own io::Error.\n\nVERDICT: FAIL head=4f584118ab35db0c6e59809a98541c45da3177c0\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 4f584118ab35db0c6e59809a98541c45da3177c0.\n thresholds.\n- Optional, accepted: bound the longest_missing_parent loop, and take the expected error text from the probe's own io::Error.\n\nVERDICT: FAIL head=4f584118ab35db0c6e59809a98541c45da3177c0\n"
     },
     {
       "id": 6083888119,
@@ -968,7 +968,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T05:49:00Z",
       "commit_id": "95784c20d3cf310b75ffe60acc8cb474e2a9919d",
-      "body": ", asserted). For format.rs:161, analyse it, then fix it with a test or reject it with evidence. Reply and resolve all three.\n- 4: re-wrap.\n\nVERDICT: FAIL head=95784c20d3cf310b75ffe60acc8cb474e2a9919d\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 95784c20d3cf310b75ffe60acc8cb474e2a9919d.\n, asserted). For format.rs:161, analyse it, then fix it with a test or reject it with evidence. Reply and resolve all three.\n- 4: re-wrap.\n\nVERDICT: FAIL head=95784c20d3cf310b75ffe60acc8cb474e2a9919d\n"
     },
     {
       "id": 6084316009,
@@ -1020,7 +1020,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T07:02:40Z",
       "commit_id": "86df4656fd0d71a65632ce7010dba215c894d5a9",
-      "body": "move .partial on a write failure; fix the body.\n- Add the ci:run label before pushing so CI runs the tests, including the Linux-only ones.\n\nVERDICT: FAIL head=86df4656fd0d71a65632ce7010dba215c894d5a9\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 86df4656fd0d71a65632ce7010dba215c894d5a9.\nmove .partial on a write failure; fix the body.\n- Add the ci:run label before pushing so CI runs the tests, including the Linux-only ones.\n\nVERDICT: FAIL head=86df4656fd0d71a65632ce7010dba215c894d5a9\n"
     },
     {
       "id": 6084738750,
@@ -1040,7 +1040,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T07:46:36Z",
       "commit_id": "dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075",
-      "body": "r naming `e/c�`). Show O3 red on Linux with nextest.\n- Optional nit (accepted): point the non-UTF-8 paragraph at the outside-symlink rule.\n\nVERDICT: FAIL head=dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075.\nr naming `e/c�`). Show O3 red on Linux with nextest.\n- Optional nit (accepted): point the non-UTF-8 paragraph at the outside-symlink rule.\n\nVERDICT: FAIL head=dc3c8c29f5b6bb1b6016b147559d98d3c2fe6075\n"
     },
     {
       "id": 6085202764,
@@ -1060,7 +1060,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T08:18:20Z",
       "commit_id": "a3a7ecff606d65182583da1885d2bb036a0f3333",
-      "body": "st).\n- A single span keeps its value's type.\n- The argument limit applies as upstream does.\nEach with a red/green test. Reply and resolve.\n\nVERDICT: FAIL head=a3a7ecff606d65182583da1885d2bb036a0f3333\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: a3a7ecff606d65182583da1885d2bb036a0f3333.\nst).\n- A single span keeps its value's type.\n- The argument limit applies as upstream does.\nEach with a red/green test. Reply and resolve.\n\nVERDICT: FAIL head=a3a7ecff606d65182583da1885d2bb036a0f3333\n"
     },
     {
       "id": 6085384559,
@@ -1100,7 +1100,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T08:53:09Z",
       "commit_id": "dbba3fdf3966d101a29f3e207db546b1eb05239b",
-      "body": "ion span fails rather than keeping its type.\n- Nit: fix it.\n- CI: rerun after the push; the main-branch timeout is tracked in its own Bug.\n\nVERDICT: FAIL head=dbba3fdf3966d101a29f3e207db546b1eb05239b\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: dbba3fdf3966d101a29f3e207db546b1eb05239b.\nion span fails rather than keeping its type.\n- Nit: fix it.\n- CI: rerun after the push; the main-branch timeout is tracked in its own Bug.\n\nVERDICT: FAIL head=dbba3fdf3966d101a29f3e207db546b1eb05239b\n"
     },
     {
       "id": 6085733703,
@@ -1130,7 +1130,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T09:36:11Z",
       "commit_id": "4804f8b6d048318d56a7a7016939c55a8f4b8811",
-      "body": "whose printed form is longer than its source (`1==1`) to the at-limit length test, red under O7.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=4804f8b6d048318d56a7a7016939c55a8f4b8811\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 4804f8b6d048318d56a7a7016939c55a8f4b8811.\nwhose printed form is longer than its source (`1==1`) to the at-limit length test, red under O7.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=4804f8b6d048318d56a7a7016939c55a8f4b8811\n"
     },
     {
       "id": 6086263669,
@@ -1180,7 +1180,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T10:21:55Z",
       "commit_id": "6233f718f24f92fd461f0d85075991c7a3b6c81f",
-      "body": "n in the PR body for the next verification to approve.\n- Reply on and resolve both threads.\n- Bug #2990 is being fixed on main separately.\n\nVERDICT: FAIL head=6233f718f24f92fd461f0d85075991c7a3b6c81f\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 6233f718f24f92fd461f0d85075991c7a3b6c81f.\nn in the PR body for the next verification to approve.\n- Reply on and resolve both threads.\n- Bug #2990 is being fixed on main separately.\n\nVERDICT: FAIL head=6233f718f24f92fd461f0d85075991c7a3b6c81f\n"
     },
     {
       "id": 6087322556,
@@ -1220,7 +1220,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T12:02:52Z",
       "commit_id": "89962df37d20605e6163840620a0d682071b9c0c",
-      "body": "s the call; a leaked worker needs a hung filesystem; record it under the deliberate differences.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=89962df37d20605e6163840620a0d682071b9c0c\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 89962df37d20605e6163840620a0d682071b9c0c.\ns the call; a leaked worker needs a hung filesystem; record it under the deliberate differences.\n- Reply on and resolve all three threads.\n\nVERDICT: FAIL head=89962df37d20605e6163840620a0d682071b9c0c\n"
     },
     {
       "id": 6088847377,
@@ -1260,7 +1260,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T14:05:17Z",
       "commit_id": "75c6f1aca47e653f7c77fee6c016bde2ff679a32",
-      "body": "failed with EINVAL during concurrent renames (fails closed); filed as a Bug.\n\nTESTS: APPROVED head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\nVERDICT: PASS head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 75c6f1aca47e653f7c77fee6c016bde2ff679a32.\nfailed with EINVAL during concurrent renames (fails closed); filed as a Bug.\n\nTESTS: APPROVED head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\nVERDICT: PASS head=75c6f1aca47e653f7c77fee6c016bde2ff679a32\n"
     }
   ]
 ]

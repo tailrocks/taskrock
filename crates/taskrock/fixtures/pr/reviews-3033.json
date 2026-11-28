@@ -8,7 +8,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-27T19:14:46Z",
       "commit_id": "d112c00b6521ec2d0c726a1901b3bfe56f88dd1b",
-      "body": "nd the reviewer runs it.\n- Mark the PR ready for review, so CI runs.\n\nTESTS: CHANGES_REQUIRED head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\nVERDICT: FAIL head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: d112c00b6521ec2d0c726a1901b3bfe56f88dd1b.\nnd the reviewer runs it.\n- Mark the PR ready for review, so CI runs.\n\nTESTS: CHANGES_REQUIRED head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\nVERDICT: FAIL head=d112c00b6521ec2d0c726a1901b3bfe56f88dd1b\n"
     },
     {
       "id": 6092474403,
@@ -58,7 +58,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-28T00:48:06Z",
       "commit_id": "8b49656d1f1bdb558e9b10891b087f36a2fcee51",
-      "body": "record.\n\nSECURITY: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nTESTS: CHANGES_REQUIRED head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nVERDICT: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 8b49656d1f1bdb558e9b10891b087f36a2fcee51.\nrecord.\n\nSECURITY: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nTESTS: CHANGES_REQUIRED head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\nVERDICT: FAIL head=8b49656d1f1bdb558e9b10891b087f36a2fcee51\n"
     },
     {
       "id": 6095210510,

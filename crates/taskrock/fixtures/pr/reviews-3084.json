@@ -18,7 +18,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-28T01:48:31Z",
       "commit_id": "b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb",
-      "body": "tructor), so push and PR apply one rule.\n- 5 and 6: fix the wording.\n\nTESTS: CHANGES_REQUIRED head=b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb\nVERDICT: FAIL head=b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb.\ntructor), so push and PR apply one rule.\n- 5 and 6: fix the wording.\n\nTESTS: CHANGES_REQUIRED head=b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb\nVERDICT: FAIL head=b5b1c3fe01c53c4c94e233fad54e0f6abf9afafb\n"
     },
     {
       "id": 6095159113,
@@ -38,7 +38,7 @@
       "state": "COMMENTED",
       "submitted_at": "2026-11-28T02:47:33Z",
       "commit_id": "86282a9e7b9c6462648b00f1ce43db29bb582755",
-      "body": "Part of #2906, #2907\"); both tasks stay open for their I/O and broker parts.\n\nTESTS: APPROVED head=86282a9e7b9c6462648b00f1ce43db29bb582755\nVERDICT: PASS head=86282a9e7b9c6462648b00f1ce43db29bb582755\n"
+      "body": "Reviewer: `tailrocks-code-reviewer` on claude-opus-5-5 (high). Commit checked: 86282a9e7b9c6462648b00f1ce43db29bb582755.\nPart of #2906, #2907\"); both tasks stay open for their I/O and broker parts.\n\nTESTS: APPROVED head=86282a9e7b9c6462648b00f1ce43db29bb582755\nVERDICT: PASS head=86282a9e7b9c6462648b00f1ce43db29bb582755\n"
     }
   ]
 ]

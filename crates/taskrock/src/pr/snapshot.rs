@@ -14,6 +14,8 @@ pub(crate) mod case_tests;
 mod facts_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod verdict_tests;
 
 /// Where a pull request is in its life.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,12 +33,12 @@ pub struct CheckFact {
     pub conclusion: Option<String>,
 }
 
-/// A `VERDICT: PASS|FAIL head=<sha>` line at the end of a review or a comment.
+/// A `VERDICT: PASS|FAIL head=<sha>` line at the end of a review that has a `Reviewer:` line.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VerdictFact {
     pub pass: bool,
     pub head: String,
-    /// When the review was submitted or the comment was created.
+    /// When the review was submitted.
     pub at: String,
 }
 
@@ -124,12 +126,10 @@ pub fn read(gh: &dyn Gh, link: &PullLink) -> Result<PullSnapshot, Error> {
     let rules = settle(rest::rules(gh, link, &base), "branch rules", &mut problems);
     snapshot.required_checks = rules.required_checks;
     let reviews = settle(rest::reviews(gh, link), "reviews", &mut problems);
-    let notes = rest::comments(gh, link, &mut problems);
-    let comments = settle(notes, "comments", &mut problems);
     snapshot.verdicts = reviews;
-    snapshot.verdicts.extend(comments.verdicts);
     snapshot.verdicts.sort_by(|a, b| a.at.cmp(&b.at));
-    snapshot.codex = comments.codex;
+    let comments = rest::comments(gh, link, &mut problems);
+    snapshot.codex = settle(comments, "comments", &mut problems);
     let found = graph::read(gh, link, &base, &mut problems);
     let graph = found.unwrap_or_else(|error| {
         graph::Graph::failed(unreadable("review threads and the merge queue", &error))

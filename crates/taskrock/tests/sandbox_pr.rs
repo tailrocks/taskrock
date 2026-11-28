@@ -83,7 +83,7 @@ fn review(gh: &RealGh, number: u64, head: &str) -> Result<(), Error> {
         gh,
         "POST",
         &format!("{REPO}/pulls/{number}/reviews"),
-        &json!({"event": "COMMENT", "body": format!("VERDICT: PASS head={head}")}),
+        &json!({"event": "COMMENT", "body": format!("Reviewer: sandbox\nVERDICT: PASS head={head}")}),
     )?;
     Ok(())
 }

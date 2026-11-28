@@ -2,29 +2,24 @@
 
 use super::case_tests::{Case, page, queued};
 use super::read;
-use super::rest::verdict;
 use crate::pr::status;
 use serde_json::json;
 
 const SHA: &str = "0123456789abcdef0123456789abcdef01234567";
 
-/// One review or comment with a verdict `word`, at `at` under `time_key`.
-fn note(time_key: &str, at: &str, word: &str) -> String {
+/// One review with a verdict `word`, submitted at `at`.
+fn note(at: &str, word: &str) -> String {
     format!(
-        r#"{{"user":{{"login":"r"}},"{time_key}":"{at}","body":"Findings.\n\nVERDICT: {word} head={SHA}"}}"#
+        r#"{{"user":{{"login":"r"}},"submitted_at":"{at}","body":"Reviewer: r\nFindings.\n\nVERDICT: {word} head={SHA}"}}"#
     )
 }
 
 #[test]
-fn snapshot_verdicts_of_comments_and_reviews_are_ordered_by_time() {
+fn snapshot_verdicts_of_reviews_are_ordered_by_time() {
     let mut case = Case::recorded(2963);
-    case.reviews = format!(
-        "[[{}]]",
-        note("submitted_at", "2026-02-01T00:00:00Z", "PASS")
-    );
-    let late = note("created_at", "2026-03-01T00:00:00Z", "FAIL");
-    let early = note("created_at", "2026-01-01T00:00:00Z", "PASS");
-    case.comments = format!("[[{late},{early}]]");
+    let late = note("2026-03-01T00:00:00Z", "FAIL");
+    let early = note("2026-01-01T00:00:00Z", "PASS");
+    case.reviews = format!("[[{late},{early}]]");
     let found = read(&case.gh(), &case.link())
         .expect("the pull is read")
         .verdicts;
@@ -33,7 +28,6 @@ fn snapshot_verdicts_of_comments_and_reviews_are_ordered_by_time() {
         found,
         [
             ("2026-01-01T00:00:00Z", true),
-            ("2026-02-01T00:00:00Z", true),
             ("2026-03-01T00:00:00Z", false),
         ]
     );
@@ -86,12 +80,6 @@ fn snapshot_an_error_on_a_later_page_keeps_the_earlier_pages() {
         last.contains("later pages") && last.contains("only the 3 threads"),
         "{last}"
     );
-}
-
-#[test]
-fn snapshot_the_head_of_a_verdict_is_lowercase() {
-    let found = verdict(&format!("VERDICT: PASS head={}", SHA.to_uppercase()), "t");
-    assert_eq!(found.expect("a verdict").head, SHA);
 }
 
 /// The names and conclusions of the checks and the finding codes that `status` gives, when the
