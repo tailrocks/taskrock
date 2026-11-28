@@ -30,7 +30,7 @@ pub(super) fn node(number: u64, title: &str, readme: &str, public: bool) -> Valu
 }
 
 pub(super) fn listing(nodes: &[Value]) -> String {
-    json!({"data": {"repositoryOwner": {"projectsV2": {"nodes": nodes}}}}).to_string()
+    json!({"data": {"organization": {"projectsV2": {"nodes": nodes}}}}).to_string()
 }
 
 type Outcome = (

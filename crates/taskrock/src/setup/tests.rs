@@ -66,7 +66,7 @@ fn org_projects() -> String {
             "<!-- taskrock:project key=roadmap kind=portfolio -->",
         ),
     ];
-    serde_json::json!({"data": {"repositoryOwner": {"projectsV2": {"nodes": nodes}}}}).to_string()
+    serde_json::json!({"data": {"organization": {"projectsV2": {"nodes": nodes}}}}).to_string()
 }
 
 const ALL: [&str; 5] = ["Initiative", "Epic", "Task", "Bug", "Feature"];

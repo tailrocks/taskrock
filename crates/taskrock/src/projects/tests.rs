@@ -20,7 +20,7 @@ fn project(number: u64) -> ProjectLink {
 }
 
 fn readme_answer(readme: &str) -> String {
-    serde_json::json!({"data": {"repositoryOwner": {"projectV2": {"readme": readme}}}}).to_string()
+    serde_json::json!({"data": {"organization": {"projectV2": {"readme": readme}}}}).to_string()
 }
 
 #[test]
@@ -82,7 +82,7 @@ fn with_marker_replaces_an_old_marker() {
 #[test]
 fn list_returns_open_projects_with_their_markers() {
     let line = marker_line(&marker("roadmap", ProjectKind::Portfolio));
-    let body = serde_json::json!({"data": {"repositoryOwner": {"projectsV2": {"nodes": [
+    let body = serde_json::json!({"data": {"organization": {"projectsV2": {"nodes": [
         {"id": "P1", "number": 3, "title": "taskrock", "readme": null, "public": false, "closed": false},
         {"id": "P2", "number": 4, "title": "Roadmap", "readme": format!("Plan\n\n{line}"), "public": true, "closed": false},
         {"id": "P3", "number": 5, "title": "Old", "readme": "", "public": false, "closed": true},
@@ -113,4 +113,38 @@ fn kind_of_reads_the_marker_and_defaults_to_delivery() {
         kind_of(&gh, &project(3)).expect("kind"),
         ProjectKind::Delivery
     );
+}
+
+/// The JSON body that the one call sent to `gh api graphql --input -`.
+fn sent(gh: &FakeGh) -> serde_json::Value {
+    let calls = gh.calls();
+    assert_eq!(calls.len(), 1);
+    assert_eq!(calls[0].0, "api graphql --input -");
+    serde_json::from_str(calls[0].1.as_deref().expect("input")).expect("json")
+}
+
+#[test]
+fn kind_of_sends_the_organization_query_with_a_numeric_number() {
+    let gh = FakeGh::new().ok("graphql", &readme_answer(""));
+    kind_of(&gh, &project(4)).expect("kind");
+    let sent = sent(&gh);
+    let query = sent["query"].as_str().expect("query");
+    assert!(query.contains("organization(login:$o){projectV2(number:$n)"));
+    assert_eq!(
+        sent["variables"],
+        serde_json::json!({"o": "tailrocks", "n": 4})
+    );
+}
+
+#[test]
+fn list_sends_the_organization_query_with_the_owner() {
+    let gh = FakeGh::new().ok(
+        "graphql",
+        r#"{"data":{"organization":{"projectsV2":{"nodes":[]}}}}"#,
+    );
+    list(&gh, "tailrocks").expect("list");
+    let sent = sent(&gh);
+    let query = sent["query"].as_str().expect("query");
+    assert!(query.contains("organization(login:$o){projectsV2(first:100)"));
+    assert_eq!(sent["variables"], serde_json::json!({"o": "tailrocks"}));
 }

@@ -9,7 +9,7 @@ const ITEMS: &str = include_str!("../fixtures/project_items.json");
 const PROJECT: &str = "https://github.com/orgs/tailrocks/projects/3";
 
 fn readme_answer(readme: &str) -> String {
-    serde_json::json!({"data": {"repositoryOwner": {"projectV2": {"readme": readme}}}}).to_string()
+    serde_json::json!({"data": {"organization": {"projectV2": {"readme": readme}}}}).to_string()
 }
 
 fn project_gh() -> FakeGh {

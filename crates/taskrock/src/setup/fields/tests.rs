@@ -77,6 +77,7 @@ fn missing_fields_are_created_with_graphql() {
     assert_eq!(lines[0], "create field Agent");
     let calls = gh.calls();
     assert_eq!(calls.len(), 10);
+    assert_eq!(calls[1].0, "api orgs/acme");
     let input = calls[2].1.clone().expect("input");
     let sent: Value = serde_json::from_str(&input).expect("json");
     assert!(sent["query"].as_str().expect("query").contains(
