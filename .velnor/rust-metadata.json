@@ -132,6 +132,16 @@
               "requires_features": false
             },
             {
+              "name": "sandbox_pr",
+              "kinds": [
+                "test"
+              ],
+              "tests": true,
+              "doctest": false,
+              "source": "crates/taskrock/tests/sandbox_pr.rs",
+              "requires_features": false
+            },
+            {
               "name": "sandbox_setup",
               "kinds": [
                 "test"
@@ -170,5 +180,5 @@
     "Cargo.toml": "50d6af5d499eef3ad2d317a6e639c469ed3e0221ca74fce42d6f748d061f6cb6",
     "crates/taskrock/Cargo.toml": "0590f036f8fd8614db9d4df9a2e6878cc04cb0004f1de61a93e83cda7c5f2e43"
   },
-  "layout": "81b9bc232594f27c04beba1154340714d86087aaf06c682fa4e5d6d180cf9337"
+  "layout": "09b09bf9f7dfcaf568a92d5bbb60d8a42957eb1137cf66fcc0f93ad39730a1b9"
 }
