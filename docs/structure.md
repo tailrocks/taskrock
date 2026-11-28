@@ -66,7 +66,22 @@ The `Gh` trait exists for the tests. `FakeGh` answers each call from a script an
 
 There are three kinds of tests.
 
-- Unit tests sit in `src/<module>/tests.rs`. The parent module declares them with the attribute `#[cfg(test)]`. The `claim` module also has `src/claim/release_tests.rs`.
+- Unit tests sit in `src/<module>/tests.rs`. The parent module declares them with the attribute `#[cfg(test)]`. When a module's `tests.rs` would pass the 150-line cap, its tests move to sibling files named `src/<module>/<name>_tests.rs`. The parent module declares each sibling file with `#[cfg(test)] mod <name>_tests;`. These sibling files exist:
+  - `src/apply/links/flow_tests.rs`
+  - `src/apply/links/milestone_tests.rs`
+  - `src/apply/links/order_tests.rs`
+  - `src/claim/body_tests.rs`
+  - `src/claim/refuse_tests.rs`
+  - `src/claim/release_tests.rs`
+  - `src/draft/check/links_tests.rs`
+  - `src/draft/check/root_tests.rs`
+  - `src/draft/check/title_tests.rs`
+  - `src/github/items/project_tests.rs`
+  - `src/link/pull_tests.rs`
+  - `src/ready/loose_tests.rs`
+  - `src/ready/problems_tests.rs`
+  - `src/ready/stacked_tests.rs`
+  - `src/ready/triage_tests.rs`
 - Integration tests sit in `crates/taskrock/tests/`. `cli.rs` runs the built binary with `--version`, with `--help` and with no argument. `ready.rs` runs `ready::run` against the fixtures through `FakeGh`. `check_config.rs` runs `taskrock check` on a config file.
 - Live tests are the five files whose names start with `sandbox_`. They call GitHub. Each test has the attribute `#[ignore = "talks to GitHub"]`, so a normal test run skips it. The live tests of apply and claim write to `tailrocks/taskrock-sandbox`. The live test of setup, `sandbox_setup.rs`, runs `taskrock setup` twice on the sandbox project and expects no change the second time.
 

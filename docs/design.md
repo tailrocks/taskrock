@@ -64,7 +64,7 @@ The [README](../README.md) does not yet list the three `pr` commands. The skills
 
 ### An issue filed while a goal is built goes under the goal
 
-**Chosen.** A Bug, a follow-up task, a task for the owner or a retro that is filed while a goal is built comes from a one-file draft. Its `parent` is a link under the goal, and `plan.toml` gives it the goal's milestone. `ready` lists the Triage items under the link. The goal skill triages them, builds them, and stops only when the goal's milestone has no open issue.
+**Chosen.** A Bug, a follow-up task, a task for the owner or a retro that is filed while a goal is built comes from a one-file draft. Its `parent` is a link under the goal, and `plan.toml` gives it the goal's milestone. `ready` lists the Triage items under the link. The goal skill triages them, builds them, and stops only when the goal's milestone has no open issue. Since 0.4.0, `check` refuses an issue that is not an Initiative and has no `parent`, and `apply` gives it the milestone of its `parent`; a milestone stays optional.
 
 **Rejected.** Friction Bugs with no parent and no milestone that wait in Triage outside the goal. A separate `gh issue edit --parent` call after `apply`.
 
