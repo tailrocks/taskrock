@@ -57,7 +57,9 @@ fn is_allowed_layout(path: &Path) -> bool {
 fn documented(text: &str) -> BTreeSet<Rel> {
     text.split(|c: char| !(c.is_ascii_alphanumeric() || "_/.-".contains(c)))
         .map(|token| token.trim_end_matches('.'))
-        .filter(|token| token.starts_with("src/") && token.ends_with(".rs"))
+        .filter(|token| {
+            token.starts_with("src/") && Path::new(token).extension().is_some_and(|e| e == "rs")
+        })
         .filter(|token| is_listed_kind(Path::new(token)))
         .map(str::to_owned)
         .collect()
