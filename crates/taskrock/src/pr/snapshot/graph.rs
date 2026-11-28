@@ -121,9 +121,17 @@ pub(super) fn read(
     let mut graph = Graph::default();
     let mut cursor: Option<String> = None;
     for page in 0..MAX_PAGES {
-        let variables = json!({"owner": link.owner, "name": link.repo, "n": link.number, "base": base, "cursor": cursor});
-        let data: Data = serde_json::from_value(graphql(gh, QUERY, &variables)?)
-            .map_err(|error| Error::Json(error.to_string()))?;
+        let data = match fetch(gh, link, base, cursor.as_deref()) {
+            Ok(data) => data,
+            Err(error) if page > 0 => {
+                problems.push(format!(
+                    "The review threads of the later pages could not be read, so the snapshot holds only the {} threads of the earlier pages: {error}.",
+                    graph.threads.len()
+                ));
+                return Ok(graph);
+            }
+            Err(error) => return Err(error),
+        };
         let pull = data.repository.pull_request;
         if page == 0 {
             graph.has_queue = data.repository.merge_queue.is_some();
@@ -178,4 +186,11 @@ fn fact(thread: Thread, problems: &mut Vec<String>) -> Option<ThreadFact> {
             .map(|c| c.body.clone())
             .collect(),
     })
+}
+
+/// One page of the query, from `cursor`.
+fn fetch(gh: &dyn Gh, link: &PullLink, base: &str, cursor: Option<&str>) -> Result<Data, Error> {
+    let variables = json!({"owner": link.owner, "name": link.repo, "n": link.number, "base": base, "cursor": cursor});
+    serde_json::from_value(graphql(gh, QUERY, &variables)?)
+        .map_err(|error| Error::Json(error.to_string()))
 }
