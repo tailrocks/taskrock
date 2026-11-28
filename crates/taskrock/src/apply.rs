@@ -72,10 +72,11 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
     status::require_triage(gh, &draft)?;
     portfolio::find_portfolio(gh, &owner, &draft)?;
     let field_ids = fields::field_ids(gh, &owner)?;
-    let linked = links::resolve(gh, &draft)?;
-    let milestones = milestones::milestone_numbers(gh, &draft, options.dry_run)?;
     let mut found = existing::find_existing(gh, &draft)?;
-    found.extend(linked);
+    let linked = links::resolve(gh, &draft, &found)?;
+    let milestones =
+        milestones::milestone_numbers(gh, &draft, &linked.milestones, options.dry_run)?;
+    found.extend(linked.found);
     let mut lines = Vec::with_capacity(draft.issues.len());
     for issue in create::creation_order(&draft) {
         if let Some(known) = found.get(&issue.key) {
@@ -84,9 +85,17 @@ pub fn create_issues(gh: &dyn Gh, folder: &Path, options: &Options) -> Result<Ap
                 known.link.number, issue.key, issue.title
             ));
         } else if options.dry_run {
-            lines.extend(create::would_create(&draft, issue));
+            lines.extend(create::would_create(&draft, issue, &linked.milestones));
         } else {
-            let created = create::create_one(gh, &draft, issue, &found, &field_ids, &milestones)?;
+            let created = create::create_one(
+                gh,
+                &draft,
+                issue,
+                &found,
+                &field_ids,
+                &milestones,
+                &linked.milestones,
+            )?;
             lines.push(format!(
                 "created #{} {} {}",
                 created.link.number, issue.key, issue.title

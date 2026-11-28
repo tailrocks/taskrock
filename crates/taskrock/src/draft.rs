@@ -1,5 +1,7 @@
 //! A draft folder read into memory: the plan and its issues.
 
+use std::collections::BTreeMap;
+
 use crate::fields::Routing;
 use crate::link::ProjectLink;
 
@@ -10,6 +12,9 @@ pub mod check;
 pub mod coverage;
 pub mod links;
 pub mod parse;
+
+/// The milestone title of each linked parent that has one, by link text.
+pub type ParentMilestones = BTreeMap<String, String>;
 
 /// One milestone of the plan.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -57,13 +62,33 @@ pub struct Draft {
 }
 
 impl Draft {
-    /// The milestone title `issue` gets: its own, or the plan's.
+    /// The milestone title `issue` gets: its own, else the plan's, else the
+    /// one of its link parent.
     #[must_use]
-    pub fn milestone_of<'a>(&'a self, issue: &'a DraftIssue) -> Option<&'a str> {
+    pub fn milestone_of<'a>(
+        &'a self,
+        issue: &'a DraftIssue,
+        parents: &'a ParentMilestones,
+    ) -> Option<&'a str> {
         issue
             .milestone
             .as_deref()
             .or(self.plan.milestone.as_deref())
+            .or_else(|| self.inherited(issue, parents))
+    }
+
+    /// The milestone title `issue` takes from its link parent. It is `None`
+    /// when the issue or the plan names a milestone.
+    #[must_use]
+    pub fn inherited<'a>(
+        &'a self,
+        issue: &'a DraftIssue,
+        parents: &'a ParentMilestones,
+    ) -> Option<&'a str> {
+        if issue.milestone.is_some() || self.plan.milestone.is_some() {
+            return None;
+        }
+        parents.get(issue.parent.as_deref()?).map(String::as_str)
     }
 }
 
