@@ -158,7 +158,7 @@ efforts  = ["low", "medium", "high", "xhigh", "max"]
 use      = "The default builder."
 
 [review]
-max_rounds = 3                     # failed reviews before the task goes to the owner
+max_rounds = 3                     # reviewed heads before the task goes to the owner
 
 # Issue types and their formats. Initiative, Epic, Task, Bug and Feature are required.
 [[issue_type]]
@@ -307,7 +307,7 @@ The goal skill lists ready tasks with `taskrock ready --stacked`, takes a stacke
 |---|---|
 | `taskrock-plan` | Asks its questions in rounds, each multiple choice with a recommended answer. Finds facts by running commands and never asks them. Reviews its own tree before it shows it. Writes Done-when boxes as commands that can fail. Splits a wide change into prefactor, expand, migrate and contract. Gives each parent Not yet specified and Decisions so far. Takes routing only from the config blocks, with `use` guiding the model choice. Picks the delivery project from the config. It counts filed Bugs in the Done when of an initiative, and ends by naming the skill that builds the plan. |
 | `taskrock-issue` | Reads the issue's comments first. Merges the default branch and reruns Done when before the pull request. Ends with DONE, BLOCKED or TASK_WRONG. Uses `taskrock release --note` when it stops. It files a friction under the parent of its task, with the task's milestone. |
-| `taskrock-goal` | The verdict names the commit: `VERDICT: PASS head=<sha>`. Only findings that the reviewer reproduced count, and each is routed as a fix, a decision (an owner task) or a deferral (a Bug in Triage). It allows at most `review.max_rounds` failed reviews, then makes an owner task. No reviewer available means no merge. When an epic closes, it makes an owner task with the repeated failures and proposed `AGENTS.md` edits. It appends Decisions so far to parents. It files every issue under the goal with the goal's milestone, sweeps the Triage items of the goal before it stops, and says that the work is done only when the goal's milestone has no open issue. |
+| `taskrock-goal` | The verdict names the commit: `VERDICT: PASS head=<sha>`. Only findings that the reviewer reproduced count, and each is routed as a fix, a decision (an owner task) or a deferral (a Bug in Triage). It allows at most `review.max_rounds` reviewed heads before the task goes to the owner. No reviewer available means no merge. When an epic closes, it makes an owner task with the repeated failures and proposed `AGENTS.md` edits. It appends Decisions so far to parents. It files every issue under the goal with the goal's milestone, sweeps the Triage items of the goal before it stops, and says that the work is done only when the goal's milestone has no open issue. |
 | `taskrock-triage` | Checks for an existing implementation, reproduces a bug and searches closed requests. A report that needs information stays in Triage with a comment and no label. A rejected request is closed as not planned with the reason. Agent comments say an agent wrote them. |
 | `taskrock-setup` | Interviews the owner in rounds with recommended answers, reading the facts of the organization with `gh api`. Offers only runtimes and models found on the machine. Writes the config, opens the pull request to `<owner>/.github`, runs `taskrock setup --dry-run`, then `taskrock setup` after approval. |
 

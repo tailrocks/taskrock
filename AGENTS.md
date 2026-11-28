@@ -17,6 +17,7 @@ The plan for this repository is on GitHub: the issues of `tailrocks/taskrock` an
 - Module files are named after the module (`link.rs`, then `link/` for its children). No `mod.rs`.
 - Unit tests live in `src/<module>/tests.rs`, declared in the module with `#[cfg(test)] mod tests;`. Integration tests live in `crates/taskrock/tests/`, which holds only `.rs` files. JSON test data lives in `crates/taskrock/fixtures/`.
 - Every GitHub request goes through the `Gh` trait. Use the REST API. Do not use the search API: its results lag behind writes.
+- GraphQL is allowed only where REST has no equivalent: the resolved state of review threads, `resolveReviewThread`, and the merge queue (`mergeQueue`, `mergeQueueEntry`, `enqueuePullRequest`). Use `github::graphql` for it.
 - Add a dependency only when the task names it. Add it with `cargo add`, and commit `Cargo.lock`.
 
 ## Checks
