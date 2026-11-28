@@ -68,7 +68,7 @@ pub struct Model {
 /// The review rules.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ReviewConfig {
-    /// Failed reviews before the task goes to the owner.
+    /// Reviewed heads before the task goes to the owner.
     pub max_rounds: u32,
 }
 
