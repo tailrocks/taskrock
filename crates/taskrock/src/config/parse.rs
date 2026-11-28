@@ -79,15 +79,17 @@ struct RawModel {
 }
 
 #[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields, default)]
 struct RawReview {
     max_rounds: u32,
+    codex: Vec<String>,
 }
 
 impl Default for RawReview {
     fn default() -> Self {
         Self {
             max_rounds: ReviewConfig::default().max_rounds,
+            codex: ReviewConfig::default().codex,
         }
     }
 }
@@ -184,6 +186,7 @@ impl From<RawConfig> for Config {
             routing: raw.routing.into(),
             review: ReviewConfig {
                 max_rounds: raw.review.max_rounds,
+                codex: raw.review.codex,
             },
             issue_types: raw.issue_type.into_iter().map(Into::into).collect(),
             owner_task: raw.owner_task.map_or_else(

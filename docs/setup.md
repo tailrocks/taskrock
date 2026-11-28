@@ -159,6 +159,7 @@ use      = "The default builder."
 
 [review]
 max_rounds = 3                     # reviewed heads before the task goes to the owner
+codex      = ["velnor-new"]        # repositories of the owner where the Codex connector reviews
 
 # Issue types and their formats. Initiative, Epic, Task, Bug and Feature are required.
 [[issue_type]]
@@ -209,6 +210,8 @@ kind  = "portfolio"
 
 The folder `crates/taskrock/fixtures/` holds a complete example, `config-good.toml`.
 
+**Codex repositories.** `review.codex` names the repositories of the owner where the Codex connector reviews pull requests. In them `taskrock pr status` gives the wait `bot_review_pending` for a ready pull request that has no Codex comment yet, because the connector posts its comment some seconds after the pull request is marked ready. In any other repository a missing comment gives nothing. The default is no repository. taskrock does not detect Codex.
+
 **What becomes a GitHub field.** Only the names. Subagent names fill Agent and Review agent, by `can`. Model names fill Model and Review model. All efforts of all models fill Effort and Review effort. Runtimes fill Runtime and Review runtime.
 
 **What stays in the config.** Each block's `runtimes`, `efforts`, `can` and `use`. They are rules for the planner. taskrock does not check that a task's subagent, runtime, model and effort fit together, because a GitHub field cannot depend on another field. The planner picks a subagent, then a runtime from its list, then a model that lists that runtime, then an effort from that model.
@@ -218,6 +221,7 @@ The folder `crates/taskrock/fixtures/` holds a complete example, `config-good.to
 **Checking the file.** `taskrock check <file>` checks the file offline and prints `OK config, <n> projects`, or one line for each problem. It checks that:
 
 - `version` is 1 and `review.max_rounds` is at least 1.
+- Each `review.codex` entry is a repository name with no `/`, listed once.
 - Subagent names, model names, issue type names and project keys are unique, and so are the milestone titles of a project.
 - Each subagent and model runtime is in `routing.runtimes`. Each subagent has at least one `can` value, and each model has at least one effort.
 - Each of the five required issue types is present, and the `file` and `checklist` sections of each format are also `build` sections.

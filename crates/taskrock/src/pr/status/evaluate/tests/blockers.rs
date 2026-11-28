@@ -64,6 +64,16 @@ fn evaluate_rounds_exhausted_at_the_limit_with_no_pass() {
 }
 
 #[test]
+fn evaluate_a_pass_then_a_fail_on_one_head_is_not_rounds_exhausted() {
+    let mut config = config::default();
+    config.review.max_rounds = 1;
+    let mut snapshot = ready();
+    snapshot.verdicts = vec![verdict(true, HEAD, 1), verdict(false, HEAD, 2)];
+    let found = evaluate(&snapshot, &config, &link());
+    assert_eq!(codes(&found), ["verdict_failed"]);
+}
+
+#[test]
 fn evaluate_threads_blocking_lists_the_urls_and_skips_resolved() {
     let mut snapshot = ready();
     let mut done = thread("done", true, P2);
