@@ -32,6 +32,7 @@ fn run_lists_the_project_as_text_and_json() {
         "ready",
         "waiting_on_owner",
         "triage",
+        "loose",
         "in_progress",
         "blocked",
         "problems",
@@ -100,4 +101,45 @@ fn run_json_lists_triage_items_outside_ready_and_problems() {
     assert!(listed.iter().all(|entry| entry["number"] != 18));
     let problems = json["problems"].to_string();
     assert!(!problems.contains("issues/18"), "{problems}");
+}
+
+#[test]
+fn run_json_lists_the_loose_issues_of_the_link_milestone() {
+    let projects = serde_json::json!({"data": {"repository": {"issue": {"projectItems": {
+        "nodes": [{"project": {
+            "number": 3,
+            "readme": "No marker, so delivery.",
+            "owner": {"login": "tailrocks"},
+        }}],
+    }}}}});
+    let gh = FakeGh::new()
+        .ok("graphql", &projects.to_string())
+        .ok("3/fields", &format!("[{FIELDS}]"))
+        .ok("3/items", &format!("[{ITEMS}]"))
+        .ok("matching-refs", "[[]]")
+        .ok("issues?state=open", "[[]]")
+        .fail("contents/taskrock.toml", "gh: Not Found (HTTP 404)");
+    let epic = "https://github.com/tailrocks/taskrock/issues/5";
+    let out = run(&gh, epic, true, false).expect("ready json");
+    let json: serde_json::Value = serde_json::from_str(&out).expect("json parses");
+    assert_eq!(
+        json["loose"],
+        serde_json::json!([{
+            "number": 99,
+            "title": "A task filed outside the tree",
+            "url": "https://github.com/tailrocks/taskrock/issues/99",
+            "type": "Task",
+        }])
+    );
+    let listed = json["ready"].as_array().expect("ready is a list");
+    assert!(listed.iter().all(|entry| entry["number"] != 99));
+    let problems = json["problems"].to_string();
+    assert!(!problems.contains("issues/99"), "{problems}");
+}
+
+#[test]
+fn run_json_of_a_project_link_has_an_empty_loose_list() {
+    let out = run(&project_gh(), PROJECT, true, false).expect("ready json");
+    let json: serde_json::Value = serde_json::from_str(&out).expect("json parses");
+    assert_eq!(json["loose"], serde_json::json!([]));
 }

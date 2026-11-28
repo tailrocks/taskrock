@@ -12,6 +12,8 @@ use crate::stack::Stack;
 use output::{json_of, text_of};
 
 mod body;
+#[cfg(test)]
+mod loose_tests;
 mod output;
 #[cfg(test)]
 mod problems_tests;
@@ -33,6 +35,10 @@ pub struct Report<'a> {
     /// The open issues with Status Triage. They are not candidates and not
     /// problems: a manager reads them to see what was reported.
     pub triage: Vec<&'a Item>,
+    /// The open issues of the link's milestone that have no parent. They are
+    /// not candidates and not problems: a manager reads them to see what was
+    /// filed outside its tree.
+    pub loose: Vec<&'a Item>,
     /// How many candidates are in progress.
     pub in_progress: usize,
     /// How many candidates have an open blocker.
@@ -73,6 +79,38 @@ pub fn scope<'a>(items: &'a [Item], link: &Link) -> Vec<&'a Item> {
                 .collect()
         }
     }
+}
+
+/// The open issues of the milestone of an issue link that have no parent.
+///
+/// A project link, or an issue link whose issue has no milestone, finds none.
+/// A loose item is a `Task`, `Bug`, `Feature` or `Epic` and is not the link
+/// itself.
+#[must_use]
+pub fn loose<'a>(items: &'a [Item], link: &Link) -> Vec<&'a Item> {
+    let Link::Issue(target) = link else {
+        return Vec::new();
+    };
+    let milestone = items
+        .iter()
+        .find(|item| item.link == *target)
+        .and_then(|item| item.milestone.as_deref());
+    let Some(milestone) = milestone else {
+        return Vec::new();
+    };
+    items
+        .iter()
+        .filter(|item| {
+            item.open
+                && item.link != *target
+                && item.parent.is_none()
+                && item.milestone.as_deref() == Some(milestone)
+                && matches!(
+                    item.kind.as_deref(),
+                    Some("Task" | "Bug" | "Feature" | "Epic")
+                )
+        })
+        .collect()
 }
 
 /// The issues that have a claim branch.
@@ -119,6 +157,7 @@ pub fn report<'a>(
         ready: Vec::new(),
         waiting_on_owner: Vec::new(),
         triage: Vec::new(),
+        loose: Vec::new(),
         in_progress: 0,
         blocked: 0,
         problems: Vec::new(),
@@ -198,7 +237,8 @@ pub fn run(gh: &dyn Gh, link: &str, json: bool, stacked: bool) -> Result<String,
     } else {
         BTreeMap::new()
     };
-    let report = report(&scope, &claimed, &bodies, &config, &stacks);
+    let mut report = report(&scope, &claimed, &bodies, &config, &stacks);
+    report.loose = loose(&items, &link);
     if json {
         json_of(&report)
     } else {
