@@ -1,6 +1,6 @@
 //! Tests of the facts that a recorded pull request does not show.
 
-use super::case_tests::{Case, page};
+use super::case_tests::{Case, page, queued};
 use super::read;
 use super::rest::verdict;
 
@@ -59,11 +59,17 @@ fn snapshot_the_merge_queue_rule_alone_means_a_queue() {
 #[test]
 fn snapshot_an_error_on_a_later_page_keeps_the_earlier_pages() {
     let mut case = Case::recorded(2963);
-    case.graphs = vec![page(3, Some("C1"), 101)];
+    case.rules = Ok("[[]]".to_owned());
+    case.graphs = vec![queued(&page(3, Some("C1"), 101))];
     let gh = case.gh().fail("graphql", "gh: Bad Gateway (HTTP 502)");
     let snapshot = read(&gh, &case.link()).expect("the pull is read");
     assert_eq!(snapshot.threads.len(), 3);
     assert!(snapshot.queue.has_queue);
+    let entry = snapshot.queue.entry.as_ref();
+    assert_eq!(
+        entry.map(|e| (e.state.as_str(), e.position)),
+        Some(("QUEUED", Some(2)))
+    );
     let problems = &snapshot.problems;
     assert_eq!(problems.len(), 4, "{problems:?}");
     assert_eq!(
